@@ -1,0 +1,18 @@
+Expression      =               PathQuantifier PathOperator
+                |               ModalOperator Expression
+                |               Logic
+
+PathQuantifier  =               'E' | 'A'
+
+PathOperator    =               ( 'X' | 'F' | 'G' | Expression 'U' ) Expression
+
+ModalOperator   =               '[' Action ']' | '<' Action '>'
+
+Logic           =               '!' Expression
+                |               Expression '&' Expression
+                |               Expression '|' Expression
+                |               Constant
+
+Action          =               \Regex: [a-z]+
+
+Constant        =               '0' | '1'
