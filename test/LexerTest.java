@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LexerTest {
     @Test
-    public void genericTest() {
+    public void testGeneric() {
         assertEquals(List.of(new Token(TokenType.ACTION, "a"),
                              new Token(TokenType.IMPLICATION),
                              new Token(TokenType.ACTION, "b")),

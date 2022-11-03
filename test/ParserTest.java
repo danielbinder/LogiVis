@@ -1,8 +1,33 @@
+import lexer.Lexer;
 import org.junit.jupiter.api.Test;
+import parser.Parser;
+import parser.node.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Assumption: Lexer is correct!
+ */
 public class ParserTest {
     @Test
-    public void genericTest() {
+    public void testGeneric() {
+        assertEquals(new ImplicationNode(new ActionNode("a"),
+                                         new ActionNode("b")),
+                     runInput("a -> b"));
+    }
 
+    @Test
+    public void testPrecedence() {
+        assertEquals(new DoubleImplicationNode(new OrNode(new ActionNode("a"),
+                                                          new AndNode(new NegationNode(new ActionNode("b")),
+                                                                      new ActionNode("c"))),
+                                               new AndNode(new NegationNode(new OrNode(new ActionNode("a"),
+                                                                                       new ActionNode("b"))),
+                                                           new ActionNode("c"))),
+                     runInput("a | !b & c <-> !(a | b) & c"));
+    }
+
+    private Node runInput(String input) {
+        return new Parser().parse(Lexer.tokenize(input));
     }
 }

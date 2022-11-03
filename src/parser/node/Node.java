@@ -1,6 +1,7 @@
 package parser.node;
 
 public sealed interface Node permits
+        ActionNode,
         AndNode,
         ConstantNode,
         DoubleImplicationNode,

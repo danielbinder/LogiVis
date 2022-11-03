@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public enum TokenType {
+    CONSTANT(Pattern.compile("[01]")),
     ACTION(Pattern.compile("[a-z]+")),
 
     NOT(Pattern.compile("!")),
@@ -16,10 +17,6 @@ public enum TokenType {
 
     LPAREN(Pattern.compile("\\(")),
     RPAREN(Pattern.compile("\\)")),
-    LBRACKET(Pattern.compile("\\[")),
-    RBRACKET(Pattern.compile("]")),
-    LANGLED(Pattern.compile("<")),
-    RANGLED(Pattern.compile(">")),
 
     EXISTS(Pattern.compile("E")),
     FOR_ALL(Pattern.compile("A")),
