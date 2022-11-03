@@ -1,14 +1,13 @@
 Formula         =               ['('] Expression [')']
 
-Expression      =               PathQuantifier PathOperator
-                |               ModalOperator Formula
+Expression      =               Path
                 |               Logic
+
+Path            =               PathQuantifier PathOperator
 
 PathQuantifier  =               'E' | 'A'
 
 PathOperator    =               ( 'X' | 'F' | 'G' | Formula 'U' ) Formula
-
-ModalOperator   =               '[' Logic ']' | '<' Logic '>'
 
 Logic           =               [ '!' ] Formula
                 |               Formula '&' Formula

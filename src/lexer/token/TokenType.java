@@ -14,8 +14,8 @@ public enum TokenType {
     IMPLICATION(Pattern.compile("->")),
     DOUBLE_IMPLICATION(Pattern.compile("<->")),
 
-    LPAR(Pattern.compile("\\(")),
-    RPAR(Pattern.compile("\\)")),
+    LPAREN(Pattern.compile("\\(")),
+    RPAREN(Pattern.compile("\\)")),
     LBRACKET(Pattern.compile("\\[")),
     RBRACKET(Pattern.compile("]")),
     LANGLED(Pattern.compile("<")),
