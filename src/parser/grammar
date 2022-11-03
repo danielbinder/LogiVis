@@ -1,16 +1,21 @@
+Formula         =               ['('] Expression [')']
+
 Expression      =               PathQuantifier PathOperator
-                |               ModalOperator Expression
+                |               ModalOperator Formula
                 |               Logic
 
 PathQuantifier  =               'E' | 'A'
 
-PathOperator    =               ( 'X' | 'F' | 'G' | Expression 'U' ) Expression
+PathOperator    =               ( 'X' | 'F' | 'G' | Formula 'U' ) Formula
 
-ModalOperator   =               '[' Action ']' | '<' Action '>'
+ModalOperator   =               '[' Logic ']' | '<' Logic '>'
 
-Logic           =               '!' Expression
-                |               Expression '&' Expression
-                |               Expression '|' Expression
+Logic           =               [ '!' ] Formula
+                |               Formula '&' Formula
+                |               Formula '|' Formula
+                |               Formula '->' Formula
+                |               Formula '<->' Formula
+                |               Action
                 |               Constant
 
 Action          =               \Regex: [a-z]+
