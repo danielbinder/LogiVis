@@ -16,7 +16,11 @@ public class REST {
         for(Method m : servlet.getClass().getDeclaredMethods()) {
             if(m.isAnnotationPresent(GET.class)) {
                 get(m.getAnnotation(GET.class).value(),
-                    (req, res) -> m.invoke(servlet, req.params().values().toArray()));
+                    (req, res) -> {
+                    res.type("application/json");
+                    res.header("Access-Control-Allow-Origin", "*");
+                    return m.invoke(servlet, req.params().values().toArray());
+                });
             }
         }
     }
@@ -27,7 +31,7 @@ public class REST {
         return map.isEmpty() ?
                 "{}" :
                 map.keySet().stream().reduce("{#", (acc, str) ->
-                                acc.replace("#", "\n\"" + str + "\":\"" + map.get(str) + "\",#"))
-                        .replace(",#", "\n}");
+                                acc.replace("#", " \"" + str + "\": \"" + map.get(str) + "\", #"))
+                        .replace(", #", " }");
     }
 }

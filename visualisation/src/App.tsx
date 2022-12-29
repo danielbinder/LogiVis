@@ -18,9 +18,16 @@ function App() {
         >
           Learn React
         </a>
+        <button onClick={handleButtonClick}>Fetch rest API</button>
       </header>
     </div>
   );
+}
+
+function handleButtonClick() {
+  return fetch('http://localhost:4000/solve/var1')
+      .then(response => response.json())
+      .then(data => console.log(data))
 }
 
 export default App;
