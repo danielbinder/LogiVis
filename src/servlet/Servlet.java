@@ -1,7 +1,7 @@
 package servlet;
 
 import generator.Generator;
-import interpreter.Interpreter;
+import interpreter.BruteForceSolver;
 import lexer.Lexer;
 import parser.Parser;
 import rest.GET;
@@ -18,11 +18,11 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return REST.toJSON(Interpreter.solve(PARSER.parse(Lexer.tokenize(formula))));
+        return REST.toJSON(BruteForceSolver.solve(PARSER.parse(Lexer.tokenize(formula))));
     }
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return Generator.generateFormula(params).toString();
+        return Generator.generateKripkeStructure(params).toString();
     }
 }
