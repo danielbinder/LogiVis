@@ -1,9 +1,9 @@
-package parser.node;
+package parser.logicnode;
 
 /**
  * left -> right i.e., !left | right
  */
-public record ImplicationNode(Node left, Node right) implements Node {
+public record ImplicationNode(LogicNode left, LogicNode right) implements LogicNode {
     @Override
     public String toString() {
         return "(" + left.toString() + " -> " + right.toString() + ")";

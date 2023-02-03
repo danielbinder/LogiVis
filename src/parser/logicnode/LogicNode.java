@@ -1,6 +1,6 @@
-package parser.node;
+package parser.logicnode;
 
-public sealed interface Node permits
+public sealed interface LogicNode permits
         ActionNode,
         AndNode,
         ConstantNode,

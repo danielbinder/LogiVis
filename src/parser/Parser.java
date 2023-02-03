@@ -2,7 +2,7 @@ package parser;
 
 import lexer.token.Token;
 import lexer.token.TokenType;
-import parser.node.*;
+import parser.logicnode.*;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class Parser {
     private Token current;
     private int i;
 
-    public Node parse(List<Token> tokens) {
+    public LogicNode parse(List<Token> tokens) {
         this.tokens = tokens;
         i = 0;
         advance();
@@ -19,10 +19,10 @@ public class Parser {
         return formula();
     }
 
-    private Node formula() {
+    private LogicNode formula() {
         if(isType(TokenType.LPAREN)) {
             advance();
-            Node expr = expression();
+            LogicNode expr = expression();
             check(TokenType.RPAREN);
 
             return expr;
@@ -31,12 +31,12 @@ public class Parser {
         return expression();
     }
 
-    private Node expression() {
+    private LogicNode expression() {
         if(isType(TokenType.EXISTS) || isType(TokenType.FOR_ALL)) return path();
         else return logic();
     }
 
-    private Node path() {
+    private LogicNode path() {
         PathQuantifier pq = isType(TokenType.EXISTS) ? PathQuantifier.E : PathQuantifier.A;
         advance();
 
@@ -54,15 +54,15 @@ public class Parser {
                 yield new GloballyNode(pq, formula());
             }
             default -> {
-                Node left = formula();
+                LogicNode left = formula();
                 check(TokenType.UNTIL);
                 yield new UntilNode(pq, left, formula());
             }
         };
     }
 
-    private Node logic() {
-        Node result = implication();
+    private LogicNode logic() {
+        LogicNode result = implication();
 
         while(isType(TokenType.DOUBLE_IMPLICATION)) {
             advance();
@@ -72,8 +72,8 @@ public class Parser {
         return result;
     }
 
-    private Node implication() {
-        Node result = or();
+    private LogicNode implication() {
+        LogicNode result = or();
 
         while(isType(TokenType.IMPLICATION)) {
             advance();
@@ -83,8 +83,8 @@ public class Parser {
         return result;
     }
 
-    private Node or() {
-        Node result = and();
+    private LogicNode or() {
+        LogicNode result = and();
 
         while(isType(TokenType.OR)) {
             advance();
@@ -94,8 +94,8 @@ public class Parser {
         return result;
     }
 
-    private Node and() {
-        Node result = not();
+    private LogicNode and() {
+        LogicNode result = not();
 
         while(isType(TokenType.AND)) {
             advance();
@@ -105,7 +105,7 @@ public class Parser {
         return result;
     }
 
-    private Node not() {
+    private LogicNode not() {
         if(isType(TokenType.NOT)) {
             advance();
             return new NegationNode(atom());
@@ -114,21 +114,21 @@ public class Parser {
         return atom();
     }
 
-    private Node atom() {
+    private LogicNode atom() {
         return switch(current.type) {
             case ACTION -> {
-                Node action = new ActionNode(current.value);
+                LogicNode action = new ActionNode(current.value);
                 advance();
                 yield action;
             }
             case CONSTANT -> {
-                Node constant = new ConstantNode(current.value.equals("1"));
+                LogicNode constant = new ConstantNode(current.value.equals("1"));
                 advance();
                 yield constant;
             }
             case LPAREN -> {
                 advance();
-                Node formula = formula();
+                LogicNode formula = formula();
                 check(TokenType.RPAREN);
                 yield formula;
             }

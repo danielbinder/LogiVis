@@ -1,9 +1,9 @@
-package parser.node;
+package parser.logicnode;
 
 /**
  * left | right
  */
-public record OrNode(Node left, Node right) implements Node {
+public record OrNode(LogicNode left, LogicNode right) implements LogicNode {
     @Override
     public String toString() {
         return "(" + left.toString() + " | " + right.toString() + ")";

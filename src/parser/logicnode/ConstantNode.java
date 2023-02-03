@@ -1,9 +1,9 @@
-package parser.node;
+package parser.logicnode;
 
 /**
  * 0 or 1
  */
-public record ConstantNode(boolean bool) implements Node {
+public record ConstantNode(boolean bool) implements LogicNode {
     @Override
     public String toString() {
         return bool ? "1" : "0";

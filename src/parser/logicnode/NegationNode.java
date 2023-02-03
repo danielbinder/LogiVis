@@ -1,9 +1,9 @@
-package parser.node;
+package parser.logicnode;
 
 /**
  * ! child
  */
-public record NegationNode(Node child) implements Node {
+public record NegationNode(LogicNode child) implements LogicNode {
     @Override
     public String toString() {
         return "(!" + child.toString() + ")";

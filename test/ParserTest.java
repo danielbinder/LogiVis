@@ -1,7 +1,7 @@
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 import parser.Parser;
-import parser.node.*;
+import parser.logicnode.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,7 +27,7 @@ public class ParserTest {
                      runInput("a | !b & c <-> !(a | b) & c"));
     }
 
-    private Node runInput(String input) {
+    private LogicNode runInput(String input) {
         return new Parser().parse(Lexer.tokenize(input));
     }
 }

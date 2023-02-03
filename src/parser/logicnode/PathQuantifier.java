@@ -1,4 +1,4 @@
-package parser.node;
+package parser.logicnode;
 
 public enum PathQuantifier {
     E,      // EXISTS
