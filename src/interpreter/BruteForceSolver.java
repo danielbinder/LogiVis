@@ -26,9 +26,7 @@ public class BruteForceSolver {
         initAssignmentList();
         assignNext();
 
-        while(!checkCurrentAssignment(formula)) {
-            assignNext();
-        }
+        while(!checkCurrentAssignment(formula) && assignmentIndex < assignments.size()) assignNext();
 
         return checkCurrentAssignment(formula) ? transformedAssignmentMap() : null;
     }

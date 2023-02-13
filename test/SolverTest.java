@@ -6,6 +6,8 @@ import parser.Parser;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class SolverTest {
     @Test
     public void testPrecedenceFormula() {
@@ -33,6 +35,12 @@ public class SolverTest {
         String formula = "a & a";
         Map<String, String> expected = Map.of("a", "true");
         assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testUnsatisfiable() {
+        String formula = "a & !a";
+        assertNull(getAssignment(formula));
     }
 
     private Map<String, String> getAssignment(String formula) {
