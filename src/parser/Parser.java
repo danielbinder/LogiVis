@@ -20,14 +20,6 @@ public class Parser {
     }
 
     private LogicNode formula() {
-        if(isType(TokenType.LPAREN)) {
-            advance();
-            LogicNode expr = expression();
-            check(TokenType.RPAREN);
-
-            return expr;
-        }
-
         return expression();
     }
 

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SolverTest {
-
     @Test
     public void testPrecedenceFormula() {
         String formula = "a | !b & c <-> !(a | b) & c";
@@ -36,7 +35,7 @@ public class SolverTest {
         assertEquals(expected, getAssignment(formula));
     }
 
-    public Map<String, String> getAssignment(String formula) {
+    private Map<String, String> getAssignment(String formula) {
         Map<String, String> varAssignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
         System.out.println(varAssignment);
         return varAssignment;
