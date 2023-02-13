@@ -2,13 +2,14 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-        // nodes;variables;minSuccessors;maxSuccessors;allStatesReachable
+// nodes;variables;minSuccessors;maxSuccessors;allStatesReachable
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <p> Evaluate a given formula</p>
+        <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
         <div>
           <span>
             <text>Formula: </text>
@@ -63,20 +64,12 @@ function handleGenKripke() {
 
 }
 
-type props = {
-        type_str: string;
-        id: string;
-        placeholder: string;
-        defaultVal: string;
-        text: string;
-};
-
-function inputGenerator(p: props) {
+function InputGenerator(props: { text: string; type_str: string; id: string; placeholder: string; defaultVal: string; }) {
   return <div>
     <span>
-      <text>{p.text}</text>
+      <text>{props.text}</text>
     </span>
-    <input type={p.type_str} id={p.id} placeholder={p.placeholder} defaultValue={p.defaultVal}/>
+    <input type={props.type_str} id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
   </div>;
 }
 
