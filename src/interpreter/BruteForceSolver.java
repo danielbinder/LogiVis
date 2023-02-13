@@ -111,7 +111,7 @@ public class BruteForceSolver {
     private Map<String, String> transformedAssignmentMap() {
         Map<String, String> assignmentMap = new HashMap<>();
 
-        for(Map.Entry<String, Boolean> e : currentAssignment.entrySet()) assignmentMap.put(e.getKey(), e.getValue() + "");
+        for(Map.Entry<String, Boolean> e : currentAssignment.entrySet()) assignmentMap.put(e.getKey(), String.valueOf(e.getValue()));
 
         return assignmentMap;
     }
