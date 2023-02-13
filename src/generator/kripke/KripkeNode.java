@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class KripkeNode {
     public final String name;
@@ -20,24 +21,14 @@ public class KripkeNode {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(name + ";");
-
-        for(Map.Entry<String, Boolean> e : stateMap.entrySet()) {
-            sb.append(e.getKey())
-                    .append(":")
-                    .append(e.getValue().toString())
-                    .append("+");
-        }
-        sb.append(";");
-
-        sb.append(isInitialNodeNode)
-                .append(";");
-
-        for(KripkeNode n : successors) {
-            sb.append(n.name)
-                    .append("+");
-        }
-
-        return sb.toString();
+        return name + ";" +
+                stateMap.entrySet()
+                        .stream()
+                        .map(e -> e.getKey() + ":" + e.getValue().toString())
+                        .collect(Collectors.joining("+")) + ";" +
+                isInitialNodeNode + ";" +
+                successors.stream()
+                        .map(n -> n.name)
+                        .collect(Collectors.joining("+"));
     }
 }
