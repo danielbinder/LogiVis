@@ -18,9 +18,9 @@ function App() {
         <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
         <div>
             <span>
-                <text>All states reachable: </text>
+                All states reachable:
             </span>
-            <input type="checkbox" id="states_reachable" checked />
+            <input type="checkbox" id="states_reachable" defaultChecked />
         </div>
         <button onClick={handleGenKripke}>Generate Kripke structure</button>
       </header>
@@ -29,9 +29,11 @@ function App() {
 }
 
 function handleCheckFormula() {
-  return fetch('http://localhost:4000/solve/var1')
+  let formula = (document.getElementById("formula") as HTMLInputElement).value;
+  console.log(formula);
+  return fetch('http://localhost:4000/solve/' + formula)
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => console.log(data));
 }
 
 function handleGenKripke() {
@@ -41,7 +43,7 @@ function handleGenKripke() {
 function InputGenerator(props: { text: string; type_str: string; id: string; placeholder: string; defaultVal: string; }) {
   return <div>
     <span>
-      <text>{props.text}</text>
+      {props.text}
     </span>
     <input type={props.type_str} id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
   </div>;

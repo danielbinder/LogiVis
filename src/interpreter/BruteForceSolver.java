@@ -65,7 +65,7 @@ public class BruteForceSolver {
     }
 
     private void initAssignmentList() {
-        for(int i = 0; i < currentAssignment.size(); i++) {
+        for(int i = 0; i <= currentAssignment.size(); i++) {
             StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(i));
 
             // Add '0'-padding in front

@@ -23,6 +23,13 @@ public class SolverTest {
     }
 
     @Test
+    public void testAndOrFormula() {
+        String formula = "(a & b) | c";
+        Map<String, String> expected = Map.of("a", "false", "b", "false", "c", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
     public void testTautology() {
         String formula = "a & a";
         Map<String, String> expected = Map.of("a", "true");
