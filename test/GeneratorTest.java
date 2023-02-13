@@ -20,5 +20,6 @@ public class GeneratorTest {
                                                                        allStatesReachable);
 
         System.out.println(ks);
+        // E.g. 0;a:false+b:false+c:false;true;2+3_1;a:false+b:false+c:false;false;0+1_2;a:false+b:false+c:false;false;3_3;a:false+b:false+c:false;true;2+3
     }
 }

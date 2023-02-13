@@ -8,20 +8,23 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p> Evaluate a given formula</p>
+        <h3> Evaluate a given formula</h3>
         <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
+		<textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
         <button onClick={handleCheckFormula}>Check formula</button>
-        <p> Parameters for generating formulas:</p>
+        <h3> Generate a formula/Kripke structure</h3>
         <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
         <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
         <InputGenerator text={"Min. successors: "} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
         <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
+		<InputGenerator text={"Initial nodes: "} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
         <div>
             <span>
                 All states reachable:
             </span>
             <input type="checkbox" id="states_reachable" defaultChecked />
         </div>
+		<textarea rows={5} cols={60} id="generation_result" placeholder="result" readOnly/>
         <button onClick={handleGenKripke}>Generate Kripke structure</button>
       </header>
     </div>
@@ -30,14 +33,38 @@ function App() {
 
 function handleCheckFormula() {
   let formula = (document.getElementById("formula") as HTMLInputElement).value;
-  console.log(formula);
-  return fetch('http://localhost:4000/solve/' + formula)
-      .then(response => response.json())
-      .then(data => console.log(data));
+  const isNonEmptyString = (val: string) => typeof val === 'string' && !!val;
+  if(isNonEmptyString(formula)) {
+	  console.log(formula);
+	  return fetch('http://localhost:4000/solve/' + formula)
+		  .then(response => response.json())
+		  .then(data => {
+			console.log(data);
+			(document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+		  });
+  }
 }
 
 function handleGenKripke() {
-    // todo
+    let nodeCnt = extractValueFromTextInput("node_cnt");
+	let varCnt = extractValueFromTextInput("variables");
+	let minSucc = extractValueFromTextInput("min_succ");
+	let maxSucc = extractValueFromTextInput("max_succ");
+	let initialNodes = extractValueFromTextInput("initial_nodes");
+	let allStatesReachable = (document.getElementById("states_reachable") as HTMLInputElement).checked;
+	const dataStr = nodeCnt + ";" + initialNodes + ";" + varCnt + ";" + minSucc + ";" + maxSucc + ";" + allStatesReachable + ";";
+	const url = "http://localhost:4000/generate/" + dataStr;
+	console.log(url);
+	return fetch(url)
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			(document.getElementById("generation_result") as HTMLInputElement).value = JSON.stringify(data);
+		});
+}
+
+function extractValueFromTextInput(component_name: string) {
+	return (document.getElementById(component_name) as HTMLInputElement).value;
 }
 
 function InputGenerator(props: { text: string; type_str: string; id: string; placeholder: string; defaultVal: string; }) {

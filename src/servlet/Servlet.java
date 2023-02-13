@@ -13,7 +13,7 @@ public class Servlet {
 
     public static void main(String[] args) {
         REST.start(PORT);
-        System.out.println("Click: http://localhost:" + PORT + "/solve/var1");
+        System.out.println("Click: http://localhost:" + PORT);
     }
 
     @GET("/solve/:formula")
@@ -23,6 +23,6 @@ public class Servlet {
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return Generator.generateKripkeStructure(params).toString();
+        return REST.singleStringToJSON(Generator.generateKripkeStructure(params).toString());
     }
 }
