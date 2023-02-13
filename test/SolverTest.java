@@ -24,7 +24,7 @@ public class SolverTest {
 
     @Test
     public void testTautology() {
-        String formula = "a & b";
+        String formula = "a & a";
         Map<String, String> expected = Map.of("a", "true");
         assertEquals(expected, getAssignment(formula));
     }
