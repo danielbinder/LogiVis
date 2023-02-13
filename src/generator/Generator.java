@@ -9,7 +9,7 @@ public class Generator {
     private static final Random rand = new Random();
 
     /**
-     * @param paramString format: nodes;variables;minSuccessors;maxSuccessors;allStatesReachable
+     * @param paramString format: nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
      * @return Kripke Structure
      */
     public static KripkeStructure generateKripkeStructure(String paramString) {
@@ -50,6 +50,7 @@ public class Generator {
     }
 
     private static List<Integer> pickRandom(int bound, int amount) {
+        assert bound >= amount;
         List<Integer> picks = new ArrayList<>();
 
         while(amount > 0) {
@@ -67,7 +68,7 @@ public class Generator {
     private static List<Map<String, Boolean>> generateRandomStateMaps(int variables, int amount) {
         List<Map<String, Boolean>> stateMaps = new ArrayList<>();
 
-        for(int i = 0; i < variables; i++) {
+        for(int i = 0; i < Math.pow(2, variables); i++) {
             StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(i));
 
             // Add '0'-padding in front
@@ -75,12 +76,12 @@ public class Generator {
 
             Map<String, Boolean> stateMap = new HashMap<>();
             int v = 0;
-            for(Character c : binaryString.toString().toCharArray()) stateMap.put(('a' + v++) + "", c == '1');
+            for(Character c : binaryString.toString().toCharArray()) stateMap.put(((char) ('a' + v++)) + "", c == '1');
 
             stateMaps.add(stateMap);
         }
 
-        List<Integer> pickedIndices = pickRandom(variables, amount);
+        List<Integer> pickedIndices = pickRandom(stateMaps.size(), amount);
 
         return stateMaps.stream()
                 .filter(sm -> pickedIndices.contains(stateMaps.indexOf(sm)))
