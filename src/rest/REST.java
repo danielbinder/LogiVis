@@ -34,8 +34,4 @@ public class REST {
                                 acc.replace("#", " \"" + str + "\": \"" + map.get(str) + "\", #"))
                         .replace(", #", " }");
     }
-
-    public static String singleStringToJSON(String obj) {
-        return obj == null ? "{}" : "{" + "\"result\"" + ":" + "\"" + obj + "\"" + "}";
-    }
 }

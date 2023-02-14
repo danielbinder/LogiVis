@@ -7,6 +7,8 @@ import parser.Parser;
 import rest.GET;
 import rest.REST;
 
+import java.util.Map;
+
 public class Servlet {
     private static final int PORT = 4000;
     private static final Parser PARSER = new Parser();
@@ -23,6 +25,6 @@ public class Servlet {
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return REST.singleStringToJSON(Generator.generateKripkeStructure(params).toString());
+        return REST.toJSON(Map.of("result", Generator.generateKripkeStructure(params).toString()));
     }
 }
