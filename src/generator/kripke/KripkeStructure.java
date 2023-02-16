@@ -56,6 +56,10 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         return new Parser().parse(Lexer.tokenize(toFormulaString(steps)));
     }
 
+    public static KripkeStructure fromString(String structure) {
+        return new KripkeStructure();        // TODO
+    }
+
     @Override
     public String toString() {
         return stream()

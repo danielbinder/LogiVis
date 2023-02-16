@@ -1,6 +1,7 @@
 package servlet;
 
 import generator.Generator;
+import generator.kripke.KripkeStructure;
 import interpreter.BruteForceSolver;
 import lexer.Lexer;
 import parser.Parser;
@@ -31,6 +32,13 @@ public class Servlet {
     @GET("/generate/:params")
     public String generate(String params) {
         return BruteForceSolver.resultToJSON(Map.of("result", Generator.generateKripkeStructure(params).toString()));
+    }
+
+    @GET("/kripke2formula/:kripke:steps")
+    public String kripke2formula(String kripke, String steps) {
+        return BruteForceSolver.resultToJSON(Map.of("result",
+                                                    KripkeStructure.fromString(kripke)
+                                                            .toFormulaString(Integer.parseInt(steps))));
     }
 
 }
