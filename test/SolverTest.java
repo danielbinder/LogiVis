@@ -12,28 +12,28 @@ public class SolverTest {
     @Test
     public void testPrecedenceFormula() {
         String formula = "a | !b & c <-> !(a | b) & c";
-        Map<String, String> expected = Map.of("a", "false", "b", "false", "c", "false");
+        var expected = Map.of("a", "false", "b", "false", "c", "false");
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testImplicationPrecedence() {
         String formula = "(p -> q) | (q -> p)";
-        Map<String, String> expected = Map.of("p", "false", "q", "false");
+        var expected = Map.of("p", "false", "q", "false");
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testAndOrFormula() {
         String formula = "(a & b) | c";
-        Map<String, String> expected = Map.of("a", "false", "b", "false", "c", "true");
+        var expected = Map.of("a", "false", "b", "false", "c", "true");
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testTautology() {
         String formula = "a & a";
-        Map<String, String> expected = Map.of("a", "true");
+        var expected = Map.of("a", "true");
         assertEquals(expected, getAssignment(formula));
     }
 
@@ -43,8 +43,22 @@ public class SolverTest {
         assertNull(getAssignment(formula));
     }
 
+    @Test
+    public void testConstant() {
+        String formula = "a & !b | true";
+        var expected = Map.of("a", "false", "b", "false");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testConjunction() {
+        String formula = "a & !b & c & d";
+        var expected = Map.of("a", "true", "b", "false", "c", "true", "d", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
     private Map<String, String> getAssignment(String formula) {
-        Map<String, String> varAssignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
+        var varAssignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
         System.out.println(varAssignment);
         return varAssignment;
     }
