@@ -59,7 +59,7 @@ public class SolverTest {
     }
 
     @Test
-    public void testValidity() {
+    public void testAllSolutions() {
         String formula = "a -> b & !c";
         var expected = List.of(
                 Map.of("a", "false", "b", "false", "c", "false"),
@@ -70,8 +70,16 @@ public class SolverTest {
         assertEquals(expected, getAllAssignments(formula));
     }
 
+    @Test
+    public void testValid() {
+        String formula = "a | !a";
+        var expected = List.of(Map.of("result", "valid"));
+        assertEquals(expected, getAllAssignments(formula));
+    }
+
     private Map<String, String> getAssignment(String formula) {
-        var assignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
+        var tokens = Lexer.tokenize(formula);
+        var assignment = BruteForceSolver.solve(new Parser().parse(tokens));
         System.out.println(assignment);
         return assignment;
     }

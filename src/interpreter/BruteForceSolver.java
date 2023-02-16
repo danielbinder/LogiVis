@@ -28,6 +28,7 @@ public class BruteForceSolver {
 
     public static String resultToJSON(List<Map<String, String>> assignments) {
         if(assignments == null) return resultToJSON(Map.of("result", "unsatisfiable"));
+        if(assignments.stream().anyMatch(m -> m.containsValue("valid"))) return resultToJSON(Map.of("result", "valid"));
         return "{" + assignments.
                 stream().
                 map(assignment -> "\"assignment_" + assignments.indexOf(assignment) + "\" : "
@@ -57,13 +58,15 @@ public class BruteForceSolver {
         List<Map<String, String>> satisfiableAssignments = new ArrayList<>();
         initAssignmentMap(formula);
         initAssignmentList();
-        assignNext();
 
         while(assignmentIndex < assignments.size()) {
-            if(checkCurrentAssignment(formula)) satisfiableAssignments.add(transformedAssignmentMap());
-
             assignNext();
+
+            if(checkCurrentAssignment(formula)) satisfiableAssignments.add(transformedAssignmentMap());
         }
+
+        //TODO: this is not beautiful
+        if(satisfiableAssignments.size() == assignments.size()) return List.of(Map.of("result", "valid"));
 
         return satisfiableAssignments.size() > 0 ? satisfiableAssignments : null;
     }
@@ -100,7 +103,7 @@ public class BruteForceSolver {
     }
 
     private void initAssignmentList() {
-        for(int i = 0; i <= Math.pow(2, currentAssignment.size()); i++) {
+        for(int i = 0; i < Math.pow(2, currentAssignment.size()); i++) {
             StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(i));
 
             // Add '0'-padding in front
