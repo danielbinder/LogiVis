@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 public enum TokenType {
-    CONSTANT(Pattern.compile("[01]")),
+    CONSTANT(Pattern.compile("[01]|true|false")),
     ACTION(Pattern.compile("[a-z]+")),
 
     NOT(Pattern.compile("!")),

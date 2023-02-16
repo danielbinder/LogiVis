@@ -16,6 +16,10 @@ public class Lexer {
 
             current.append(input.charAt(i));
 
+            if(Character.isAlphabetic(input.charAt(i)) &&
+                    i + 1 <input.length() &&
+                    Character.isAlphabetic(input.charAt(i + 1))) continue;
+
             try {
                 tokens.add(Token.fromString(current.toString()));
                 current = new StringBuilder();
