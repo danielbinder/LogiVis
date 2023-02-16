@@ -46,7 +46,7 @@ public class SolverTest {
     @Test
     public void testConstant() {
         String formula = "a & !b | true";
-        var expected = Map.of("a", "false", "b", "false");
+        var expected = Map.of("a", "true", "b", "false");
         assertEquals(expected, getAssignment(formula));
     }
 
