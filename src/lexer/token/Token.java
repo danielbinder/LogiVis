@@ -18,7 +18,7 @@ public class Token {
     public static Token fromString(String s) {
         TokenType type = TokenType.fromString(s);
 
-        return new Token(type, type == TokenType.ACTION ? s : "");
+        return new Token(type, type == TokenType.ACTION || type == TokenType.CONSTANT ? s : "");
     }
 
     @Override

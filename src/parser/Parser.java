@@ -114,7 +114,7 @@ public class Parser {
                 yield action;
             }
             case CONSTANT -> {
-                LogicNode constant = new ConstantNode(current.value.equals("1"));
+                LogicNode constant = new ConstantNode(current.value.equals("1") || current.value.equals("true"));
                 advance();
                 yield constant;
             }
