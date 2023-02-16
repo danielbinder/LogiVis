@@ -8,7 +8,6 @@ import rest.GET;
 import rest.REST;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Servlet {
     private static final int PORT = 4000;
@@ -21,17 +20,17 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return REST.toJSON(BruteForceSolver.solve(PARSER.parse(Lexer.tokenize(formula))));
+        return BruteForceSolver.resultToJSON(BruteForceSolver.solve(PARSER.parse(Lexer.tokenize(formula))));
     }
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return REST.assignmentsToJSON(BruteForceSolver.solveAll(PARSER.parse(Lexer.tokenize(formula))));
+        return BruteForceSolver.resultToJSON(BruteForceSolver.solveAll(PARSER.parse(Lexer.tokenize(formula))));
     }
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return REST.toJSON(Map.of("result", Generator.generateKripkeStructure(params).toString()));
+        return BruteForceSolver.resultToJSON(Map.of("result", Generator.generateKripkeStructure(params).toString()));
     }
 
 }

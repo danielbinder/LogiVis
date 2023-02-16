@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BruteForceSolver {
     private final LogicNode formula;
@@ -23,6 +24,23 @@ public class BruteForceSolver {
 
     public static List<Map<String, String>> solveAll(LogicNode formula) {
         return new BruteForceSolver(formula).solveAll();
+    }
+
+    public static String resultToJSON(List<Map<String, String>> assignments) {
+        if(assignments == null) return resultToJSON(Map.of("result", "unsatisfiable"));
+        return "{" + assignments.
+                stream().
+                map(assignment -> "\"assignment_" + assignments.indexOf(assignment) + "\" : "
+                        + resultToJSON(assignment))
+                .collect(Collectors.joining(" , ")) + "}";
+    }
+
+    public static String resultToJSON(Map<String, String> map) {
+        if(map == null) return resultToJSON(Map.of("result", "unsatisfiable"));
+        return map.isEmpty() ? "{}" :
+                map.keySet().stream().reduce("{#", (acc, str) ->
+                                acc.replace("#", " \"" + str + "\": \"" + map.get(str) + "\", #"))
+                        .replace(", #", " }");
     }
 
     private Map<String, String> solve() {
