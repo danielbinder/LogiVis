@@ -7,6 +7,7 @@ public class KripkeStructureTest {
     public void testToFormula() {
         KripkeStructure ks = Generator.generateKripkeStructure("4_2_3_1_3_true");
         System.out.println(ks);
+        System.out.println(ks.toFormulaString(3));
         System.out.println(ks.toFormula(3));
     }
 }

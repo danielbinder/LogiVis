@@ -1,5 +1,9 @@
 package generator.kripke;
 
+import lexer.Lexer;
+import parser.Parser;
+import parser.logicnode.LogicNode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +16,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         for(KripkeNode n : this) n.stateMap = stateMaps.get(i);
     }
 
-    public String toFormula(int steps) {
+    public String toFormulaString(int steps) {
         StringBuilder formula = new StringBuilder("true ");
 
         for(int i = 0; i < steps; i++) {
@@ -46,6 +50,10 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         }
 
         return formula.toString();
+    }
+
+    public LogicNode toFormula(int steps) {
+        return new Parser().parse(Lexer.tokenize(toFormulaString(steps)));
     }
 
     @Override
