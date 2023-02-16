@@ -10,21 +10,21 @@ function App() {
       <header className="App-header">
         <h3> Evaluate a given formula</h3>
         <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
-		<textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
+		    <textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
         <button onClick={handleCheckFormula}>Check formula</button>
         <h3> Generate a formula/Kripke structure</h3>
         <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
         <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
         <InputGenerator text={"Min. successors: "} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
         <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
-		<InputGenerator text={"Initial nodes: "} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
+		    <InputGenerator text={"Initial nodes: "} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
         <div>
             <span>
                 All states reachable:
             </span>
             <input type="checkbox" id="states_reachable" defaultChecked />
         </div>
-		<textarea rows={5} cols={60} id="generation_result" placeholder="result" readOnly/>
+		    <textarea rows={5} cols={60} id="generation_result" placeholder="result" readOnly/>
         <button onClick={handleGenKripke}>Generate Kripke structure</button>
       </header>
     </div>
@@ -46,7 +46,7 @@ function handleCheckFormula() {
 }
 
 function handleGenKripke() {
-    let nodeCnt = extractValueFromTextInput("node_cnt");
+  let nodeCnt = extractValueFromTextInput("node_cnt");
 	let varCnt = extractValueFromTextInput("variables");
 	let minSucc = extractValueFromTextInput("min_succ");
 	let maxSucc = extractValueFromTextInput("max_succ");
