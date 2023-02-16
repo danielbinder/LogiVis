@@ -28,8 +28,10 @@ public class REST {
     // UTILITY METHODS //
 
     public static String toJSON(Map<String, String> map) {
-        return map == null || map.isEmpty() ?
-                "{}" :
+        if(map == null) {
+            return toJSON(Map.of("result", "unsatisfiable"));
+        }
+        return map.isEmpty() ? "{}" :
                 map.keySet().stream().reduce("{#", (acc, str) ->
                                 acc.replace("#", " \"" + str + "\": \"" + map.get(str) + "\", #"))
                         .replace(", #", " }");
