@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 // nodes;variables;minSuccessors;maxSuccessors;allStatesReachable
@@ -11,7 +10,10 @@ function App() {
         <h3> Evaluate a given formula</h3>
         <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
 		    <textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
-        <button onClick={handleCheckFormula}>Check formula</button>
+        <div>
+          <button onClick={handleCheckFormula}>Check formula</button>
+          <button className="button_margin_left" onClick={handleAllAssignments}>All valid assignments</button>
+        </div>
         <h3> Generate a formula/Kripke structure</h3>
         <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
         <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
@@ -31,17 +33,31 @@ function App() {
   );
 }
 
+const isNonEmptyString = (val: string) => typeof val === 'string' && !!val;
+
 function handleCheckFormula() {
-  let formula = (document.getElementById("formula") as HTMLInputElement).value;
-  const isNonEmptyString = (val: string) => typeof val === 'string' && !!val;
+  let formula = extractValueFromTextInput("formula");
   if(isNonEmptyString(formula)) {
 	  console.log(formula);
 	  return fetch('http://localhost:4000/solve/' + formula)
 		  .then(response => response.json())
 		  .then(data => {
-			console.log(data);
-			(document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+			  console.log(data);
+			  (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
 		  });
+  }
+}
+
+function handleAllAssignments() {
+  let formula = extractValueFromTextInput("formula");
+  if(isNonEmptyString(formula)) {
+    console.log(formula);
+    return fetch('http://localhost:4000/solveAll/' + formula)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+      });
   }
 }
 

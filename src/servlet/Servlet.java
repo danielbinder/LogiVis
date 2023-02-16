@@ -26,10 +26,7 @@ public class Servlet {
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return "{" + BruteForceSolver.solveAll(PARSER.parse(Lexer.tokenize(formula)))
-                .stream()
-                .map(REST::toJSON)
-                .collect(Collectors.joining(" , ")) + "}";
+        return REST.assignmentsToJSON(BruteForceSolver.solveAll(PARSER.parse(Lexer.tokenize(formula))));
     }
 
     @GET("/generate/:params")
