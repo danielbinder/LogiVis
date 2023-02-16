@@ -15,7 +15,7 @@ public class Generator {
     public static KripkeStructure generateKripkeStructure(String paramString) {
         Random rand = new Random();
         KripkeStructure ks = new KripkeStructure();
-        String[] params = paramString.split(";");
+        String[] params = paramString.split("_");
 
         int nodes = Integer.parseInt(params[0]);
         for(int i = 0; i < nodes; i++) ks.add(new KripkeNode(i + ""));

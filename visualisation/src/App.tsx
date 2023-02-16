@@ -52,7 +52,7 @@ function handleGenKripke() {
 	let maxSucc = extractValueFromTextInput("max_succ");
 	let initialNodes = extractValueFromTextInput("initial_nodes");
 	let allStatesReachable = (document.getElementById("states_reachable") as HTMLInputElement).checked;
-	const dataStr = nodeCnt + ";" + initialNodes + ";" + varCnt + ";" + minSucc + ";" + maxSucc + ";" + allStatesReachable + ";";
+	const dataStr = nodeCnt + "_" + initialNodes + "_" + varCnt + "_" + minSucc + "_" + maxSucc + "_" + allStatesReachable;
 	const url = "http://localhost:4000/generate/" + dataStr;
 	console.log(url);
 	return fetch(url)
