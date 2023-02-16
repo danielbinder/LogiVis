@@ -29,7 +29,7 @@ public class Generator {
         int minSuccessors = Integer.parseInt(params[3]);
         int maxSuccessors = Integer.parseInt(params[4]);
         for(KripkeNode n: ks) {
-            int successors = rand.nextInt(minSuccessors, maxSuccessors);
+            int successors = rand.nextInt(minSuccessors, maxSuccessors + 1);
             List<Integer> chosenSuccessors = pickRandom(nodes, successors);
 
             for(int succ : chosenSuccessors) n.successors.add(ks.get(succ));
@@ -44,6 +44,8 @@ public class Generator {
             for(KripkeNode n : ks)
                 for(KripkeNode succ : n.successors)
                     reachabilityMap.put(succ.name, reachabilityMap.get(succ.name) + 1);
+
+            //TODO: only checks reachability but doesn't correct it yet
         }
 
         return ks;
