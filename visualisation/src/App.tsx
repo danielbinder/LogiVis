@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-// nodes;variables;minSuccessors;maxSuccessors;allStatesReachable
+// nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
 		    <textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
         <div>
           <button onClick={handleCheckFormula}>Check formula</button>
-          <button className="button_margin_left" onClick={handleAllAssignments}>All valid assignments</button>
+          <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
         </div>
         <h3> Generate a formula/Kripke structure</h3>
         <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
