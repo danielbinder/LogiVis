@@ -21,6 +21,10 @@ public class BruteForceSolver {
         return new BruteForceSolver(formula).solve();
     }
 
+    public static List<Map<String, String>> solveAll(LogicNode formula) {
+        return new BruteForceSolver(formula).solveAll();
+    }
+
     private Map<String, String> solve() {
         initAssignmentMap(formula);
         initAssignmentList();
@@ -29,6 +33,21 @@ public class BruteForceSolver {
         while(!checkCurrentAssignment(formula) && assignmentIndex < assignments.size()) assignNext();
 
         return checkCurrentAssignment(formula) ? transformedAssignmentMap() : null;
+    }
+
+    private List<Map<String, String>> solveAll() {
+        List<Map<String, String>> satisfiableAssignments = new ArrayList<>();
+        initAssignmentMap(formula);
+        initAssignmentList();
+        assignNext();
+
+        while(assignmentIndex < assignments.size()) {
+            if(checkCurrentAssignment(formula)) satisfiableAssignments.add(transformedAssignmentMap());
+
+            assignNext();
+        }
+
+        return satisfiableAssignments.size() > 0 ? satisfiableAssignments : null;
     }
 
     private void initAssignmentMap(LogicNode formula) {
