@@ -36,10 +36,9 @@ public class Servlet {
 
     @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps) {
-        String adaptedKripke = kripke.replaceAll(",", ";");
+        String rawKripke = kripke.substring(kripke.indexOf(':') + 2, kripke.length() - 2).replace(",", ";");
         return BruteForceSolver.resultToJSON(Map.of("result",
-                                                    KripkeStructure.fromString(adaptedKripke)
-                                                            .toFormulaString(Integer.parseInt(steps))));
+                                                    KripkeStructure.fromString(rawKripke)
+                                                            .toFormulaString(Integer.parseInt(steps)).replaceAll("\n", " ")));
     }
-
 }

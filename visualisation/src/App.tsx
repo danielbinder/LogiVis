@@ -91,7 +91,9 @@ function handleKripke2Formula() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                (document.getElementById("formula") as HTMLInputElement).value = JSON.stringify(data);
+                let rawFormula = JSON.stringify(data);
+                rawFormula = rawFormula.substring(rawFormula.indexOf(':') + 2, rawFormula.length - 2);
+                (document.getElementById("formula") as HTMLInputElement).value = rawFormula;
             })
     }
 }
