@@ -19,6 +19,9 @@ public class KripkeNode {
         this.successors = new HashSet<>();
     }
 
+    /**
+     * Does NOT do linking of nodes!
+     */
     public static KripkeNode fromString(String node) {
         String[] parts = node.split(";");
         KripkeNode kn = new KripkeNode(parts[0]);

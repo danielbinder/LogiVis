@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {Buffer} from "buffer";
+import { Graphviz } from 'graphviz-react';
 
 // nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
 
@@ -43,7 +43,7 @@ function Solver() {
 function Generator () {
     return (
         <div className={"column"}>
-        <h3> Generate a formula/Kripke structure</h3>
+        <h3> Generate a Kripke structure</h3>
             <div className={"left"}>
         <InputGenerator text={"Nodes"} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
         <InputGenerator text={"Variables"} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
@@ -61,6 +61,7 @@ function Generator () {
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
+            <Graphviz dot={'digraph {a -> b; c d -> c; a -> d; }'}/>
         </div>);
 }
 
