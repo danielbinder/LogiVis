@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import {Buffer} from "buffer";
 
 // nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
 
@@ -7,8 +8,15 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-          <Solver/>
-          <Generator/>
+          <div className={"row"}>
+              <Solver/>
+              <div className={"column"}>
+                  <br/><br/><br/><br/><br/><br/><br/><br/>
+                  <button>→</button>
+                  <button>←</button>
+              </div>
+              <Generator/>
+          </div>
       </header>
     </div>
   );
@@ -16,37 +24,42 @@ function App() {
 
 function Solver() {
     return (
-        <>
+        <div className={"column"}>
         <h3> Evaluate a given formula</h3>
-        <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
-        <textarea rows={10} cols={70} id="formula_eval_result" placeholder="result" readOnly/>
-        <div>
-            <button onClick={handleCheckFormula}>Check formula</button>
-            <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
+            <textarea rows={1} cols={80} id="formula" placeholder="Formula"/>
+            <br/><br/><br/>
+            <div>
+                <button onClick={handleCheckFormula}>Check formula</button>
+                <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
+            </div>
+            <br/><br/><br/>
+            <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
         </div>
-        </>
     );
 }
 
 function Generator () {
-    return (<>
+    return (
+        <div className={"column"}>
         <h3> Generate a formula/Kripke structure</h3>
-        <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
-        <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
-        <InputGenerator text={"Min. successors: "} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
-        <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
-        <InputGenerator text={"Initial nodes: "} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
+            <div className={"left"}>
+        <InputGenerator text={"   Nodes"} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
+        <InputGenerator text={"   Variables"} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
+        <InputGenerator text={"   Successors at least"} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
+        <InputGenerator text={"   Successors at most"} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
+        <InputGenerator text={"   Initial Nodes"} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
         <div>
-            <span>
-                All states reachable:
-            </span>
             <input type="checkbox" id="states_reachable" defaultChecked />
+            <span>   All states reachable</span>
         </div>
-        <textarea rows={10} cols={70} id="generation_result" placeholder="result" readOnly/>
-        <div>
-            <button onClick={handleGenKripke}>Generate Kripke structure</button>
-        </div>
-        </>);
+            </div>
+            <br/><br/><br/>
+            <div>
+                <button onClick={handleGenKripke}>Generate Kripke structure</button>
+            </div>
+            <br/><br/><br/>
+            <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
+        </div>);
 }
 
 const isNonEmptyString = (val: string) => !!val;
@@ -101,10 +114,10 @@ function extractValueFromTextInput(component_name: string) {
 
 function InputGenerator(props: { text: string; type_str: string; id: string; placeholder: string; defaultVal: string; }) {
   return <div>
-    <span>
-      {props.text}
-    </span>
-    <input type={props.type_str} id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
+      <input size={1} type={props.type_str} id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
+      <span>
+        {props.text}
+      </span>
   </div>;
 }
 
