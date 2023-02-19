@@ -34,7 +34,7 @@ public class Servlet {
         return BruteForceSolver.resultToJSON(Map.of("result", Generator.generateKripkeStructure(params).toString()));
     }
 
-    @GET("/kripke2formula/:kripke:steps")
+    @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps) {
         return BruteForceSolver.resultToJSON(Map.of("result",
                                                     KripkeStructure.fromString(kripke)
