@@ -35,7 +35,7 @@ function App() {
   );
 }
 
-const isNonEmptyString = (val: string) => typeof val === 'string' && !!val;
+const isNonEmptyString = (val: string) => !!val;
 
 function handleCheckFormula() {
   let formula = extractValueFromTextInput("formula");
