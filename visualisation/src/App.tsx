@@ -43,7 +43,7 @@ function Solver() {
 function Generator () {
     return (
         <div className={"column"}>
-        <h3> Generate a formula/Kripke structure</h3>
+        <h3> Generate a Kripke structure</h3>
             <div className={"left"}>
         <InputGenerator text={"Nodes"} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
         <InputGenerator text={"Variables"} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
