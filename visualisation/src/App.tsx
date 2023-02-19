@@ -13,8 +13,9 @@ function App() {
               <div className={"column"}>
                   <br/><br/><br/><br/><br/><br/><br/><br/>
                   <button>→</button>
-                  <br/>
-                  <button>←</button>
+                  <br/><br/>
+                  <InputGenerator text={"Steps"} type_str={"text"} id={"steps"} placeholder={"3"} defaultVal={"3"}/>
+                  <button onClick={handleGenKripke}>←</button>
               </div>
               <Generator/>
           </div>
@@ -44,11 +45,11 @@ function Generator () {
         <div className={"column"}>
         <h3> Generate a formula/Kripke structure</h3>
             <div className={"left"}>
-        <InputGenerator text={"   Nodes"} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
-        <InputGenerator text={"   Variables"} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
-        <InputGenerator text={"   Successors at least"} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
-        <InputGenerator text={"   Successors at most"} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
-        <InputGenerator text={"   Initial Nodes"} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
+        <InputGenerator text={"Nodes"} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
+        <InputGenerator text={"Variables"} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
+        <InputGenerator text={"Successors at least"} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
+        <InputGenerator text={"Successors at most"} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
+        <InputGenerator text={"Initial Nodes"} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
         <div>
             <input type="checkbox" id="states_reachable" defaultChecked />
             <span>   All states reachable</span>
@@ -76,6 +77,21 @@ function handleCheckFormula() {
 			  (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
 		  });
   }
+}
+
+function handleKripke2Formula() {
+    //TODO:
+    let kripke = ''
+    let steps = extractValueFromTextInput("steps")
+    if(isNonEmptyString(kripke)) {
+        console.log(kripke)
+        return fetch('http://localhost:4000/kripke2formula/' + kripke + '/' + steps)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+            })
+    }
 }
 
 function handleAllAssignments() {
@@ -117,6 +133,7 @@ function InputGenerator(props: { text: string; type_str: string; id: string; pla
   return <div>
       <input size={1} type={props.type_str} id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
       <span>
+          &nbsp;&nbsp;
         {props.text}
       </span>
   </div>;
