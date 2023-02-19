@@ -8,17 +8,17 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h3> Evaluate a given formula</h3>
-            <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
-		    <textarea rows={5} cols={60} id="formula_eval_result" placeholder="result" readOnly/>
+        <InputGenerator text={"Formula: "} type_str={"text"} id={"formula"} placeholder={"formula"} defaultVal={""}/>
+		    <textarea rows={10} cols={70} id="formula_eval_result" placeholder="result" readOnly/>
         <div>
           <button onClick={handleCheckFormula}>Check formula</button>
           <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
         </div>
-            <h3> Generate a formula/Kripke structure</h3>
-            <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
-            <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
-            <InputGenerator text={"Min. successors: "} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
-            <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
+        <h3> Generate a formula/Kripke structure</h3>
+        <InputGenerator text={"Node count: "} type_str={"text"} id={"node_cnt"} placeholder={"node count"} defaultVal={"4"}/>
+        <InputGenerator text={"Variable count: "} type_str={"text"} id={"variables"} placeholder={"variables"} defaultVal={"3"}/>
+        <InputGenerator text={"Min. successors: "} type_str={"text"} id={"min_succ"} placeholder={"min. successors"} defaultVal={"1"}/>
+        <InputGenerator text={"Max. successors: "} type_str={"text"} id={"max_succ"} placeholder={"max. successors"} defaultVal={"3"}/>
 		    <InputGenerator text={"Initial nodes: "} type_str={"text"} id={"initial_nodes"} placeholder={"initial nodes"} defaultVal={"2"}/>
         <div>
             <span>
@@ -26,14 +26,16 @@ function App() {
             </span>
             <input type="checkbox" id="states_reachable" defaultChecked />
         </div>
-		    <textarea rows={5} cols={60} id="generation_result" placeholder="result" readOnly/>
-            <button onClick={handleGenKripke}>Generate Kripke structure</button>
+		    <textarea rows={10} cols={70} id="generation_result" placeholder="result" readOnly/>
+        <div>
+          <button onClick={handleGenKripke}>Generate Kripke structure</button>
+        </div>
       </header>
     </div>
   );
 }
 
-const isNonEmptyString = (val: string) => !!val;
+const isNonEmptyString = (val: string) => typeof val === 'string' && !!val;
 
 function handleCheckFormula() {
   let formula = extractValueFromTextInput("formula");
