@@ -19,6 +19,21 @@ public class KripkeNode {
         this.successors = new HashSet<>();
     }
 
+    public static KripkeNode fromString(String node) {
+        String[] parts = node.split(";");
+        KripkeNode kn = new KripkeNode(parts[0]);
+
+        String assignments = parts[1];
+        for(String a : assignments.split("[+]")) {
+            String[] var = a.split(":");
+            kn.stateMap.put(var[0], var[1].equals("true"));
+        }
+
+        kn.isInitialNodeNode = parts[2].equals("true");
+
+        return kn;
+    }
+
     @Override
     public String toString() {
         return name + ";" +

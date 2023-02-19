@@ -4,12 +4,14 @@ import lexer.Lexer;
 import parser.Parser;
 import parser.logicnode.LogicNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KripkeStructure extends ArrayList<KripkeNode> {
+    public KripkeNode get(String name) {
+        return stream().filter(kn -> kn.name.equals(name)).findAny().orElseThrow(NoSuchElementException::new);
+    }
+
     public void addStateMaps(List<Map<String, Boolean>> stateMaps) {
         int i = 0;
 
@@ -57,7 +59,19 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
     }
 
     public static KripkeStructure fromString(String structure) {
-        return new KripkeStructure();        // TODO
+        KripkeStructure ks = new KripkeStructure();
+        ks.addAll(Arrays.stream(structure.split("_"))
+                          .map(KripkeNode::fromString)
+                          .toList());
+
+        // Linking of Nodes
+        Arrays.stream(structure.split("_")).forEach(node -> {
+            String[] parts = node.split(";");
+            for(String succ : parts[3].split("[+]"))
+                ks.get(parts[0]).successors.add(ks.get(succ));
+        });
+
+        return ks;
     }
 
     @Override
