@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {Buffer} from "buffer";
+import { Graphviz } from 'graphviz-react';
 
 // nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
 
@@ -61,6 +61,7 @@ function Generator () {
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
+            <Graphviz dot={'digraph {a -> b; c d -> c; a -> d; }'}/>
         </div>);
 }
 
