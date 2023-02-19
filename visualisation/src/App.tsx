@@ -65,6 +65,30 @@ function Generator () {
         </div>);
 }
 
+function kripkeString2Graph(kripkeString: string) {
+    let result = 'digraph {'
+
+    let nodes = kripkeString.split('_')
+    for(let i = 0; i < nodes.length; i++) {
+        let parts = nodes[i].split(';')
+        let name = parts[0];
+        let assignments = parts[1].split('+')
+        for(let j = 0; j < assignments.length; j++) {
+            let a = assignments[j];
+            //TODO
+        }
+        let isInitialNode = parts[2]
+        let successors = parts[3].split('+')
+        for(let j = 0; j < successors.length; j++) {
+            let s = successors[j];
+            //TODO
+        }
+
+        //TODO
+        return result + '}'
+    }
+}
+
 const isNonEmptyString = (val: string) => !!val;
 
 function handleCheckFormula() {
