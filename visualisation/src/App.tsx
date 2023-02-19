@@ -13,6 +13,7 @@ function App() {
               <div className={"column"}>
                   <br/><br/><br/><br/><br/><br/><br/><br/>
                   <button>→</button>
+                  <br/>
                   <button>←</button>
               </div>
               <Generator/>
@@ -27,12 +28,12 @@ function Solver() {
         <div className={"column"}>
         <h3> Evaluate a given formula</h3>
             <textarea rows={1} cols={80} id="formula" placeholder="Formula"/>
-            <br/><br/><br/>
+            <br/><br/>
             <div>
                 <button onClick={handleCheckFormula}>Check formula</button>
                 <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
             </div>
-            <br/><br/><br/>
+            <br/><br/>
             <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
         </div>
     );
@@ -53,11 +54,11 @@ function Generator () {
             <span>   All states reachable</span>
         </div>
             </div>
-            <br/><br/><br/>
+            <br/><br/>
             <div>
                 <button onClick={handleGenKripke}>Generate Kripke structure</button>
             </div>
-            <br/><br/><br/>
+            <br/><br/>
             <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
         </div>);
 }
