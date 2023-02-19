@@ -67,7 +67,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         // Linking of Nodes
         Arrays.stream(structure.split("_")).forEach(node -> {
             String[] parts = node.split(";");
-            for(String succ : parts[3].split("[+]"))
+            for(String succ : parts[3].split("\\+"))
                 ks.get(parts[0]).successors.add(ks.get(succ));
         });
 

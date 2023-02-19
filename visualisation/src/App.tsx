@@ -84,11 +84,13 @@ function handleKripke2Formula() {
     let steps = extractValueFromTextInput("steps")
     if(isNonEmptyString(kripke)) {
         console.log(kripke)
-        return fetch('http://localhost:4000/kripke2formula/' + kripke + '/' + steps)
+        let url = 'http://localhost:4000/kripke2formula/' + kripke + '/' + steps;
+        url = url.replaceAll(';', ',');
+        return fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+                (document.getElementById("formula") as HTMLInputElement).value = JSON.stringify(data);
             })
     }
 }

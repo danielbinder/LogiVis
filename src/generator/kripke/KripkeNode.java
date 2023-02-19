@@ -24,7 +24,7 @@ public class KripkeNode {
         KripkeNode kn = new KripkeNode(parts[0]);
 
         String assignments = parts[1];
-        for(String a : assignments.split("[+]")) {
+        for(String a : assignments.split("\\+")) {
             String[] var = a.split(":");
             kn.stateMap.put(var[0], var[1].equals("true"));
         }
