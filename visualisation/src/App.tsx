@@ -80,8 +80,7 @@ function handleCheckFormula() {
 }
 
 function handleKripke2Formula() {
-    //TODO:
-    let kripke = ''
+    let kripke = extractValueFromTextInput("generation_result")
     let steps = extractValueFromTextInput("steps")
     if(isNonEmptyString(kripke)) {
         console.log(kripke)
