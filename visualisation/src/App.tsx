@@ -15,7 +15,7 @@ function App() {
                   <button>→</button>
                   <br/><br/>
                   <InputGenerator text={"Steps"} type_str={"text"} id={"steps"} placeholder={"3"} defaultVal={"3"}/>
-                  <button onClick={handleGenKripke}>←</button>
+                  <button onClick={handleKripke2Formula}>←</button>
               </div>
               <Generator/>
           </div>
