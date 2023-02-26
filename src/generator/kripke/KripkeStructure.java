@@ -15,7 +15,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
     public void addStateMaps(List<Map<String, Boolean>> stateMaps) {
         int i = 0;
 
-        for(KripkeNode n : this) n.stateMap = stateMaps.get(i);
+        for(KripkeNode n : this) n.stateMap = stateMaps.get(i++);
     }
 
     public String toFormulaString(int steps) {

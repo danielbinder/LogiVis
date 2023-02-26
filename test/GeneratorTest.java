@@ -12,14 +12,16 @@ public class GeneratorTest {
         int maxSuccessors = 3;
         boolean allStatesReachable = true;
 
-        KripkeStructure ks = Generator.generateKripkeStructure(nodes + "_" +
-                                                                       initialNodes + "_" +
-                                                                       variables + "_" +
-                                                                       minSuccessors + "_" +
-                                                                       maxSuccessors + "_" +
-                                                                       allStatesReachable);
+        for(int i = 0; i < 10; i++) {
+            KripkeStructure ks = Generator.generateKripkeStructure(nodes + "_" +
+                                                                           initialNodes + "_" +
+                                                                           variables + "_" +
+                                                                           minSuccessors + "_" +
+                                                                           maxSuccessors + "_" +
+                                                                           allStatesReachable);
 
-        System.out.println(ks);
-        // E.g. 0;a:false+b:false+c:false;true;2+3_1;a:false+b:false+c:false;false;0+1_2;a:false+b:false+c:false;false;3_3;a:false+b:false+c:false;true;2+3
+            System.out.println(ks);
+        }
+        // E.g. 0;a:false+b:false+c:false;false;2_1;a:false+b:false+c:true;false;0_2;a:false+b:true+c:false;true;3_3;a:true+b:false+c:true;true;3+0
     }
 }
