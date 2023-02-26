@@ -39,8 +39,8 @@ public class BruteForceSolver {
     public static String resultToJSON(Map<String, String> map) {
         if(map == null) return resultToJSON(Map.of("result", "unsatisfiable"));
         return map.isEmpty() ? "{}" :
-                map.keySet().stream().reduce("{#", (acc, str) ->
-                                acc.replace("#", " \"" + str + "\": \"" + map.get(str) + "\", #"))
+                map.keySet().stream().reduce("{#", (acc, key) ->
+                                acc.replace("#", " \"" + key + "\": \"" + map.get(key) + "\", #"))
                         .replace(", #", " }");
     }
 
