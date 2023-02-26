@@ -127,7 +127,8 @@ function handleCheckFormula() {
     let formula = extractValueFromTextInput("formula");
     if(isNonEmptyString(formula)) {
         console.log(formula);
-        return fetch('http://localhost:4000/solve/' + formula)
+        const url = 'http://localhost:4000/solve/' + formula;
+        return fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -157,7 +158,8 @@ function handleAllAssignments() {
     let formula = extractValueFromTextInput("formula");
     if(isNonEmptyString(formula)) {
         console.log(formula);
-        return fetch('http://localhost:4000/solveAll/' + formula)
+        const url = 'http://localhost:4000/solveAll/' + formula;
+        return fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
