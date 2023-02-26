@@ -87,7 +87,8 @@ function kripkeString2Graph(nodes: string) {
     result += 'ratio="0.5";\n';
     result += 'rankdir=LR;\n';
 
-    const nodeList = nodes.split('_');
+    const nodeListString = nodes.substring(nodes.indexOf(":") + 2, nodes.lastIndexOf("\""));
+    const nodeList = nodeListString.split('_');
     const initialNodes = new Set<string>();
 
     for (let i = 0; i < nodeList.length; i++) {
