@@ -73,10 +73,10 @@ function Generator() {
             <br />
             <div>
                 <button onClick={handleGenKripke}>Generate Kripke structure</button>
-                <button onClick={handleGenGraph}>Generate Graph</button>
+                <button className="button_margin_left" onClick={handleGenGraph}>Generate Graph</button>
             </div>
             <br />
-            <textarea rows={10} cols={80} id="generation_result" placeholder="result" defaultValue={'0;a:false+b:false+c:false;true;2+3_1;a:false+b:false+c:false;false;0+1_2;a:false+b:false+c:false;false;3_3;a:false+b:false+c:false;true;2+3'} readOnly/>
+            <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
             {graph !== "" && <Graphviz dot={graph} />}
         </div>
     );
@@ -175,8 +175,8 @@ function handleGenKripke() {
     let minSucc = extractValueFromTextInput("min_succ");
     let maxSucc = extractValueFromTextInput("max_succ");
     let initialNodes = extractValueFromTextInput("initial_nodes");
-    let allStatesReachable = (document.getElementById("statesreachable") as HTMLInputElement).checked;
-    const dataStr = nodeCnt + "" + initialNodes + "" + varCnt + "" + minSucc + "" + maxSucc + "" + allStatesReachable;
+    let allStatesReachable = (document.getElementById("states_reachable") as HTMLInputElement).checked;
+    const dataStr = nodeCnt + "_" + initialNodes + "_" + varCnt + "_" + minSucc + "_" + maxSucc + "_" + allStatesReachable;
     const url = "http://localhost:4000/generate/" + dataStr;
     console.log(url);
     return fetch(url)
