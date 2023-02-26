@@ -83,39 +83,38 @@ function Generator() {
 }
 
 function kripkeString2Graph(nodes: string) {
-    let result = "digraph {\n";
+    let result = 'digraph {\n';
     result += 'ratio="0.5";\n';
     result += 'rankdir=LR;\n';
 
-    const nodeList = nodes.split("_");
+    const nodeList = nodes.split('_');
     const initialNodes = new Set<string>();
 
     for (let i = 0; i < nodeList.length; i++) {
-        const parts = nodeList[i].split(";");
+        const parts = nodeList[i].split(';');
         const name = parts[0];
         const assignments = parts[1]
-            .split("+")
-            .map((a) => (a.split(":")[1] === "true" ? "" : "!") + a.split(":")[0])
+            .split('+')
+            .map((a) => (a.split(':')[1] === 'true' ? '' : '!') + a.split(':')[0])
             .join(" ");
-        const isInitialNode = parts[2] === "true";
-        const successors = parts[3].split("+");
+        const isInitialNode = parts[2] === 'true';
+        const successors = parts[3].split('+');
         const nodeName = name;
 
         if (isInitialNode) {
-            result += `  none -> ${nodeName};\n`; // use backticks for string interpolation
+            result += `  none${i} -> ${nodeName};\n`; // use backticks for string interpolation
+            result += `  none${i} [shape=none];\n`;
+            result += `  none${i} [label=""];\n`;
             initialNodes.add(nodeName);
         }
         successors.forEach((s) => {
-            const sName = s.replace(/\+/g, "_").replace(/\-/g, "_");
+            const sName = s.replace(/\+/g, "_")
+                .replace(/-/g, "_");
             result += `  ${nodeName} -> ${sName};\n`;
         });
+
         result += `  ${nodeName} [label="${assignments}"];\n`;
         result += `  ${nodeName} [shape=circle];\n`;
-    }
-
-    if (result.includes("none")) {
-        result += `  none [shape=none];\n`;
-        result += `  none [label=""];\n`;
     }
 
     result += "}";
