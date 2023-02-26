@@ -45,11 +45,11 @@ function Generator() {
 
     const handleGenGraph = () => {
         try {
-            const graphStr = kripkeString2Graph(
-                extractValueFromTextInput("generation_result")
-            );
-            console.log(graphStr);
-            setGraph(graphStr);
+            handleGenKripke().then((kripke) => {
+              const graphStr = kripkeString2Graph(kripke);
+              console.log(graphStr);
+              setGraph(graphStr);
+            });
         } catch (e) {
             setGraph("");
         }
@@ -63,8 +63,7 @@ function Generator() {
                 <InputGenerator text="Variables" type_str="text" id="variables" placeholder="variables" defaultVal="3"/>
                 <InputGenerator text="Successors at least" type_str="text" id="min_succ" placeholder="min. successors" defaultVal="1"/>
                 <InputGenerator text="Successors at most" type_str="text" id="max_succ" placeholder="max. successors" defaultVal="3"/>
-                <InputGenerator text="Initial Nodes" type_str="text" id="initial_nodes" placeholder="initial nodes" defaultVal="2"
-                />
+                <InputGenerator text="Initial Nodes" type_str="text" id="initial_nodes" placeholder="initial nodes" defaultVal="2"/>
                 <div>
                     <input type="checkbox" id="states_reachable" defaultChecked />
                     <span> All states reachable</span>
@@ -72,11 +71,12 @@ function Generator() {
             </div>
             <br />
             <div>
-                <button onClick={handleGenKripke}>Generate Kripke structure</button>
-                <button className="button_margin_left" onClick={handleGenGraph}>Generate Graph</button>
+                {/*<button onClick={handleGenKripke}>Generate Kripke structure</button>*/}
+                {/*<button className="button_margin_left" onClick={handleGenGraph}>Generate Graph</button>*/}
+                <button onClick={handleGenGraph}>Generate Kripke structure</button>
             </div>
             <br />
-            <textarea rows={10} cols={80} id="generation_result" placeholder="result" readOnly/>
+            <input type="hidden" id="generation_result" placeholder="result" readOnly/>
             {graph !== "" && <Graphviz dot={graph} />}
         </div>
     );
@@ -184,6 +184,7 @@ function handleGenKripke() {
             console.log(data);
             const kripke = `${JSON.parse(JSON.stringify(data))['result']}`;
             (document.getElementById("generation_result") as HTMLInputElement).value = kripke;
+            return kripke;
         });
 }
 
