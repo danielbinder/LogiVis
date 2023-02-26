@@ -11,12 +11,13 @@ import rest.REST;
 import java.util.Map;
 
 public class Servlet {
-    private static final int PORT = 4000;
+    private static final int SERVLET_PORT = 4000;
+    private static final int APP_PORT = 3000;
     private static final Parser PARSER = new Parser();
 
     public static void main(String[] args) {
-        REST.start(PORT);
-        System.out.println("Click: http://localhost:" + PORT);
+        REST.start(SERVLET_PORT);
+        System.out.println("Click: http://localhost:" + APP_PORT);
     }
 
     @GET("/solve/:formula")
@@ -36,7 +37,7 @@ public class Servlet {
 
     @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps) {
-        String rawKripke = kripke.substring(kripke.indexOf(':') + 2, kripke.length() - 2).replace(",", ";");
+        String rawKripke = kripke.replace(",", ";");
         return BruteForceSolver.resultToJSON(Map.of("result",
                                                     KripkeStructure.fromString(rawKripke)
                                                             .toFormulaString(Integer.parseInt(steps)).replaceAll("\n", " ")));
