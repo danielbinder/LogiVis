@@ -87,8 +87,7 @@ function kripkeString2Graph(nodes: string) {
     result += 'ratio="0.5";\n';
     result += 'rankdir=LR;\n';
 
-    const nodeListString = nodes.substring(nodes.indexOf(":") + 2, nodes.lastIndexOf("\""));
-    const nodeList = nodeListString.split('_');
+    const nodeList = nodes.split('_');
     const initialNodes = new Set<string>();
 
     for (let i = 0; i < nodeList.length; i++) {
@@ -122,15 +121,14 @@ function kripkeString2Graph(nodes: string) {
     return result;
 }
 
-
-
 const isNonEmptyString = (val: string) => !!val;
 
 function handleCheckFormula() {
     let formula = extractValueFromTextInput("formula");
     if(isNonEmptyString(formula)) {
         console.log(formula);
-        return fetch('http://localhost:4000/solve/' + formula)
+        const url = 'http://localhost:4000/solve/' + formula;
+        return fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -150,8 +148,7 @@ function handleKripke2Formula() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                let rawFormula = JSON.stringify(data);
-                rawFormula = rawFormula.substring(rawFormula.indexOf(':') + 2, rawFormula.length - 2);
+                const rawFormula = `${JSON.parse(JSON.stringify(data))['result']}`;
                 (document.getElementById("formula") as HTMLInputElement).value = rawFormula;
             })
     }
@@ -161,7 +158,8 @@ function handleAllAssignments() {
     let formula = extractValueFromTextInput("formula");
     if(isNonEmptyString(formula)) {
         console.log(formula);
-        return fetch('http://localhost:4000/solveAll/' + formula)
+        const url = 'http://localhost:4000/solveAll/' + formula;
+        return fetch(url)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -184,7 +182,8 @@ function handleGenKripke() {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            (document.getElementById("generation_result") as HTMLInputElement).value = JSON.stringify(data);
+            const kripke = `${JSON.parse(JSON.stringify(data))['result']}`;
+            (document.getElementById("generation_result") as HTMLInputElement).value = kripke;
         });
 }
 
