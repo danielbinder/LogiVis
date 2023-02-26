@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public enum TokenType {
     CONSTANT(Pattern.compile("[01]|true|false")),
-    ACTION(Pattern.compile("[a-z]+[0-9]*")),
+    ACTION(Pattern.compile("[a-z]+([a-z]*[0-9]*)*")),
 
     NOT(Pattern.compile("!")),
     AND(Pattern.compile("&")),
