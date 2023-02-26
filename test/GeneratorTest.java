@@ -18,7 +18,7 @@ public class GeneratorTest {
                                                                            variables + "_" +
                                                                            minSuccessors + "_" +
                                                                            maxSuccessors + "_" +
-                                                                           allStatesReachable);
+                                                                           allStatesReachable, 10);
 
             System.out.println(ks);
         }

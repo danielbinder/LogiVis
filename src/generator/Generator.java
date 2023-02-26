@@ -12,43 +12,55 @@ public class Generator {
      * @param paramString format: nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
      * @return Kripke Structure
      */
-    public static KripkeStructure generateKripkeStructure(String paramString) {
+    public static KripkeStructure generateKripkeStructure(String paramString, int maxRegeneration) {
         Random rand = new Random();
-        KripkeStructure ks = new KripkeStructure();
-        String[] params = paramString.split("_");
+        KripkeStructure ks = null;
 
-        int nodes = Integer.parseInt(params[0]);
-        for(int i = 0; i < nodes; i++) ks.add(new KripkeNode(i + ""));
+        boolean regenerate = true;
+        int regenerated = 0;
+        while(regenerate && regenerated < maxRegeneration) {
+            ks = new KripkeStructure();
+            String[] params = paramString.split("_");
 
-        int initialNodes = Integer.parseInt(params[1]);
-        for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
+            int nodes = Integer.parseInt(params[0]);
+            for(int i = 0; i < nodes; i++) ks.add(new KripkeNode(i + ""));
 
-        int variables = Integer.parseInt(params[2]);
-        ks.addStateMaps(generateRandomStateMaps(variables, nodes));
+            int initialNodes = Integer.parseInt(params[1]);
+            for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
 
-        int minSuccessors = Integer.parseInt(params[3]);
-        int maxSuccessors = Integer.parseInt(params[4]);
-        for(KripkeNode n: ks) {
-            int successors = rand.nextInt(minSuccessors, maxSuccessors + 1);
-            List<Integer> chosenSuccessors = pickRandom(nodes, successors);
+            int variables = Integer.parseInt(params[2]);
+            ks.addStateMaps(generateRandomStateMaps(variables, nodes));
 
-            for(int succ : chosenSuccessors) n.successors.add(ks.get(succ));
-        }
+            int minSuccessors = Integer.parseInt(params[3]);
+            int maxSuccessors = Integer.parseInt(params[4]);
+            for(KripkeNode n : ks) {
+                int successors = rand.nextInt(minSuccessors, maxSuccessors + 1);
+                List<Integer> chosenSuccessors = pickRandom(nodes, successors);
 
-        boolean allStatesReachable = Boolean.parseBoolean(params[5]);
-        if(allStatesReachable) {
-            Map<String, Integer> reachabilityMap = new HashMap<>();
+                for(int succ : chosenSuccessors) n.successors.add(ks.get(succ));
+            }
 
-            for(KripkeNode n : ks) reachabilityMap.put(n.name, 0);
+            boolean allStatesReachable = Boolean.parseBoolean(params[5]);
+            if(allStatesReachable) {
+                Map<KripkeNode, Boolean> reachabilityMap = new HashMap<>();
+                for(KripkeNode initial : ks.stream()
+                        .filter(kn -> kn.isInitialNodeNode)
+                        .toList())
+                    walk(initial, reachabilityMap);
 
-            for(KripkeNode n : ks)
-                for(KripkeNode succ : n.successors)
-                    reachabilityMap.put(succ.name, reachabilityMap.get(succ.name) + 1);
-
-            //TODO: only checks reachability but doesn't correct it yet
+                if(nodes == reachabilityMap.keySet().size()) regenerate = false;
+                else regenerated++;
+            }
         }
 
         return ks;
+    }
+
+    private static void walk(KripkeNode current, Map<KripkeNode, Boolean> reachabilityMap) {
+        if(reachabilityMap.containsKey(current)) return;
+
+        reachabilityMap.put(current, true);
+        for(KripkeNode kn : current.successors) walk(kn, reachabilityMap);
     }
 
     private static List<Integer> pickRandom(int bound, int amount) {
