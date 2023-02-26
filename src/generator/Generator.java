@@ -29,6 +29,7 @@ public class Generator {
             for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
 
             int variables = Integer.parseInt(params[2]);
+            assert(Math.pow(2, variables) > nodes);     // ensure enough unique variable assignments
             ks.addStateMaps(generateRandomStateMaps(variables, nodes));
 
             int minSuccessors = Integer.parseInt(params[3]);
