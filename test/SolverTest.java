@@ -77,6 +77,71 @@ public class SolverTest {
         assertEquals(expected, getAllAssignments(formula));
     }
 
+    @Test
+    public void testLongVariableNames() {
+        String formula = "apples | !bananas & carrots <-> !(apples | bananas) & carrots";
+        var expected = Map.of("apples", "false", "bananas", "false", "carrots", "false");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testSingleVariable() {
+        String formula = "a";
+        var expected = Map.of("a", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testRepeatedVariables() {
+        String formula = "a | !a & a";
+        var expected = Map.of("a", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+
+    @Test
+    public void testParentheses() {
+        String formula = "a & (b | c)";
+        var expected = Map.of("a", "true", "b", "false", "c", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testMixedFormula() {
+        String formula = "(a | b) & (c | d)";
+        var expected = Map.of("a", "false", "b", "true", "c", "false", "d", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testMixedOperators() {
+        String formula = "(a & b) <-> (c | d)";
+        var expected = Map.of("a", "false", "b", "false", "c", "false", "d", "false");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testOnlyNegations() {
+        String formula = "!(a & b)";
+        var expected = Map.of("a", "false", "b", "false");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+    @Test
+    public void testOnlyConjunctions() {
+        String formula = "a & b & c";
+        var expected = Map.of("a", "true", "b", "true", "c", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
+
+    @Test
+    public void testOnlyDisjunctions() {
+        String formula = "a | b | c";
+        var expected = Map.of("a", "false", "b", "false", "c", "true");
+        assertEquals(expected, getAssignment(formula));
+    }
+
     private Map<String, String> getAssignment(String formula) {
         var tokens = Lexer.tokenize(formula);
         var assignment = BruteForceSolver.solve(new Parser().parse(tokens));
