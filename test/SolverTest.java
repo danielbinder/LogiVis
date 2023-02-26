@@ -142,6 +142,13 @@ public class SolverTest {
         assertEquals(expected, getAssignment(formula));
     }
 
+    @Test
+    public void testVariablesWithNumbers() {
+        String formula = "(a0 & b0) | c0";
+        var expected = Map.of("a0", "true", "b0", "true", "c0", "false");
+        assertEquals(expected, getAssignment(formula));
+    }
+
     private Map<String, String> getAssignment(String formula) {
         var tokens = Lexer.tokenize(formula);
         var assignment = BruteForceSolver.solve(new Parser().parse(tokens));
