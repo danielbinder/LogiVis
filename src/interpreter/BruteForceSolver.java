@@ -65,7 +65,6 @@ public class BruteForceSolver {
             if(checkCurrentAssignment(formula)) satisfiableAssignments.add(transformedAssignmentMap());
         }
 
-        //TODO: this is not beautiful
         if(satisfiableAssignments.size() == assignments.size()) return List.of(Map.of("result", "valid"));
 
         return satisfiableAssignments.size() > 0 ? satisfiableAssignments : null;
