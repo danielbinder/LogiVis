@@ -27,21 +27,20 @@ public class BruteForceSolver {
     }
 
     public static String resultToJSON(List<Map<String, String>> assignments) {
-        if(assignments == null) return resultToJSON(Map.of("result", "unsatisfiable"));
-        if(assignments.stream().anyMatch(m -> m.containsValue("valid"))) return resultToJSON(Map.of("result", "valid"));
-        return "{" + assignments.
-                stream().
-                map(assignment -> "\"assignment_" + assignments.indexOf(assignment) + "\" : "
-                        + resultToJSON(assignment))
-                .collect(Collectors.joining(" , ")) + "}";
+        if(assignments == null) return "{\"result\":\"unsatisfiable\"}";
+        if(assignments.stream().anyMatch(m -> "valid".equals(m.get("result")))) return "{\"result\":\"valid\"}";
+        return "{" + assignments.stream()
+                .map(a -> "\"assignment_" + assignments.indexOf(a) + "\":" + resultToJSON(a))
+                .collect(Collectors.joining(",")) + "}";
     }
 
+
     public static String resultToJSON(Map<String, String> map) {
-        if(map == null) return resultToJSON(Map.of("result", "unsatisfiable"));
-        return map.isEmpty() ? "{}" :
-                map.keySet().stream().reduce("{#", (acc, key) ->
-                                acc.replace("#", " \"" + key + "\": \"" + map.get(key) + "\", #"))
-                        .replace(", #", " }");
+        if(map == null) return "{\"result\":\"unsatisfiable\"}";
+        return map.entrySet()
+                .stream()
+                .map(e -> "\"" + e.getKey() + "\":\"" + e.getValue() + "\"")
+                .collect(Collectors.joining(",", "{", "}"));
     }
 
     private Map<String, String> solve() {
