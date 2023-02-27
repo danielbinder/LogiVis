@@ -5,11 +5,7 @@ public sealed interface LogicNode permits
         AndNode,
         ConstantNode,
         DoubleImplicationNode,
-        FinallyNode,
-        GloballyNode,
-        ImmediateNode,
         ImplicationNode,
         NegationNode,
-        OrNode,
-        UntilNode {}
+        OrNode {}
 

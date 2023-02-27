@@ -20,112 +20,78 @@ public class Parser {
     }
 
     private LogicNode formula() {
-        return expression();
-    }
-
-    private LogicNode expression() {
-        if(isType(TokenType.EXISTS) || isType(TokenType.FOR_ALL)) return path();
-        else return logic();
-    }
-
-    private LogicNode path() {
-        PathQuantifier pq = isType(TokenType.EXISTS) ? PathQuantifier.E : PathQuantifier.A;
-        advance();
-
-        return switch(current.type) {
-            case IMMEDIATE -> {
-                advance();
-                yield new ImmediateNode(pq, formula());
-            }
-            case FINALLY -> {
-                advance();
-                yield new FinallyNode(pq, formula());
-            }
-            case GLOBALLY -> {
-                advance();
-                yield new GloballyNode(pq, formula());
-            }
-            default -> {
-                LogicNode left = formula();
-                check(TokenType.UNTIL);
-                yield new UntilNode(pq, left, formula());
-            }
-        };
-    }
-
-    private LogicNode logic() {
-        LogicNode result = implication();
-
-        while(isType(TokenType.DOUBLE_IMPLICATION)) {
-            advance();
-            result = new DoubleImplicationNode(result, implication());
-        }
-
-        return result;
+        return implication();
     }
 
     private LogicNode implication() {
-        LogicNode result = or();
+        LogicNode result = doubleImplication();
 
         while(isType(TokenType.IMPLICATION)) {
             advance();
-            result = new ImplicationNode(result, or());
+            result = new ImplicationNode(result, doubleImplication());
         }
 
         return result;
     }
 
-    private LogicNode or() {
-        LogicNode result = and();
+    private LogicNode doubleImplication() {
+        LogicNode result = expression();
+
+        while(isType(TokenType.DOUBLE_IMPLICATION)) {
+            advance();
+            result = new DoubleImplicationNode(result, expression());
+        }
+
+        return result;
+    }
+
+    private LogicNode expression() {
+        LogicNode result = term();
 
         while(isType(TokenType.OR)) {
             advance();
-            result = new OrNode(result, and());
+            result = new OrNode(result, term());
         }
 
         return result;
     }
 
-    private LogicNode and() {
-        LogicNode result = not();
+    private LogicNode term() {
+        LogicNode result = factor();
 
         while(isType(TokenType.AND)) {
             advance();
-            result = new AndNode(result, not());
+            result = new AndNode(result, factor());
         }
 
         return result;
     }
 
-    private LogicNode not() {
+    private LogicNode factor() {
         if(isType(TokenType.NOT)) {
             advance();
-            return new NegationNode(atom());
+            return new NegationNode(factor());
         }
 
         return atom();
     }
 
     private LogicNode atom() {
-        return switch(current.type) {
-            case ACTION -> {
-                LogicNode action = new ActionNode(current.value);
-                advance();
-                yield action;
-            }
-            case CONSTANT -> {
-                LogicNode constant = new ConstantNode(current.value.equals("1") || current.value.equals("true"));
-                advance();
-                yield constant;
-            }
+        LogicNode result;
+
+        switch(current.type) {
+            case ACTION -> result = new ActionNode(current.value);
+            case CONSTANT -> result = new ConstantNode(current.value.equals("1") || current.value.equals("true"));
             case LPAREN -> {
                 advance();
-                LogicNode formula = formula();
-                check(TokenType.RPAREN);
-                yield formula;
+                result = formula();
+                assert(isType(TokenType.RPAREN));
             }
-            case default -> formula();
-        };
+            default -> throw new IllegalArgumentException("Illegal TokenType " + current.type);
+        }
+
+        advance();
+        return result;
     }
 
     /* H E L P E R S */
@@ -136,10 +102,5 @@ public class Parser {
 
     private boolean isType(TokenType type) {
         return current.type == type;
-    }
-
-    private void check(TokenType type) {
-        assert(isType(type));
-        advance();
     }
 }

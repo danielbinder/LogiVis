@@ -89,13 +89,6 @@ public class BruteForceSolver {
                 initAssignmentMap(n.left());
                 initAssignmentMap(n.right());
             }
-            case FinallyNode n -> initAssignmentMap(n.child());
-            case GloballyNode n -> initAssignmentMap(n.child());
-            case ImmediateNode n -> initAssignmentMap(n.child());
-            case UntilNode n -> {
-                initAssignmentMap(n.left());
-                initAssignmentMap(n.right());
-            }
             default -> {}
         }
     }
@@ -136,11 +129,6 @@ public class BruteForceSolver {
 
                 yield true;
             }
-            //TODO:
-            case ImmediateNode n -> false;
-            case FinallyNode n -> false;
-            case GloballyNode n -> false;
-            case UntilNode n -> false;
         };
     }
 
