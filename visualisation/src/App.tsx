@@ -77,7 +77,7 @@ function Generator() {
                 <button onClick={handleGenGraph}>Generate Kripke structure</button>
             </div>
             <br />
-            <input type="hidden" id="generation_result" placeholder="result" readOnly/>
+            <input type="hidden" id="generation_result" style={{display: 'none'}} placeholder="result" readOnly/>
             {graph !== "" && <Graphviz dot={graph} />}
         </div>
     );
