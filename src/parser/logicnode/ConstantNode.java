@@ -6,7 +6,7 @@ package parser.logicnode;
 public record ConstantNode(boolean bool) implements LogicNode {
     @Override
     public String toString() {
-        return bool ? "1" : "0";
+        return bool ? "true" : "false";
     }
 
     @Override
