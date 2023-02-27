@@ -3,6 +3,7 @@ package servlet;
 import generator.Generator;
 import generator.kripke.KripkeStructure;
 import interpreter.BruteForceSolver;
+import interpreter.Simplification;
 import lexer.Lexer;
 import parser.Parser;
 import rest.GET;
@@ -40,6 +41,13 @@ public class Servlet {
         String rawKripke = kripke.replace(",", ";");
         return BruteForceSolver.resultToJSON(Map.of("result",
                                                     KripkeStructure.fromString(rawKripke)
-                                                            .toFormulaString(Integer.parseInt(steps)).replaceAll("\n", " ")));
+                                                            .toFormulaString(Integer.parseInt(steps))
+                                                            .replaceAll("\n", " ")));
+    }
+
+    @GET("/simplify/:formula")
+    public String simplify(String formula) {
+        return BruteForceSolver.resultToJSON(Map.of("result",
+                                                    Simplification.of(PARSER.parse(Lexer.tokenize(formula))).toString()));
     }
 }

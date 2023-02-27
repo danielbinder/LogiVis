@@ -31,7 +31,8 @@ function Solver() {
             <textarea rows={1} cols={80} id="formula" placeholder="Formula"/>
             <br/><br/>
             <div>
-                <button onClick={handleCheckFormula}>Check formula</button>
+                <button onClick={handleSimplify}>Simplify formula</button>
+                <button className="button_margin_left" onClick={handleCheckFormula}>Check formula</button>
                 <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
             </div>
             <br/><br/>
@@ -137,6 +138,21 @@ function handleCheckFormula() {
     }
 }
 
+function handleSimplify() {
+    let formula = extractValueFromTextInput("formula");
+    if(isNonEmptyString(formula)) {
+        console.log(formula);
+        const url = 'http://localhost:4000/simplify/' + formula;
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                (document.getElementById("formula") as HTMLInputElement).value =
+                    `${JSON.parse(JSON.stringify(data))['result']}`;
+            });
+    }
+}
+
 function handleKripke2Formula() {
     let kripke = extractValueFromTextInput("generation_result")
     let steps = extractValueFromTextInput("steps")
@@ -163,7 +179,8 @@ function handleAllAssignments() {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                (document.getElementById("formula_eval_result") as HTMLInputElement).value = JSON.stringify(data);
+                (document.getElementById("formula_eval_result") as HTMLInputElement).value =
+                    JSON.stringify(data);
             });
     }
 }
