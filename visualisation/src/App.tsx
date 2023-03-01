@@ -38,9 +38,9 @@ function Generator() {
 
     const handleGenGraph = () => {
         try {
-            handleGenKripke().then(kripke => setGraph(kripkeString2Graph(kripke)));
+          handleGenKripke().then(kripke => setGraph(kripkeString2Graph(kripke)));
         } catch (e) {
-            setGraph("");
+          setGraph("");
         }
     }
 
@@ -109,9 +109,11 @@ const kripkeString2Graph = (kripke: string) => {
             result += `  none${i} [shape=none];\n`;
             result += `  none${i} [label=""];\n`;
         }
-        result += successors.map(s =>
-            `  ${nodeName} -> ${s.replace(/\+/g, "_").replace(/-/g, "_")};\n`)
-            .join();
+        successors.forEach((s) => {
+            const sName = s.replace(/\+/g, "_")
+                .replace(/-/g, "_");
+            result += `  ${nodeName} -> ${sName};\n`;
+        });
 
         result += `  ${nodeName} [label="${assignments}"];\n`;
         result += `  ${nodeName} [shape=circle];\n`;
@@ -163,10 +165,10 @@ const handleAllAssignments = () => {
 
 const handleGenKripke = () => {
     const dataStr = getElementById("node_cnt").value + '_' +
+        getElementById("initial_nodes").value + '_' +
         getElementById("variables").value + '_' +
         getElementById("min_succ").value + '_' +
         getElementById("max_succ").value + '_' +
-        getElementById("initial_nodes").value + '_' +
         getElementById("states_reachable").checked;
 
     return fetch("http://localhost:4000/generate/" + dataStr)
