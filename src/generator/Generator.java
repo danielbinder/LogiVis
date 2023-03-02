@@ -9,7 +9,7 @@ public class Generator {
     private static final Random rand = new Random();
 
     /**
-     * @param paramString format: nodes;initialNodes;variables;minSuccessors;maxSuccessors;allStatesReachable
+     * @param paramString format: nodes_initialNodes_variables_minSuccessors_maxSuccessors_allStatesReachable
      * @return Kripke Structure
      */
     public static KripkeStructure generateKripkeStructure(String paramString, int maxRegeneration) {
@@ -18,22 +18,26 @@ public class Generator {
 
         boolean regenerate = true;
         int regenerated = 0;
+
+        String[] params = paramString.split("_");
+        int nodes = Integer.parseInt(params[0]);
+        int initialNodes = Integer.parseInt(params[1]);
+        assert(1 <= initialNodes && initialNodes <= nodes);
+        int variables = Integer.parseInt(params[2]);
+        assert(Math.pow(2, variables) > nodes);     // ensure enough unique variable assignments
+        int minSuccessors = Integer.parseInt(params[3]);
+        assert(0 <= minSuccessors && minSuccessors <= nodes - 1);
+        int maxSuccessors = Integer.parseInt(params[4]);
+        assert(0 <= maxSuccessors && maxSuccessors <= nodes - 1 && minSuccessors <= maxSuccessors);
+        boolean allStatesReachable = Boolean.parseBoolean(params[5]);
+
         while(regenerate && regenerated < maxRegeneration) {
             ks = new KripkeStructure();
-            String[] params = paramString.split("_");
-
-            int nodes = Integer.parseInt(params[0]);
             for(int i = 0; i < nodes; i++) ks.add(new KripkeNode(i + ""));
 
-            int initialNodes = Integer.parseInt(params[1]);
             for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
-
-            int variables = Integer.parseInt(params[2]);
-            assert(Math.pow(2, variables) > nodes);     // ensure enough unique variable assignments
             ks.addStateMaps(generateRandomStateMaps(variables, nodes));
 
-            int minSuccessors = Integer.parseInt(params[3]);
-            int maxSuccessors = Integer.parseInt(params[4]);
             for(KripkeNode n : ks) {
                 int successors = rand.nextInt(minSuccessors, maxSuccessors + 1);
                 List<Integer> chosenSuccessors = pickRandom(nodes, successors);
@@ -41,7 +45,6 @@ public class Generator {
                 for(int succ : chosenSuccessors) n.successors.add(ks.get(succ));
             }
 
-            boolean allStatesReachable = Boolean.parseBoolean(params[5]);
             if(allStatesReachable) {
                 Map<KripkeNode, Boolean> reachabilityMap = new HashMap<>();
                 for(KripkeNode initial : ks.stream()
@@ -57,6 +60,12 @@ public class Generator {
         return ks;
     }
 
+    /**
+     * Walks the KripkeStructure recursively to check if every node is reachable
+     * by adding every visited node to the reachabilityMap
+     * @param current node
+     * @param reachabilityMap of walked nodes
+     */
     private static void walk(KripkeNode current, Map<KripkeNode, Boolean> reachabilityMap) {
         if(reachabilityMap.containsKey(current)) return;
 
