@@ -22,7 +22,7 @@ public class Lexer {
                     Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
-                tokens.add(Token.fromString(current.toString()));
+                tokens.add(Token.fromString(current.toString()));       // this is where the magic happens
                 current = new StringBuilder();
             } catch(NoSuchElementException ignored) {}
         }

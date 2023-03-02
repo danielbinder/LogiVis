@@ -23,6 +23,9 @@ public class Parser {
         return implication();
     }
 
+    /**
+     * Implication = DoubleImplication ('->' DoubleImplication)*
+     */
     private LogicNode implication() {
         LogicNode result = doubleImplication();
 
@@ -34,6 +37,9 @@ public class Parser {
         return result;
     }
 
+    /**
+     * DoubleImplication = Expression ('<->' Expression)*
+     */
     private LogicNode doubleImplication() {
         LogicNode result = expression();
 
@@ -45,6 +51,9 @@ public class Parser {
         return result;
     }
 
+    /**
+     * Expression = Term ('|' Term)*
+     */
     private LogicNode expression() {
         LogicNode result = term();
 
@@ -56,6 +65,9 @@ public class Parser {
         return result;
     }
 
+    /**
+     * Term = Factor ('&' Factor)*
+     */
     private LogicNode term() {
         LogicNode result = factor();
 
@@ -67,6 +79,10 @@ public class Parser {
         return result;
     }
 
+    /**
+     * Factor = ('!')? Factor
+     *        | Atom
+     */
     private LogicNode factor() {
         if(isType(TokenType.NOT)) {
             advance();
@@ -76,6 +92,11 @@ public class Parser {
         return atom();
     }
 
+    /**
+     * Atom = Action
+     *      | Constant
+     *      | '(' Formula ')'
+     */
     private LogicNode atom() {
         LogicNode result;
 

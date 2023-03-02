@@ -1,7 +1,7 @@
 package parser.logicnode;
 
 /**
- * 0 or 1
+ * false/0 or true/1
  */
 public record ConstantNode(boolean bool) implements LogicNode {
     @Override

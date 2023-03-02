@@ -9,6 +9,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Assumption: Lexer and Parser are correct!
+ */
 public class SolverTest {
     @Test
     public void testPrecedenceFormula() {
@@ -150,8 +153,7 @@ public class SolverTest {
     }
 
     private Map<String, String> getAssignment(String formula) {
-        var tokens = Lexer.tokenize(formula);
-        var assignment = BruteForceSolver.solve(new Parser().parse(tokens));
+        var assignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
         System.out.println(assignment);
         return assignment;
     }

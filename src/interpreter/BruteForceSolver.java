@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class BruteForceSolver {
     private final LogicNode formula;
     private final Map<String, Boolean> currentAssignment = new HashMap<>();
-    private final List<String> assignments = new ArrayList<>();
+    private final List<String> assignments = new ArrayList<>();     // all possible variable assignments as binary string
     private int assignmentIndex = 0;
 
     private BruteForceSolver(LogicNode formula) {
@@ -132,6 +132,10 @@ public class BruteForceSolver {
         };
     }
 
+    /**
+     * Transforms Map<String, Boolean> to Map<String, String>
+     * @return Map<String, String>
+     */
     private Map<String, String> transformedAssignmentMap() {
         Map<String, String> assignmentMap = new HashMap<>();
 
