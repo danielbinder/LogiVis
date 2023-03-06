@@ -51,7 +51,12 @@ public class SimplificationTest {
 
     @Test
     public void testDistributiveSimplification() {
-        test("a | b & a | c", "((a | b) | c)");
+        test("(a | b) | (a | c)", "(a | (b | c))");
+    }
+
+    @Test
+    public void testPrecedenceSimplification() {
+        test("a | b & a | c", "(a | c)");
     }
 
     @Test
@@ -65,7 +70,7 @@ public class SimplificationTest {
     @Test
     public void testAbsorption() {
         test("a & (a | b)", "a");
-        test("a | (a & b)", "(a | b)");
+        test("a | (a & b)", "a");
     }
 
     private void test(String input, String expected) {
