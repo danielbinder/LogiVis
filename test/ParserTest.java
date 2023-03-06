@@ -51,6 +51,13 @@ public class ParserTest {
                      runInput("a & b | c & d"));
     }
 
+    @Test
+    public void testImplicationPrecedence() {
+        assertEquals(new DoubleImplicationNode(new ImplicationNode(new ActionNode("a"), new ActionNode("b")),
+                                               new ImplicationNode(new ActionNode("c"), new ActionNode("d"))),
+                     runInput("a -> b <-> c -> d"));
+    }
+
     private LogicNode runInput(String input) {
         return new Parser().parse(Lexer.tokenize(input));
     }

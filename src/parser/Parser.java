@@ -20,32 +20,32 @@ public class Parser {
     }
 
     private LogicNode formula() {
-        return implication();
+        return doubleImplication();
     }
 
     /**
-     * Implication = DoubleImplication ('->' DoubleImplication)*
+     * DoubleImplication = Implication ('<->' Implication)*
      */
-    private LogicNode implication() {
-        LogicNode result = doubleImplication();
+    private LogicNode doubleImplication() {
+        LogicNode result = implication();
 
-        while(isType(TokenType.IMPLICATION)) {
+        while(isType(TokenType.DOUBLE_IMPLICATION)) {
             advance();
-            result = new ImplicationNode(result, doubleImplication());
+            result = new DoubleImplicationNode(result, implication());
         }
 
         return result;
     }
 
     /**
-     * DoubleImplication = Expression ('<->' Expression)*
+     * Implication = Expression ('->' Expression)*
      */
-    private LogicNode doubleImplication() {
+    private LogicNode implication() {
         LogicNode result = expression();
 
-        while(isType(TokenType.DOUBLE_IMPLICATION)) {
+        while(isType(TokenType.IMPLICATION)) {
             advance();
-            result = new DoubleImplicationNode(result, expression());
+            result = new ImplicationNode(result, expression());
         }
 
         return result;
