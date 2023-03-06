@@ -3,11 +3,12 @@ package rest;
 import servlet.Servlet;
 
 import java.lang.reflect.Method;
+import java.util.TreeMap;
 
 import static spark.Spark.get;
 
 /**
- * A very simple implementation of a REST API
+ * A very simple implementation of a REST API.
  */
 public class REST {
     public static void start(int port) {
@@ -21,7 +22,7 @@ public class REST {
                     (req, res) -> {
                     res.type("application/json");
                     res.header("Access-Control-Allow-Origin", "*");     // Prevents CORS errors
-                    return m.invoke(servlet, req.params().values().toArray());
+                    return m.invoke(servlet, new TreeMap<>(req.params()).values().toArray());
                 });
             }
         }
