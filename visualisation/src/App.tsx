@@ -17,15 +17,43 @@ function App() {
 }
 
 function Solver() {
+    const [hidden, setHidden] = useState(true);
+
     return (
         <div className="column">
             <h3>Evaluate a given formula</h3>
-            <textarea rows={1} cols={80} id="formula" placeholder="Formula"/>
+            <div>
+                Chose formula type:  
+                <select className="button_margin_left" id="dropdown" onChange={() => {
+                    var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
+                    if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
+                        setHidden(false);
+                    } else {
+                        setHidden(true);
+                    }
+                }}>
+                    <option value="bool">Boolean algebra</option>
+                    <option value="ctl">CTL expression</option>
+                </select>
+            </div>
+            <textarea rows={1} cols={80} id="formula" placeholder="formula"/>
+            {!hidden ? <textarea rows={10} cols={80} id="model" placeholder={
+                "Example model:\n"
+                + "s1, s2, s3; # model has three states S={s1, s2, s3}\n"
+                + "initial: s1; # model has one initial state I = {s1}\n"
+                + "t1: s1 - s2,\n"
+                + "t2: s1 - s3,\n"
+                + "t3: s2 - s1,\n"
+                + "t4: s3 - s2; # model has four transitions T={t1, t2, t3, t4}\n"
+                + "s1: , # state s1 has no properties (i.e., {}) \n"
+                + "s2: p, # state s2 has property p\n"
+                + "s3: p q; # state s3 has properties p and q\n"
+            }/> : null}
             <br/><br/>
             <div>
-                <button onClick={handleSimplify}>Simplify formula</button>
+                {hidden ? <button onClick={handleSimplify}>Simplify formula</button> : null}
                 <button className="button_margin_left" onClick={handleCheckFormula}>Check formula</button>
-                <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button>
+                {hidden ? <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button> : null}
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
@@ -38,9 +66,12 @@ function Generator() {
 
     const handleGenGraph = () => {
         try {
-          handleGenKripke().then(kripke => setGraph(kripkeString2Graph(kripke)));
-        } catch (e) {
-          setGraph("");
+            const kripke = getElementById("generation_result").value;
+            if(!isEmptyString(kripke)) {
+                setGraph(kripkeString2Graph(kripke));
+            }
+        } catch (ex) {
+            setGraph("");
         }
     }
 
@@ -59,9 +90,9 @@ function Generator() {
                 </div>
             </div>
             <br/>
-            <button onClick={handleGenGraph}>Generate Kripke structure</button>
+            <button onClick={handleGenKripke}>Generate Kripke structure</button>
             <br/>
-            <input type="hidden" id="generation_result" style={{display: 'none'}} placeholder='result' readOnly/>
+            <input type="hidden" id="generation_result" style={{display: 'none'}} placeholder='result' onInput={handleGenGraph} readOnly/>
             {graph !== "" && <Graphviz dot={graph} />}
         </div>);
 }
@@ -70,7 +101,7 @@ function LeftRightButtons() {
     return (
         <div className={"column"}>
             <br/><br/><br/><br/><br/><br/><br/><br/>
-            <button>→</button>
+            <button onClick={handleModel2Kripke}>→</button>
             <br/><br/>
             <InputGenerator text="Steps" id="steps" placeholder="steps" defaultVal="3"/>
             <button onClick={handleKripke2Formula}>←</button>
@@ -110,9 +141,12 @@ const kripkeString2Graph = (kripke: string) => {
             result += `  none${i} [label=""];\n`;
         }
         successors.forEach((s) => {
-            const sName = s.replace(/\+/g, "_")
-                .replace(/-/g, "_");
-            result += `  ${nodeName} -> ${sName};\n`;
+            const raw_name = s.trim();
+            if(!isEmptyString(raw_name)) {
+                const sName = raw_name.replace(/\+/g, "_")
+                    .replace(/-/g, "_");
+                result += `  ${nodeName} -> ${sName};\n`;
+            }
         });
 
         result += `  ${nodeName} [label="${assignments}"];\n`;
@@ -124,13 +158,107 @@ const kripkeString2Graph = (kripke: string) => {
 
 /** BUTTON HANDLERS */
 
+const handleModel2Kripke = () => {
+    const model_input = getElementById("model");
+    if(model_input === null || isEmptyString(model_input.value)) return;
+
+    const model_parts = model_input.value.split(";");
+    let unique_atoms: Set<string> = new Set();
+    let states_and_atoms: Map<string, string[]> = new Map();
+    const properties = model_parts[3].split(",");
+    for(let i = 0; i < properties.length; i++) {
+        const state_and_atoms = properties[i].split(":");
+        const state_atoms = state_and_atoms[1].split(" ");
+        let clean_atoms: string[] = [];
+        state_atoms.forEach((s) => {
+            if(!isEmptyString(s)) {
+                unique_atoms.add(s);
+                clean_atoms.push(s);
+            }
+        });
+        states_and_atoms.set(state_and_atoms[0].trim(), clean_atoms);
+    }
+
+    const transitions = model_parts[2].split(",");
+    let states_and_transitions: Map<string, string[]> = new Map();
+    for(let i = 0; i < transitions.length; i++) {
+        const state_pair = transitions[i].split(":")[1].split("-");
+        const from_state = state_pair[0].trim();
+        const to_state = state_pair[1].trim();
+        if(!states_and_transitions.has(from_state)) states_and_transitions.set(from_state, [] as string[]);
+        if(!states_and_transitions.get(from_state)?.includes(to_state)) {
+            states_and_transitions.get(from_state)?.push(to_state);
+        }
+    }
+
+    const initial_states_parts = model_parts[1].split(":");
+    let initial_states: Set<string> = new Set();
+    if(!isEmptyString(initial_states_parts[1].trim())) {
+        let init_states = initial_states_parts[1].trim().split(",");
+        init_states.forEach((s) => {
+            const state_name = s.trim();
+            if(states_and_atoms.has(state_name)) initial_states.add(state_name);
+        });
+    }
+
+    let result = "";
+    let state_cnt = states_and_atoms.size;
+    for(let state of Array.from(states_and_atoms.keys())) {
+        result += state + ";";
+        const state_properties = states_and_atoms.get(state);
+        let elem_cnt = unique_atoms.size;
+        for(let property of Array.from(unique_atoms)) {
+            result += property + ":";
+            if(state_properties?.includes(property)) result += "true";
+            else result += "false";
+            elem_cnt--;
+            if(elem_cnt > 0) result += "+";
+        }
+        result += ";";
+        if(initial_states.has(state)) result += "true";
+        else result += "false";
+        result += ";";
+        if(states_and_transitions.has(state)) {
+            const successors = states_and_transitions.get(state) as string[];
+            let succ_cnt = successors?.length;
+            for(let successor of successors) {
+                result += successor;
+                succ_cnt--;
+                if(succ_cnt > 0) result += "+";
+            }
+        }
+        state_cnt--;
+        if(state_cnt > 0) result += "_";
+    }
+
+    getElementById("generation_result").value = result;
+    dispatchEventForElement("generation_result", "input");
+}
+
 const handleCheckFormula = () => {
     let formula = getElementById("formula").value;
     if(isEmptyString(formula)) return;
 
-    fetch('http://localhost:4000/solve/' + formula)
+    let url = 'http://localhost:4000/solve';
+    var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
+    if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
+        url += 'CTL/' + formula + '/';
+        const raw_model = getElementById("model").value;
+        const model = formatModel(raw_model);
+        if(isEmptyString(model)) return;
+        else url += model;
+    } else {
+        url += '/' + formula;
+    }
+
+    fetch(url)
         .then(response => response.json())
         .then(data => getElementById("formula_eval_result").value = JSON.stringify(data));
+}
+
+const formatModel = (raw_model: string) => {
+    let model = raw_model.replace(/\n/g, "").replace(/;/g, "_");
+    return model;
 }
 
 const handleSimplify = () => {
@@ -175,12 +303,15 @@ const handleGenKripke = () => {
         .then(response => response.json())
         .then(data => getResultFromJSON(data))
         .then(kripke => {
-            getElementById('generation_result').value = kripke
+            getElementById("generation_result").value = kripke;
+            dispatchEventForElement("generation_result", "input");
             return kripke;
         });
 }
 
 /** HELPERS */
+
+const dispatchEventForElement = (element: string, event_type: string) => getElementById(element).dispatchEvent(new Event(event_type, {bubbles: true}))
 
 const isEmptyString = (val: string) => !val;
 
