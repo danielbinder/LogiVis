@@ -54,7 +54,7 @@ public class Generator {
 
                 if(nodes == reachabilityMap.keySet().size()) regenerate = false;
                 else regenerated++;
-            }
+            } else break;
         }
 
         return ks;
