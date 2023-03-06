@@ -90,7 +90,9 @@ function Generator() {
                 </div>
             </div>
             <br/>
-            <button onClick={handleGenKripke}>Generate Kripke structure</button>
+            <div>
+                <button onClick={handleGenKripke}>Generate Kripke structure</button>
+            </div>
             <br/>
             <input type="hidden" id="generation_result" style={{display: 'none'}} placeholder='result' onInput={handleGenGraph} readOnly/>
             {graph !== "" && <Graphviz dot={graph} />}
