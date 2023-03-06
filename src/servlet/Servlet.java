@@ -8,6 +8,7 @@ import lexer.Lexer;
 import parser.Parser;
 import rest.GET;
 import rest.REST;
+import temporal.solver.CTLSolver;
 
 import java.util.Map;
 
@@ -26,6 +27,14 @@ public class Servlet {
         return BruteForceSolver.resultToJSON(BruteForceSolver.solve(PARSER.parse(Lexer.tokenize(formula))));
     }
 
+    @GET("/solveCTL/:formula/:model")
+    public String solveCTL(String formula, String model) {
+        String formattedModel = model.replace("_", ";");
+        temporal.model.KripkeStructure kripkeStructure = new temporal.model.KripkeStructure(formattedModel);
+        CTLSolver solver = new CTLSolver(kripkeStructure);
+        return BruteForceSolver.resultToJSON(solver.getSatisfyingStates(formula));
+    }
+
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
         return BruteForceSolver.resultToJSON(BruteForceSolver.solveAll(PARSER.parse(Lexer.tokenize(formula))));
@@ -37,7 +46,7 @@ public class Servlet {
     }
 
     @GET("/kripke2formula/:kripke/:steps")
-    public String kripke2formula(String kripke, String steps) {
+    public String kripke2formula(String kripke, String steps)   {
         String rawKripke = kripke.replace(",", ";");
         return BruteForceSolver.resultToJSON(Map.of("result",
                                                     KripkeStructure.fromString(rawKripke)
