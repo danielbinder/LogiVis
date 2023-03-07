@@ -11,6 +11,7 @@ import rest.REST;
 import temporal.solver.CTLSolver;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Servlet {
     private static final int SERVLET_PORT = 4000;
@@ -32,7 +33,11 @@ public class Servlet {
         String formattedModel = model.replace("_", ";");
         temporal.model.KripkeStructure kripkeStructure = new temporal.model.KripkeStructure(formattedModel);
         CTLSolver solver = new CTLSolver(kripkeStructure);
-        return BruteForceSolver.resultToJSON(solver.getSatisfyingStates(formula));
+
+        TreeMap<String, String> results = solver.getSatisfyingStates(formula);
+        results.put("steps", solver.getSolverSteps().replaceAll(System.lineSeparator(), "_"));
+
+        return BruteForceSolver.resultToJSON(results);
     }
 
     @GET("/solveAll/:formula")

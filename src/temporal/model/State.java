@@ -23,4 +23,9 @@ public class State {
     public boolean equals(Object obj) {
         return this.stateName.equals(((State) obj).getStateName());
     }
+
+    @Override
+    public String toString() {
+        return this.stateName;
+    }
 }

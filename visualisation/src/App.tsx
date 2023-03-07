@@ -28,8 +28,10 @@ function Solver() {
                     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
                     if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
                         setHidden(false);
+                        getElementById("check_button").innerText = "Check model";
                     } else {
                         setHidden(true);
+                        getElementById("check_button").innerText = "Check formula";
                     }
                 }}>
                     <option value="bool">Boolean algebra</option>
@@ -52,11 +54,12 @@ function Solver() {
             <br/><br/>
             <div>
                 {hidden ? <button onClick={handleSimplify}>Simplify formula</button> : null}
-                <button className="button_margin_left" onClick={handleCheckFormula}>Check formula</button>
+                <button className="button_margin_left" id="check_button" onClick={handleCheckFormula}>Check formula</button>
                 {hidden ? <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button> : null}
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
+            {!hidden ? <textarea className="element_margin_top" rows={10} cols={80} id="solver_steps" placeholder="CTL solver steps" readOnly/> : null}
         </div>
     );
 }
@@ -243,7 +246,8 @@ const handleCheckFormula = () => {
 
     let url = 'http://localhost:4000/solve';
     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
-    if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
+    const isCTLSelected = dropdown.options[dropdown.selectedIndex].value === "ctl";
+    if(isCTLSelected) {
         url += 'CTL/' + formula + '/';
         const raw_model = getElementById("model").value;
         const model = formatModel(raw_model);
@@ -255,7 +259,15 @@ const handleCheckFormula = () => {
 
     fetch(url)
         .then(response => response.json())
-        .then(data => getElementById("formula_eval_result").value = JSON.stringify(data));
+        .then(data => {   
+            if(isCTLSelected) {
+                let steps = getArbitraryValueFromJSON(data, 'steps');
+                steps = steps.replaceAll(/_/g, "\n");
+                getElementById("solver_steps").value = steps;
+                delete data['steps'];
+            }
+            getElementById("formula_eval_result").value = JSON.stringify(data);
+        });
 }
 
 const formatModel = (raw_model: string) => {
@@ -318,6 +330,8 @@ const dispatchEventForElement = (element: string, event_type: string) => getElem
 const isEmptyString = (val: string) => !val;
 
 const getResultFromJSON = (data: JSON) => `${JSON.parse(JSON.stringify(data))['result']}`;
+
+const getArbitraryValueFromJSON = (data: JSON, key: string) => `${JSON.parse(JSON.stringify(data))[key]}`;
 
 const getElementById = (component_name: string) => (document.getElementById(component_name) as HTMLInputElement);
 

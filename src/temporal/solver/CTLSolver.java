@@ -12,16 +12,30 @@ import java.util.stream.Collectors;
 
 public class CTLSolver {
 
-    private KripkeStructure kripkeStructure;
+    private final KripkeStructure kripkeStructure;
+    private final StringBuilder solverSteps;
 
     public CTLSolver(KripkeStructure kripkeStructure) {
         this.kripkeStructure = kripkeStructure;
+        this.solverSteps = new StringBuilder();
     }
 
     public TreeMap<String, String> getSatisfyingStates(String expression) {
         try {
+            // reset recorded solver steps
+            resetSolverSteps();
+
+            // attempt simplification of passed expression
             expression = simplifyExpression(expression);
+
+            // log first solver step
+            logStep("Check satisfiability of expression %s for every model state", expression);
+
+            // obtain states satisfying passed expression
             List<State> states = sat(expression.replace(" ", ""));
+
+            // return ordered mapping of states names to a boolean value indicating if respective
+            // state satisfies the passed expression
             Map<String, String> result = kripkeStructure.getStates()
                     .stream()
                     .collect(Collectors.toMap(
@@ -140,6 +154,9 @@ public class CTLSolver {
             throw new RuntimeException(String.format("Unknown expression/atom/constant '%s'.", expression));
         }
 
+        // log current solver step
+        logSolverStep(expression, sym);
+
         return switch (sym.getExprType()) {
             case True -> {
                 states.addAll(kripkeStructure.getStates());
@@ -189,30 +206,38 @@ public class CTLSolver {
             }
             case Implication -> {
                 // apply De Morgan's law to expression ((a -> b) = (!a | b))
-                StringBuilder newExpr = new StringBuilder();
-                newExpr.append(SolverConstants.SymNot);
-                newExpr.append(sym.getLeftExpression());
-                newExpr.append(SolverConstants.SymOr);
-                newExpr.append(sym.getRightExpression());
-                yield sat(newExpr.toString());
+                StringBuilder equivalentExpr = new StringBuilder();
+                equivalentExpr.append(SolverConstants.SymNot);
+                equivalentExpr.append(sym.getLeftExpression());
+                equivalentExpr.append(SolverConstants.SymOr);
+                equivalentExpr.append(sym.getRightExpression());
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
+                yield sat(equivalentExpr.toString());
             }
             case DoubleImplication -> {
                 // split double implication in two conjugated single implications
-                StringBuilder newExpr = new StringBuilder();
-                newExpr.append(SolverConstants.SymLeftPar);
-                newExpr.append(SolverConstants.SymLeftPar);
-                newExpr.append(sym.getLeftExpression());
-                newExpr.append(SolverConstants.SymImplication);
-                newExpr.append(sym.getRightExpression());
-                newExpr.append(SolverConstants.SymRightPar);
-                newExpr.append(SolverConstants.SymAnd);
-                newExpr.append(SolverConstants.SymLeftPar);
-                newExpr.append(sym.getRightExpression());
-                newExpr.append(SolverConstants.SymImplication);
-                newExpr.append(sym.getLeftExpression());
-                newExpr.append(SolverConstants.SymRightPar);
-                newExpr.append(SolverConstants.SymRightPar);
-                yield sat(newExpr.toString());
+                StringBuilder equivalentExpr = new StringBuilder();
+                equivalentExpr.append(SolverConstants.SymLeftPar);
+                equivalentExpr.append(SolverConstants.SymLeftPar);
+                equivalentExpr.append(sym.getLeftExpression());
+                equivalentExpr.append(SolverConstants.SymImplication);
+                equivalentExpr.append(sym.getRightExpression());
+                equivalentExpr.append(SolverConstants.SymRightPar);
+                equivalentExpr.append(SolverConstants.SymAnd);
+                equivalentExpr.append(SolverConstants.SymLeftPar);
+                equivalentExpr.append(sym.getRightExpression());
+                equivalentExpr.append(SolverConstants.SymImplication);
+                equivalentExpr.append(sym.getLeftExpression());
+                equivalentExpr.append(SolverConstants.SymRightPar);
+                equivalentExpr.append(SolverConstants.SymRightPar);
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
+                yield sat(equivalentExpr.toString());
             }
             case EX -> {
                 // evaluate CTL-expression for checking if a certain property holds at least
@@ -230,6 +255,9 @@ public class CTLSolver {
                 equivalentExpr.append(SolverConstants.SymEX);
                 equivalentExpr.append(SolverConstants.SymNot);
                 equivalentExpr.append(sym.getLeftExpression());
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
 
                 List<State> exprStates = new ArrayList<>(sat(equivalentExpr.toString()));
                 List<State> realStates = new ArrayList<>();
@@ -278,6 +306,10 @@ public class CTLSolver {
                 equivalentExpr.append(sym.getRightExpression());
                 equivalentExpr.append(SolverConstants.SymRightPar);
                 equivalentExpr.append(SolverConstants.SymRightPar);
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
                 yield sat(equivalentExpr.toString());
             }
             case EF -> {
@@ -291,6 +323,10 @@ public class CTLSolver {
                 equivalentExpr.append(SolverConstants.SymUntil);
                 equivalentExpr.append(sym.getLeftExpression());
                 equivalentExpr.append(SolverConstants.SymRightPar);
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
                 yield sat(equivalentExpr.toString());
             }
             case AF -> {
@@ -309,11 +345,15 @@ public class CTLSolver {
                 equivalentExpr.append(SolverConstants.SymAF);
                 equivalentExpr.append(SolverConstants.SymNot);
                 equivalentExpr.append(sym.getLeftExpression());
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
                 yield sat(equivalentExpr.toString());
             }
             case AG -> {
-                // evaluate CTL-expression for checking if a certain property holds on the entire subsequent trances
-                // of all outgoing branches
+                // evaluate CTL-expression for checking if a certain property holds on the entire subsequent traces
+                // of all outgoing paths
 
                 // build semantically equivalent expression
                 StringBuilder equivalentExpr = new StringBuilder();
@@ -321,6 +361,10 @@ public class CTLSolver {
                 equivalentExpr.append(SolverConstants.SymEF);
                 equivalentExpr.append(SolverConstants.SymNot);
                 equivalentExpr.append(sym.getLeftExpression());
+
+                // log transformation
+                logExpressionTransformation(expression, equivalentExpr.toString());
+
                 yield sat(equivalentExpr.toString());
             }
         };
@@ -352,9 +396,9 @@ public class CTLSolver {
     }
 
     /**
-     * Obtain all predecessor states for the passed target states by calculating
-     * the difference between the predecessors of the target states and the
-     * predecessors of all states without the passed target states.
+     * Obtain universal (all-quantified) predecessor states for the passed target states by calculating
+     * the difference between the existential predecessors of the target states and the
+     * existential predecessors of all available states minus the passed target states.
      * @see <a href="https://q2a.cs.uni-kl.de/34/how-to-compute-the-universal-predecessor"></a>
      * */
     private List<State> universalPredecessors(List<State> targetStates) {
@@ -486,9 +530,40 @@ public class CTLSolver {
      * If the passed expression does not contain any temporal symbols, it can be trivially simplified.
      * */
     private String simplifyExpression(String expression) {
-        if(!SolverConstants.TEMPORAL_SYMBOLS.stream().anyMatch(expression::contains)) {
-            return Simplification.of(new Parser().parse(Lexer.tokenize(expression))).toString();
+        if(SolverConstants.TEMPORAL_SYMBOLS.stream().noneMatch(expression::contains)) {
+            String simplified = Simplification.of(new Parser().parse(Lexer.tokenize(expression))).toString();
+            logStep("Simplified expression %s to %s", expression, simplified);
+            return simplified;
         }
         return expression;
     }
+
+    private void resetSolverSteps() {
+        this.solverSteps.setLength(0);
+    }
+
+    private void logStep(String message, String... params) {
+        if(!message.isEmpty()) {
+            if(params.length != 0) {
+                message = String.format(message, params);
+            }
+            this.solverSteps.append(message);
+            this.solverSteps.append(System.lineSeparator());
+        }
+    }
+
+    private void logSolverStep(String expression, BinarySymbol sym) {
+        logStep("Check satisfiability of "
+                + (sym.isBinary() ? "binary " : "unary ")
+                + "expression %s by checking nested "
+                + (sym.isBinary() ? "expressions " : "expression ") + "%s"
+                + (sym.isBinary() ? " and %s" : "")
+                + " first", expression, sym.getLeftExpression(), sym.getRightExpression());
+    }
+
+    private void logExpressionTransformation(String originalExpr, String newExpr) {
+        logStep("Transformed expression %s to %s by leveraging semantic equivalence.", originalExpr, newExpr);
+    }
+
+    public String getSolverSteps() { return this.solverSteps.toString(); }
 }
