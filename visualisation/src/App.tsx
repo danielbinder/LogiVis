@@ -29,9 +29,11 @@ function Solver() {
                     if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
                         setHidden(false);
                         getElementById("check_button").innerText = "Check model";
+                        getElementById("steps").style.visibility = 'hidden';
                     } else {
                         setHidden(true);
                         getElementById("check_button").innerText = "Check formula";
+                        getElementById("steps").style.visibility = 'visible';
                     }
                 }}>
                     <option value="bool">Boolean algebra</option>
@@ -108,8 +110,8 @@ function LeftRightButtons() {
             <br/><br/><br/><br/><br/><br/><br/><br/>
             <button onClick={handleModel2Kripke}>→</button>
             <br/><br/>
-            <InputGenerator text="Steps" id="steps" placeholder="steps" defaultVal="3"/>
-            <button onClick={handleKripke2Formula}>←</button>
+            <InputGenerator text="" id="steps" placeholder="steps" defaultVal="3"/>
+            <button onClick={handleKripke2Solver}>←</button>
         </div>);
 }
 
@@ -284,16 +286,31 @@ const handleSimplify = () => {
         .then(data => getElementById("formula").value = getResultFromJSON(data));
 }
 
-const handleKripke2Formula = () => {
+const handleKripke2Solver = () => {
     const kripke = getElementById('generation_result').value
         // REST API does not seem to work with ';' in url
         .replaceAll(';', ',');
     if(isEmptyString(kripke)) return;
-    const steps = getElementById("steps").value
+    const steps = getElementById("steps").value;
 
-    fetch('http://localhost:4000/kripke2formula/' + kripke + '/' + steps)
+    let url = "http://localhost:4000/";
+    var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
+    const isCTLSelected = dropdown.options[dropdown.selectedIndex].value === "ctl";
+    if(isCTLSelected) {
+        url += "kripkeString2ModelString/" + kripke;
+    } else {
+        url += "kripke2formula/" + kripke + '/' + steps;
+    }
+
+    fetch(url)
         .then(response => response.json())
-        .then(data => getElementById("formula").value = getResultFromJSON(data))
+        .then(data => getResultFromJSON(data))
+        .then(data => {
+            if(isCTLSelected) getElementById("model").value = data
+                .replace(/_/g, ";")
+                .replace(/[+]/g, "\n");
+            else getElementById("formula").value = data;
+        })
 }
 
 const handleAllAssignments = () => {

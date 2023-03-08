@@ -59,6 +59,15 @@ public class Servlet {
                                                             .replaceAll("\n", " ")));
     }
 
+    @GET("/kripkeString2ModelString/:kripkeString")
+    public String kripkeString2ModelString(String kripkeString) {
+        return BruteForceSolver.resultToJSON(
+                Map.of("result", KripkeStructure
+                        .fromString(kripkeString.replace(",", ";"))
+                        .toOtherKripke()
+                        .toModelString().replaceAll(";", "_").replaceAll("\n", "+")));
+    }
+
     @GET("/simplify/:formula")
     public String simplify(String formula) {
         return BruteForceSolver.resultToJSON(Map.of("result",

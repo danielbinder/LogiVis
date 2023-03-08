@@ -1,6 +1,7 @@
 package temporal.model;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class KripkeStructure {
@@ -12,6 +13,16 @@ public class KripkeStructure {
     private final List<State> initialStates = new ArrayList<>();
     private final List<State> states = new ArrayList<>();
     private final List<String> atoms = new ArrayList<>();
+
+    public KripkeStructure(List<State> states,
+                           List<State> initialStates,
+                           List<Transition> transitions,
+                           List<String> atoms) {
+        this.states.addAll(states);
+        this.initialStates.addAll(initialStates);
+        this.transitions.addAll(transitions);
+        this.atoms.addAll(atoms);
+    }
 
     public KripkeStructure(String structureDefinition) {
         String [] structure = structureDefinition
@@ -94,6 +105,25 @@ public class KripkeStructure {
     public List<State> getStates() { return states; }
 
     public List<String> getAtoms() { return atoms; }
+
+    public String toModelString() {
+        String result = "";
+
+        result += states.stream().map(State::getStateName).collect(Collectors.joining(","));
+        result += ";\ninitial: ";
+        result += initialStates.stream().map(State::getStateName).collect(Collectors.joining(","));
+        result += ";\n";
+        AtomicInteger tCount = new AtomicInteger();
+        result += transitions.stream()
+                .map(t -> "t" + tCount.getAndIncrement() + " : " + t.getFromState() + " - " + t.getToState())
+                .collect(Collectors.joining(",\n"));
+        result += ";\n";
+        result += states.stream()
+                .map(s -> s + " : " + String.join(" ", s.getAtoms()))
+                .collect(Collectors.joining(",\n"));
+
+        return result + ";";
+    }
 
     @Override
     public String toString() {
