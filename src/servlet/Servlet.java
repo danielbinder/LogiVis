@@ -65,7 +65,9 @@ public class Servlet {
                 Map.of("result", KripkeStructure
                         .fromString(kripkeString.replace(",", ";"))
                         .toOtherKripke()
-                        .toModelString().replaceAll(";", "_").replaceAll("\n", "+")));
+                        .toModelString()
+                        .replaceAll(";", "_")
+                        .replaceAll("\n", "+")));
     }
 
     @GET("/simplify/:formula")
