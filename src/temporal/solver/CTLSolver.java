@@ -34,7 +34,10 @@ public class CTLSolver {
             // obtain states satisfying passed expression
             List<State> states = sat(expression.replace(" ", ""));
 
-            // return ordered mapping of states names to a boolean value indicating if respective
+            // log solving hint
+            logStep("Calculated set of satisfying states by going bottom-up in the expression hierarchy");
+
+            // return ordered mapping of state names to a boolean value indicating if associated
             // state satisfies the passed expression
             Map<String, String> result = kripkeStructure.getStates()
                     .stream()
@@ -553,12 +556,19 @@ public class CTLSolver {
     }
 
     private void logSolverStep(String expression, BinarySymbol sym) {
-        logStep("Check satisfiability of "
-                + (sym.isBinary() ? "binary " : "unary ")
-                + "expression %s by checking nested "
-                + (sym.isBinary() ? "expressions " : "expression ") + "%s"
-                + (sym.isBinary() ? " and %s" : "")
-                + " first", expression, sym.getLeftExpression(), sym.getRightExpression());
+        switch (sym.getExprType()) {
+            case Atomic -> logStep("Check in which states atom %s is present", expression);
+            case True -> logStep("All states satisfy constant true (current expression).");
+            case False -> logStep("No step satisfies constant false (current expression).");
+            default -> {
+                logStep("Check satisfiability of "
+                    + (sym.isBinary() ? "binary " : "unary ")
+                    + "expression %s (outermost expression type " + sym.getExprType().toString() + ") by checking nested "
+                    + (sym.isBinary() ? "expressions " : "expression ") + "%s"
+                    + (sym.isBinary() ? " and %s" : "")
+                    + " first", expression, sym.getLeftExpression(), sym.getRightExpression());
+            }
+        }
     }
 
     private void logExpressionTransformation(String originalExpr, String newExpr) {
