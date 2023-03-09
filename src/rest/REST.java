@@ -11,6 +11,7 @@ import static spark.Spark.get;
  * A very simple implementation of a REST API.
  */
 public class REST {
+
     public static void start(int port) {
         spark.Spark.port(port);
 
@@ -21,7 +22,7 @@ public class REST {
                 get(m.getAnnotation(GET.class).value(),
                     (req, res) -> {
                     res.type("application/json");
-                    res.header("Access-Control-Allow-Origin", "*");     // Prevents CORS errors
+                    res.header("Access-Control-Allow-Origin", "*");     // prevents CORS errors
                     return m.invoke(servlet, new TreeMap<>(req.params()).values().toArray());
                 });
             }
