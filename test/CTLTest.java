@@ -8,6 +8,58 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CTLTest {
 
+    /*
+    Some clean string representations of valid models.
+
+    s1, s2, s3, s4, s5, s6, s7;"
+    initial: s1, s2;
+    t1 : s1 - s2,
+    t2 : s1 - s3,
+    t3 : s2 - s4,
+    t4 : s2 - s5,
+    t5 : s3 - s6,
+    t6 : s3 - s7;
+    s1 : ,
+    s2 : p q,
+    s3 : p q,
+    s4 : p,
+    s5 : q,
+    s6 : ,
+    s7 : ;
+
+    s1, s2, s3, s4, s5, s6, s7;
+    initial: s1;
+    t1 : s1 - s2,
+    t2 : s1 - s3,
+    t3 : s2 - s4,
+    t4 : s2 - s5,
+    t5 : s3 - s6,
+    t6 : s3 - s7;
+    s1 : ,
+    s2 : bananas apples,
+    s3 : bananas apples,
+    s4 : bananas,
+    s5 : apples,
+    s6 : ,
+    s7 : kiwis;
+
+    s1, s2, s3, s4, s5, s6, s7;
+    initial: s1, s2;
+    t1 : s1 - s2,
+    t2 : s1 - s3,
+    t3 : s2 - s4,
+    t4 : s2 - s5,
+    t5 : s3 - s6,
+    t6 : s3 - s7;
+    s1 : ,
+    s2 : p,
+    s3 : p,
+    s4 : p,
+    s5 : ,
+    s6 : ,
+    s7 : ;
+    */
+
     private static final String SIMPLE_KRIPKE = "s1, s2, s3, s4, s5, s6, s7;\n" +
             "initial: s1, s2;\n" +
             "t1 : s1 - s2,\n" +
@@ -24,39 +76,6 @@ public class CTLTest {
             "s6 : ,\n" +
             "s7 : ;";
 
-    /*s1, s2, s3, s4, s5, s6, s7;" +
-            initial: s1, s2;
-            t1 : s1 - s2,
-            t2 : s1 - s3,
-            t3 : s2 - s4,
-            t4 : s2 - s5,
-            t5 : s3 - s6,
-            t6 : s3 - s7;
-            s1 : ,
-            s2 : p q,
-            s3 : p q,
-            s4 : p,
-            s5 : q,
-            s6 : ,
-            s7 : ;*/
-
-    /*
-    s1, s2, s3, s4, s5, s6, s7;
-    initial: s1;
-    t1 : s1 - s2,
-    t2 : s1 - s3,
-    t3 : s2 - s4,
-    t4 : s2 - s5,
-    t5 : s3 - s6,
-    t6 : s3 - s7;
-    s1 : ,
-    s2 : bananas apples,
-    s3 : bananas apples,
-    s4 : bananas,
-    s5 : apples,
-    s6 : ,
-    s7 : kiwis;
-     */
     private static final String KRIPKE_LONG_ATOMS = "s1, s2, s3, s4, s5, s6, s7;\n" +
             "initial: s1;\n" +
             "t1 : s1 - s2,\n" +

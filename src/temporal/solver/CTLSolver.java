@@ -558,8 +558,8 @@ public class CTLSolver {
     private void logSolverStep(String expression, BinarySymbol sym) {
         switch (sym.getExprType()) {
             case Atomic -> logStep("Check in which states atom %s is present", expression);
-            case True -> logStep("All states satisfy constant true (current expression).");
-            case False -> logStep("No step satisfies constant false (current expression).");
+            case True -> logStep("All states satisfy constant true (current expression)");
+            case False -> logStep("No states satisfy constant false (current expression)");
             default -> {
                 logStep("Check satisfiability of "
                     + (sym.isBinary() ? "binary " : "unary ")
