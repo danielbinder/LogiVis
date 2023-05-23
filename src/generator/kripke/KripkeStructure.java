@@ -20,46 +20,6 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         for(KripkeNode n : this) n.stateMap = stateMaps.get(i++);
     }
 
-    public String toFormulaString(int steps) {
-        StringBuilder formula = new StringBuilder("true ");
-
-        for(int i = 0; i < steps; i++) {
-            for(KripkeNode n : this) {
-                formula.append(" &\n((");
-
-                for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
-                    formula.append(e.getValue() ? "" : "!")
-                            .append(e.getKey())
-                            .append(i)
-                            .append(" & ");
-                }
-
-                formula.append("true) -> (false ");
-
-                for(KripkeNode succ : n.successors) {
-                    formula.append("| (");
-
-                    for(Map.Entry<String, Boolean> e : succ.stateMap.entrySet()) {
-                        formula.append(e.getValue() ? "" : "!")
-                                .append(e.getKey())
-                                .append(i + 1)
-                                .append(" & ");
-                    }
-
-                    formula.append("true) ");
-                }
-
-                formula.append("))");
-            }
-        }
-
-        return formula.toString();
-    }
-
-    public LogicNode toFormula(int steps) {
-        return new Parser().parse(Lexer.tokenize(toFormulaString(steps)));
-    }
-
     public static KripkeStructure fromString(String structure) {
         KripkeStructure ks = new KripkeStructure();
         ks.addAll(Arrays.stream(structure.split("_"))
@@ -100,6 +60,46 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         List<String> atoms = get(0).stateMap.keySet().stream().toList();
 
         return new temporal.model.KripkeStructure(states, initial, transitions, atoms);
+    }
+
+    public LogicNode toFormula(int steps) {
+        return new Parser().parse(Lexer.tokenize(toFormulaString(steps)));
+    }
+
+    public String toFormulaString(int steps) {
+        StringBuilder formula = new StringBuilder("true ");
+
+        for(int i = 0; i < steps; i++) {
+            for(KripkeNode n : this) {
+                formula.append(" &\n((");
+
+                for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
+                    formula.append(e.getValue() ? "" : "!")
+                            .append(e.getKey())
+                            .append(i)
+                            .append(" & ");
+                }
+
+                formula.append("true) -> (false ");
+
+                for(KripkeNode succ : n.successors) {
+                    formula.append("| (");
+
+                    for(Map.Entry<String, Boolean> e : succ.stateMap.entrySet()) {
+                        formula.append(e.getValue() ? "" : "!")
+                                .append(e.getKey())
+                                .append(i + 1)
+                                .append(" & ");
+                    }
+
+                    formula.append("true) ");
+                }
+
+                formula.append("))");
+            }
+        }
+
+        return formula.toString();
     }
 
     @Override

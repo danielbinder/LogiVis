@@ -2,6 +2,7 @@ package servlet;
 
 import generator.Generator;
 import generator.kripke.KripkeStructure;
+import generator.kripke.KripkeTruthTable;
 import interpreter.BruteForceSolver;
 import interpreter.Simplification;
 import lexer.Lexer;
@@ -62,8 +63,10 @@ public class Servlet {
     @GET("/kripke2CompactFormula/:kripke/:steps")
     public String kripke2CompactFormula(String kripke, String steps) {
         String rawKripke = kripke.replace(",", ";");
-        // TODO: connect with associated logic
-        return BruteForceSolver.resultToJSON(Map.of("result", "not yet implemented"));
+        return BruteForceSolver.resultToJSON(Map.of("result",
+                                                    new KripkeTruthTable(KripkeStructure.fromString(rawKripke))
+                                                            .toFormulaString(Integer.parseInt(steps))
+                                                            .replaceAll("\n", " ")));
     }
 
     @GET("/kripkeString2ModelString/:kripkeString")
