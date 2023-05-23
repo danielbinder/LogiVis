@@ -71,7 +71,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
 
         for(int i = 0; i < steps; i++) {
             for(KripkeNode n : this) {
-                formula.append(" &\n((");
+                formula.append(" &\n ((");
 
                 for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
                     formula.append(e.getValue() ? "" : "!")
