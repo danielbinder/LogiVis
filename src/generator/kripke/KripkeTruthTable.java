@@ -42,8 +42,9 @@ public class KripkeTruthTable {
         // Remove any rows that haven't been filled
         List<Map<String, Boolean>> emptyKeys = table.keySet().stream().filter(k -> table.get(k).isEmpty()).toList();
         emptyKeys.forEach(table::remove);
-
-        System.out.println(this);
+        
+        // Comment in line below for visualisation of truth table
+//        System.out.println(this);
     }
 
     private Map<String, Boolean> assignmentMapFromAssignmentString(String assignmentString) {
