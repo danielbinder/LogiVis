@@ -1,5 +1,9 @@
 package generator.kripke;
 
+import interpreter.Simplification;
+import lexer.Lexer;
+import parser.Parser;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,27 +28,20 @@ public class KripkeTruthTable {
                 .map(kn -> kn.successors.size())
                 .max(Integer::compareTo)
                 .orElse(0);
-        Map<String, Boolean> zeroLiterals = assignmentMapFromAssignmentString(
-                literals.stream().map(l -> "0").collect(Collectors.joining()));
 
         for(KripkeNode kn : ks) {
             // Add the assignment of every successor
             for(KripkeNode succ : kn.successors)
                 table.get(kn.stateMap).add(succ.stateMap);
 
-            // Pad the rest of the row with zeros
+            // Pad the rest of the row with already existing assignments
             for(int i = 0; i < maxSuccessors - kn.successors.size(); i++)
-                table.get(kn.stateMap).add(zeroLiterals);
+                table.get(kn.stateMap).add(table.get(kn.stateMap).get(0));
         }
 
-        // Fill any rows that haven't been filled
-        for(Map<String, Boolean> key : table.keySet()) {
-            if(table.get(key).isEmpty()) {
-                for(int i = 0; i < maxSuccessors; i++) {
-                    table.get(key).add(zeroLiterals);
-                }
-            }
-        }
+        // Remove any rows that haven't been filled
+        List<Map<String, Boolean>> emptyKeys = table.keySet().stream().filter(k -> table.get(k).isEmpty()).toList();
+        emptyKeys.forEach(table::remove);
 
         System.out.println(this);
     }
