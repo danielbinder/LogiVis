@@ -67,12 +67,9 @@ public class KripkeTruthTable {
                             int finalI = i;
                             formula.append(table.keySet()
                                                    .stream()
-                                                   .filter(k -> table.get(k)
-                                                           .equals(list))
-                                                   .findAny()
-                                                   .orElseThrow(IllegalStateException::new)
-                                                   .entrySet()
-                                                   .stream()
+                                                   .filter(k -> table.get(k).equals(list))
+                                                   .findAny().orElseThrow(IllegalStateException::new)
+                                                   .entrySet().stream()
                                                    .map(e -> (e.getValue() ? "" : "!") + e.getKey() + finalI)
                                                    .collect(Collectors.joining(" & ")));
 
