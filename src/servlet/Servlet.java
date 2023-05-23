@@ -20,7 +20,7 @@ public class Servlet {
 
     public static void main(String[] args) {
         REST.start(SERVLET_PORT);
-        System.out.println("Click: http://localhost:" + APP_PORT);
+        System.out.println("Server started; go to: http://localhost:" + APP_PORT);
     }
 
     @GET("/solve/:formula")
@@ -57,6 +57,13 @@ public class Servlet {
                                                     KripkeStructure.fromString(rawKripke)
                                                             .toFormulaString(Integer.parseInt(steps))
                                                             .replaceAll("\n", " ")));
+    }
+
+    @GET("/kripke2CompactFormula/:kripke/:steps")
+    public String kripke2CompactFormula(String kripke, String steps) {
+        String rawKripke = kripke.replace(",", ";");
+        // TODO: connect with associated logic
+        return BruteForceSolver.resultToJSON(Map.of("result", "not yet implemented"));
     }
 
     @GET("/kripkeString2ModelString/:kripkeString")

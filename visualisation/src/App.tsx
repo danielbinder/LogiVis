@@ -304,10 +304,16 @@ const handleKripke2Solver = () => {
     let url = "http://localhost:4000/";
     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
     const isCTLSelected = dropdown.options[dropdown.selectedIndex].value === "ctl";
+    const requestCompactFormula = getElementById("compact_form").checked;
+
     if(isCTLSelected) {
         url += "kripkeString2ModelString/" + kripke;
     } else {
-        url += "kripke2formula/" + kripke + '/' + steps;
+        if(requestCompactFormula) {
+            url += "kripke2CompactFormula/" + kripke + "/" + steps; 
+        } else {
+            url += "kripke2formula/" + kripke + "/" + steps;
+        }
     }
 
     fetch(url)
