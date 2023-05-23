@@ -24,16 +24,18 @@ function Solver() {
             <h3>Evaluate a given formula</h3>
             <div>
                 Chose formula type:  
-                <select className="button_margin_left" id="dropdown" onChange={() => {
+                <select className="element_margin_left" id="dropdown" onChange={() => {
                     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
                     if(dropdown.options[dropdown.selectedIndex].value === "ctl") {
                         setHidden(false);
                         getElementById("check_button").innerText = "Check model";
-                        getElementById("steps").style.visibility = 'hidden';
+                        getElementById("steps").style.visibility = "hidden";
+                        getElementById("compact_form_container").style.visibility = "hidden";
                     } else {
                         setHidden(true);
                         getElementById("check_button").innerText = "Check formula";
-                        getElementById("steps").style.visibility = 'visible';
+                        getElementById("steps").style.visibility = "visible";
+                        getElementById("compact_form_container").style.visibility = "visible";   
                     }
                 }}>
                     <option value="bool">Boolean algebra</option>
@@ -56,8 +58,8 @@ function Solver() {
             <br/><br/>
             <div>
                 {hidden ? <button onClick={handleSimplify}>Simplify formula</button> : null}
-                <button className="button_margin_left" id="check_button" onClick={handleCheckFormula}>Check formula</button>
-                {hidden ? <button className="button_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button> : null}
+                <button className="element_margin_left" id="check_button" onClick={handleCheckFormula}>Check formula</button>
+                {hidden ? <button className="element_margin_left" onClick={handleAllAssignments}>All satisfiable assignments</button> : null}
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
@@ -84,14 +86,14 @@ function Generator() {
         <div className="column">
             <h3>Generate a Kripke structure</h3>
             <div className="left">
-                <InputGenerator text="Nodes" id="node_cnt" placeholder="node count" defaultVal="4"/>
-                <InputGenerator text="Variables" id="variables" placeholder="variables" defaultVal="3"/>
-                <InputGenerator text="Successors at least" id="min_succ" placeholder="min. successors" defaultVal="1"/>
-                <InputGenerator text="Successors at most" id="max_succ" placeholder="max. successors" defaultVal="3"/>
-                <InputGenerator text="Initial Nodes" id="initial_nodes" placeholder="initial nodes" defaultVal="2"/>
+                <InputGenerator text="Nodes" id="node_cnt" placeholder="node count" defaultVal="4" spacing={10}/>
+                <InputGenerator text="Variables" id="variables" placeholder="variables" defaultVal="3" spacing={10}/>
+                <InputGenerator text="Successors at least" id="min_succ" placeholder="min. successors" defaultVal="1" spacing={10}/>
+                <InputGenerator text="Successors at most" id="max_succ" placeholder="max. successors" defaultVal="3" spacing={10}/>
+                <InputGenerator text="Initial Nodes" id="initial_nodes" placeholder="initial nodes" defaultVal="2" spacing={10}/>
                 <div>
                     <input type="checkbox" id="states_reachable" defaultChecked />
-                    <span>All states reachable</span>
+                    <span className="element_margin_left">All states reachable</span>
                 </div>
             </div>
             <br/>
@@ -106,23 +108,29 @@ function Generator() {
 
 function LeftRightButtons() {
     return (
-        <div className={"column"}>
+        <div className="column">
             <br/><br/><br/><br/><br/><br/><br/><br/>
             <button onClick={handleModel2Kripke}>→</button>
             <br/><br/>
-            <InputGenerator text="" id="steps" placeholder="steps" defaultVal="3"/>
+            <div style={{display: "grid"}}>
+                <InputGenerator text="" id="steps" placeholder="steps" defaultVal="3" spacing={0}/>
+            </div>
+            <div id="compact_form_container">
+                <input type="checkbox" id="compact_form" defaultChecked />
+                <span className="element_margin_left">Compact</span>
+            </div>
             <button onClick={handleKripke2Solver}>←</button>
-        </div>);
+        </div>
+    );
 }
 
-function InputGenerator(props: { text: string, id: string, placeholder: string, defaultVal: string }) {
+function InputGenerator(props: {text: string, id: string, placeholder: string, defaultVal: string, spacing: number}) {
     return (
         <div>
             <input size={1} type="text" id={props.id} placeholder={props.placeholder} defaultValue={props.defaultVal}/>
-            <span>
-              &nbsp;&nbsp;{props.text}
-            </span>
-        </div>);
+            <span style={{padding: props.spacing}}>{props.text}</span>
+        </div>
+    );
 }
 
 const kripkeString2Graph = (kripke: string) => {

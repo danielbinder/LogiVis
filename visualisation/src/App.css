@@ -25,12 +25,12 @@
 }
 
 .row {
-  display:flex;
+  display: flex;
   flex-direction: row;
 }
 
 .column {
-  display:flex;
+  display: flex;
   flex-direction: column;
   padding-right: 50px;
 }
@@ -52,7 +52,7 @@
   }
 }
 
-.button_margin_left {
+.element_margin_left {
   margin-left: 10px;
 }
 

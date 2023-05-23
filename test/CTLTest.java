@@ -170,6 +170,22 @@ public class CTLTest {
             "s8 : t1 c2 2,\n" +
             "s9 : n1 c2 2;";
 
+    private static final String SMALL_GENERATED_KRIPKE = "0,1,2,3;\n" +
+            "initial: 2,3;\n" +
+            "t0 : 0 - 0,\n" +
+            "t1 : 0 - 2,\n" +
+            "t2 : 1 - 2,\n" +
+            "t3 : 2 - 0,\n" +
+            "t4 : 2 - 3,\n" +
+            "t5 : 2 - 2,\n" +
+            "t6 : 3 - 1,\n" +
+            "t7 : 3 - 3,\n" +
+            "t8 : 3 - 2;\n" +
+            "0 : ,\n" +
+            "1 : c,\n" +
+            "2 : a,\n" +
+            "3 : a b;";
+
     @Test
     public void testModelParser() {
         KripkeStructure structure = new KripkeStructure(SIMPLE_KRIPKE);
@@ -656,5 +672,15 @@ public class CTLTest {
                 "s8", "true",
                 "s9", "true",
                 "s10", "true"), solver.getSatisfyingStates("AGp"));
+    }
+
+    @Test
+    public void testComplexCTLExpressionSeven() {
+        KripkeStructure structure = new KripkeStructure(SMALL_GENERATED_KRIPKE);
+        CTLSolver solver = new CTLSolver(structure);
+        assertEquals(Map.of("0", "false",
+                "1", "false",
+                "2", "true",
+                "3", "true"), solver.getSatisfyingStates("EX((a & b) | !!!!c) & true"));
     }
 }

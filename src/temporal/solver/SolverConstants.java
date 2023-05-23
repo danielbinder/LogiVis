@@ -6,8 +6,6 @@ import java.util.List;
 
 public class SolverConstants {
 
-
-
     public static final String SymLeftPar = "(";
     public static final String SymRightPar = ")";
     public static final String SymAnd = "&";
