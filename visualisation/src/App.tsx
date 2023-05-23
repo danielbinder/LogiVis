@@ -222,7 +222,9 @@ const handleModel2Kripke = () => {
         result += state + ";";
         const state_properties = states_and_atoms.get(state);
         let elem_cnt = unique_atoms.size;
-        for(let property of Array.from(unique_atoms)) {
+        const unique_atoms_array = Array.from(unique_atoms);
+        unique_atoms_array.sort();
+        for(let property of unique_atoms_array) {
             result += property + ":";
             if(state_properties?.includes(property)) result += "true";
             else result += "false";
