@@ -325,7 +325,7 @@ const handleKripke2Solver = () => {
             if(isCTLSelected) getElementById("model").value = data
                 .replace(/_/g, ";")
                 .replace(/[+]/g, "\n");
-            else getElementById("formula").value = data.replaceAll("  ", "\n");
+            else getElementById("formula").value = data;
         })
 }
 
