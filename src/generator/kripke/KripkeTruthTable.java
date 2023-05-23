@@ -1,9 +1,6 @@
 package generator.kripke;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KripkeTruthTable {
@@ -39,6 +36,17 @@ public class KripkeTruthTable {
             for(int i = 0; i < maxSuccessors - kn.successors.size(); i++)
                 table.get(kn.stateMap).add(zeroLiterals);
         }
+
+        // Fill any rows that haven't been filled
+        for(Map<String, Boolean> key : table.keySet()) {
+            if(table.get(key).isEmpty()) {
+                for(int i = 0; i < maxSuccessors; i++) {
+                    table.get(key).add(zeroLiterals);
+                }
+            }
+        }
+
+        System.out.println(this);
     }
 
     private Map<String, Boolean> assignmentMapFromAssignmentString(String assignmentString) {
@@ -86,5 +94,37 @@ public class KripkeTruthTable {
         }
 
         return formula.toString();
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+
+        result += String.join(" ", literals);
+        result += " || ";
+
+        int maxSuccessors = table.values().stream()
+                .findAny().orElseThrow(NoSuchElementException::new)
+                .size();
+        for(int i = 0; i < maxSuccessors; i++) {
+            result += literals.stream().map(l -> l + "'").collect(Collectors.joining(""));
+            result += "| ";
+        }
+
+        result += "\n";
+
+        for(Map<String, Boolean> key : table.keySet()) {
+            result += literals.stream().map(l -> key.get(l) ? "1" : "0").collect(Collectors.joining(" "));
+            result += " || ";
+
+            for(Map<String, Boolean> value : table.get(key)) {
+                result += literals.stream().map(l -> value.get(l) ? "1" : "0").collect(Collectors.joining(" "));
+                result += " | ";
+            }
+
+            result += "\n";
+        }
+
+        return result;
     }
 }
