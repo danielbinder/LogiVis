@@ -85,8 +85,8 @@ public class KripkeTruthTable {
                         }
                     }
 
-                    if(amountFutureAssignments == 0) formula.append("false)) & ");
-                    else formula.append("false) & ");
+                    if(amountFutureAssignments == 0) formula.append("false))) & ");
+                    else formula.append("false))) & ");
                 }
                 formula.append("true) &\n ");
             }
