@@ -73,7 +73,7 @@ public class Simplification {
                     // !(!a | b) = a & !b
                     if(o.left() instanceof NegationNode n1)
                         yield new AndNode(n1.child(), new NegationNode(o.right()));
-                    // !(a | !b) = !a & b
+                    // (a | !b) = !a & b
                     if(o.right() instanceof NegationNode n1)
                         yield new AndNode(new NegationNode(o.left()), n1.child());
                 }
