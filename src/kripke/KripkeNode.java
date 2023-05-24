@@ -1,4 +1,4 @@
-package generator.kripke;
+package kripke;
 
 import java.util.HashMap;
 import java.util.HashSet;

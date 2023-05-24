@@ -1,4 +1,4 @@
-package generator.kripke;
+package kripke;
 
 import lexer.Lexer;
 import parser.Parser;

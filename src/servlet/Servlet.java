@@ -1,8 +1,8 @@
 package servlet;
 
 import generator.Generator;
-import generator.kripke.KripkeStructure;
-import generator.kripke.KripkeTruthTable;
+import kripke.KripkeStructure;
+import kripke.KripkeTruthTable;
 import interpreter.BruteForceSolver;
 import interpreter.Simplification;
 import lexer.Lexer;

@@ -1,4 +1,4 @@
-package generator.kripke;
+package kripke;
 
 import java.util.*;
 import java.util.stream.Collectors;

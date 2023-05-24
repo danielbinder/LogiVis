@@ -1,5 +1,5 @@
 import generator.Generator;
-import generator.kripke.KripkeStructure;
+import kripke.KripkeStructure;
 import org.junit.jupiter.api.Test;
 
 public class GeneratorTest {

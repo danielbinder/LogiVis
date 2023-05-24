@@ -1,7 +1,7 @@
 package generator;
 
-import generator.kripke.KripkeNode;
-import generator.kripke.KripkeStructure;
+import kripke.KripkeNode;
+import kripke.KripkeStructure;
 
 import java.util.*;
 
