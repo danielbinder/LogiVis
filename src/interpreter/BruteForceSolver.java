@@ -26,23 +26,6 @@ public class BruteForceSolver {
         return new BruteForceSolver(formula).solveAll();
     }
 
-    public static String resultToJSON(List<Map<String, String>> assignments) {
-        if(assignments == null) return "{\"result\":\"unsatisfiable\"}";
-        if(assignments.stream().anyMatch(m -> "valid".equals(m.get("result")))) return "{\"result\":\"valid\"}";
-        return "{" + assignments.stream()
-                .map(a -> "\"assignment_" + assignments.indexOf(a) + "\":" + resultToJSON(a))
-                .collect(Collectors.joining(",")) + "}";
-    }
-
-
-    public static String resultToJSON(Map<String, String> map) {
-        if(map == null) return "{\"result\":\"unsatisfiable\"}";
-        return map.entrySet()
-                .stream()
-                .map(e -> "\"" + e.getKey() + "\":\"" + e.getValue() + "\"")
-                .collect(Collectors.joining(",", "{", "}"));
-    }
-
     private Map<String, String> solve() {
         initAssignmentMap(formula);
         initAssignmentList();
