@@ -19,15 +19,11 @@ public class KripkeTruthTable {
                 .max(Integer::compareTo)
                 .orElse(0);
 
-        for(KripkeNode kn : ks) {
-            // Add the assignment of the current node as top-level key
-            // Add the assignment of every successor as top-level value
-            table.put(kn.stateMap, kn.successors.stream().map(succ -> succ.stateMap).collect(Collectors.toList()));
-
-            // Pad the rest of the row with already existing assignments
-            for(int i = 0; i < maxSuccessors - kn.successors.size(); i++)
-                table.get(kn.stateMap).add(table.get(kn.stateMap).get(0));
-        }
+        // Add the assignment of the current node as top-level key
+        // Add the assignment of every successor as top-level value
+        ks.forEach(kn -> table.put(kn.stateMap, kn.successors.stream()
+                                                        .map(succ -> succ.stateMap)
+                                                        .collect(Collectors.toList())));
     }
 
     public String toFormulaString(int steps) {
