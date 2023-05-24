@@ -31,7 +31,7 @@ public class KripkeTruthTable {
 
         for(int i = 0; i < steps; i++) {
             for(List<Map<String, Boolean>> list : table.values()) {
-                formula.append("(");
+                formula.append("((");
 
                 for(String literal : literals) {
                     formula.append("(")
@@ -39,8 +39,10 @@ public class KripkeTruthTable {
                             .append(i + 1)
                             .append(" <-> ((");
 
+                    boolean noAssignment = true;
                     for(Map<String, Boolean> futureAssignment : list) {
                         if(futureAssignment.get(literal)) {
+                            noAssignment = false;
                             int finalI = i;
                             formula.append(table.keySet()
                                                    .stream()
@@ -53,14 +55,24 @@ public class KripkeTruthTable {
                         }
                     }
 
-                    formula.append("false))) & ");
+                    if(noAssignment) {
+                        formula.setLength(formula.length() - 2);
+                        formula.append("false) & ");
+                    } else {
+                        formula.setLength(formula.length() - 4);
+                        formula.append(")) & ");
+                    }
                 }
 
-                formula.append("true) &\n ");
+                formula.setLength(formula.length() - 3);
+                formula.append(") |\n");
             }
 
-            formula.append("true");
+            formula.setLength(formula.length() - 3);
+            formula.append(" &\n(");
         }
+
+        formula.setLength(formula.length() - 4);
 
         return formula.toString();
     }
