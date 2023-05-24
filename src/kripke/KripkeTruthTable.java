@@ -19,19 +19,25 @@ public class KripkeTruthTable {
                 .max(Integer::compareTo)
                 .orElse(0);
 
-        // Add the assignment of the current node as top-level key
-        // Add the assignment of every successor as top-level value
-        ks.forEach(kn -> table.put(kn.stateMap, kn.successors.stream()
-                                                        .map(succ -> succ.stateMap)
-                                                        .collect(Collectors.toList())));
+        for(KripkeNode kn : ks) {
+            // Add the assignment of the current node as top-level key
+            // Add the assignment of every successor as top-level value
+            table.put(kn.stateMap, kn.successors.stream().map(succ -> succ.stateMap).collect(Collectors.toList()));
+
+            // Pad the rest of the row with already existing assignments
+            for(int i = 0; i < maxSuccessors - kn.successors.size(); i++)
+                table.get(kn.stateMap).add(table.get(kn.stateMap).get(0));
+        }
     }
 
     public String toFormulaString(int steps) {
         StringBuilder formula = new StringBuilder();
 
         for(int i = 0; i < steps; i++) {
-            for(List<Map<String, Boolean>> list : table.values()) {
-                formula.append("((");
+            formula.append("(");
+
+            for(int futureAss = 0; futureAss < maxSuccessors; futureAss++) {
+                formula.append("(");
 
                 for(String literal : literals) {
                     formula.append("(")
@@ -40,15 +46,11 @@ public class KripkeTruthTable {
                             .append(" <-> ((");
 
                     boolean noAssignment = true;
-                    for(Map<String, Boolean> futureAssignment : list) {
-                        if(futureAssignment.get(literal)) {
+                    for(Map<String, Boolean> currAss : table.keySet()) {
+                        if(table.get(currAss).get(futureAss).get(literal)) {
                             noAssignment = false;
                             int finalI = i;
-                            formula.append(table.keySet()
-                                                   .stream()
-                                                   .filter(k -> table.get(k).equals(list))
-                                                   .findAny().orElseThrow(IllegalStateException::new)
-                                                   .entrySet().stream()
+                            formula.append(currAss.entrySet().stream()
                                                    .map(e -> (e.getValue() ? "" : "!") + e.getKey() + finalI)
                                                    .collect(Collectors.joining(" & ")))
                                     .append(") | (");
@@ -69,10 +71,10 @@ public class KripkeTruthTable {
             }
 
             formula.setLength(formula.length() - 3);
-            formula.append(" &\n(");
+            formula.append(") &\n");
         }
 
-        formula.setLength(formula.length() - 4);
+        formula.setLength(formula.length() - 3);
 
         return formula.toString();
     }
