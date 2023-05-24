@@ -63,6 +63,7 @@ function Solver() {
             </div>
             <br/><br/>
             <textarea rows={10} cols={80} id="formula_eval_result" placeholder="result" readOnly/>
+            {hidden ? <textarea className="element_margin_top" rows={10} cols={80} id="truth_table" placeholder="truth table" readOnly/> : null}
             {!hidden ? <textarea className="element_margin_top" rows={10} cols={80} id="solver_steps" placeholder="CTL solver steps" readOnly/> : null}
         </div>
     );
@@ -116,7 +117,9 @@ function LeftRightButtons() {
                 <InputGenerator text="" id="steps" placeholder="steps" defaultVal="3" spacing={0}/>
             </div>
             <div id="compact_form_container">
-                <input type="checkbox" id="compact_form" defaultChecked />
+                <input type="checkbox" id="compact_form" defaultChecked onChange={() => {
+                        getElementById("truth_table").style.visibility = getElementById("compact_form").checked ? "visible" : "hidden";
+                }}/>
                 <span className="element_margin_left">Compact</span>
             </div>
             <button onClick={handleKripke2Solver}>←</button>
@@ -306,12 +309,12 @@ const handleKripke2Solver = () => {
     let url = "http://localhost:4000/";
     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
     const isCTLSelected = dropdown.options[dropdown.selectedIndex].value === "ctl";
-    const requestCompactFormula = getElementById("compact_form").checked;
+    const compactFormulaRequested = getElementById("compact_form").checked;
 
     if(isCTLSelected) {
         url += "kripkeString2ModelString/" + kripke;
     } else {
-        if(requestCompactFormula) {
+        if(compactFormulaRequested) {
             url += "kripke2CompactFormula/" + kripke + "/" + steps; 
         } else {
             url += "kripke2formula/" + kripke + "/" + steps;
@@ -320,12 +323,19 @@ const handleKripke2Solver = () => {
 
     fetch(url)
         .then(response => response.json())
-        .then(data => getResultFromJSON(data))
         .then(data => {
-            if(isCTLSelected) getElementById("model").value = data
-                .replace(/_/g, ";")
-                .replace(/[+]/g, "\n");
-            else getElementById("formula").value = data;
+            if(isCTLSelected) {
+                getElementById("model").value = getResultFromJSON(data)
+                    .replace(/_/g, ";")
+                    .replace(/[+]/g, "\n");
+            } else {
+                getElementById("formula").value = getResultFromJSON(data);
+                if(compactFormulaRequested) {
+                    delete data['result'];
+                    getElementById("truth_table").value = getArbitraryValueFromJSON(data, 'truth-table')
+                        .replace(/[+]/g, "\n");
+                }
+            }
         })
 }
 

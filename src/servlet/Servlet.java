@@ -11,6 +11,7 @@ import rest.GET;
 import rest.REST;
 import temporal.solver.CTLSolver;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,9 +65,11 @@ public class Servlet {
     @GET("/kripke2CompactFormula/:kripke/:steps")
     public String kripke2CompactFormula(String kripke, String steps) {
         String rawKripke = kripke.replace(",", ";");
-        return resultToJSON(Map.of("result", new KripkeTruthTable(KripkeStructure.fromString(rawKripke))
-                                                            .toFormulaString(Integer.parseInt(steps))
+        KripkeTruthTable tt = new KripkeTruthTable(KripkeStructure.fromString(rawKripke));
+        Map<String, String> results = new HashMap<>(Map.of("result", tt.toFormulaString(Integer.parseInt(steps))
                                                             .replaceAll("\n", " ")));
+        results.put("truth-table", tt.toString().replaceAll("\n", "+"));
+        return resultToJSON(results);
     }
 
     @GET("/kripkeString2ModelString/:kripkeString")
