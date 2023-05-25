@@ -35,7 +35,8 @@ function Solver() {
                         setHidden(true);
                         getElementById("check_button").innerText = "Check formula";
                         getElementById("steps").style.visibility = "visible";
-                        getElementById("compact_form_container").style.visibility = "visible";   
+                        getElementById("compact_form_container").style.visibility = "visible";
+                        getElementById("compact_form_cb").checked = true;   
                     }
                 }}>
                     <option value="bool">Boolean algebra</option>
@@ -117,8 +118,8 @@ function LeftRightButtons() {
                 <InputGenerator text="" id="steps" placeholder="steps" defaultVal="3" spacing={0}/>
             </div>
             <div id="compact_form_container">
-                <input type="checkbox" id="compact_form" defaultChecked onChange={() => {
-                        getElementById("truth_table").style.visibility = getElementById("compact_form").checked ? "visible" : "hidden";
+                <input type="checkbox" id="compact_form_cb" defaultChecked onChange={() => {
+                        getElementById("truth_table").style.visibility = getElementById("compact_form_cb").checked ? "visible" : "hidden";
                 }}/>
                 <span className="element_margin_left">Compact</span>
             </div>
@@ -309,12 +310,12 @@ const handleKripke2Solver = () => {
     let url = "http://localhost:4000/";
     var dropdown = getElementById("dropdown") as unknown as HTMLSelectElement;
     const isCTLSelected = dropdown.options[dropdown.selectedIndex].value === "ctl";
-    const compactFormulaRequested = getElementById("compact_form").checked;
+    const isCompactFormSelected = getElementById("compact_form_cb").checked;
 
     if(isCTLSelected) {
         url += "kripkeString2ModelString/" + kripke;
     } else {
-        if(compactFormulaRequested) {
+        if(isCompactFormSelected) {
             url += "kripke2CompactFormula/" + kripke + "/" + steps; 
         } else {
             url += "kripke2formula/" + kripke + "/" + steps;
@@ -330,7 +331,7 @@ const handleKripke2Solver = () => {
                     .replace(/[+]/g, "\n");
             } else {
                 getElementById("formula").value = getResultFromJSON(data);
-                if(compactFormulaRequested) {
+                if(isCompactFormSelected) {
                     delete data['result'];
                     getElementById("truth_table").value = getArbitraryValueFromJSON(data, 'truth-table')
                         .replace(/[+]/g, "\n");
