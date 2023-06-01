@@ -1,13 +1,116 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+* {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #1c1c1c;
+    color: #c7c7c7;
+    border-radius: 3px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.center {
+    text-align: center;
+}
+
+.margin {
+    margin: 10px;
+}
+
+.red {
+    color: #d10a0a;
+}
+
+.textArea {
+    max-width: 99%;
+    width: 99%;
+    height: 150px;
+    margin-left: 2px;
+    margin-top: 10px;
+}
+
+.column {
+    float: left;
+    display: inline;
+    width: 48%;
+    margin-left: 20px;
+}
+
+.smallColumn {
+    float: left;
+    display: inline;
+    width: 30%;
+    margin-left: 10px;
+}
+
+.centerContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    margin-top: 20px;
+    margin-right: 15px;
+    margin-left: 15px;
+    width: 150px;
+}
+
+.select {
+    margin-top: 20px;
+    margin-right: 15px;
+    margin-left: 15px;
+    width: 150px;
+}
+
+.fieldset {
+    margin-right: 0;
+}
+
+.fieldset > input {
+    margin-right: 5px;
+}
+
+.fieldset > label {
+    margin-right: 20px;
+}
+
+.smallFieldset {
+    margin-top: -28px;
+}
+
+.smallFieldset > input {
+    margin-right: 5px;
+}
+
+.rows {
+    margin-top: 28px;
+    display: block;
+}
+
+.rows > div {
+    margin-bottom: 5px;
+}
+
+.input {
+    width: 50px;
+    margin-right: 5px;
+}
+
+.graph {
+    border-style: solid;
+    border-color: #c7c7c7;
+    margin-left: 2px;
+    margin-right: -1px;
+    display: flex;
+    justify-content: center;
+}
+
+.graph > svg {
+    max-height: 215px;
+}
+
+.parameters {
+    margin-left: 10px;
+    margin-right: -26px;
+}
+
+.model {
+    margin-left: 20px;
+    margin-right: 20px;
 }
