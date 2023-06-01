@@ -10,7 +10,7 @@ export default function AlgorithmTester() {
     return (
         <div className="rows">
             <fieldset className="smallFieldset">
-                <legend>&nbsp;Test your Algorithm&nbsp;</legend>
+                <legend>&nbsp;Test your algorithm&nbsp;</legend>
                 <div className="centerContainer">
                     <select
                         className="select"
@@ -19,7 +19,7 @@ export default function AlgorithmTester() {
                         value={algorithm}
                         onChange={(event) => setAlgorithm(event.target.value)}
                     >
-                        <option value="">Choose</option>
+                        <option className="center" value="">Choose</option>
                         <option value="isDeterministic">isDeterministic</option>
                         <option value="isComplete">isComplete</option>
                         <option value="toProductAutomaton">toProductAutomaton</option>

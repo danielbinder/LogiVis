@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 export default function ModelTypeSelector() {
-    const [modelType, setModelType] = useState("kripkeStructure")
+    const [modelType, setModelType] = useState("kripke")
 
     return (
         <div className="rows">

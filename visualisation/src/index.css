@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=JetBrains Mono");
+
 * {
     font-family: "Segoe UI", Arial, sans-serif;
     background-color: #1c1c1c;
@@ -23,6 +25,8 @@
     height: 150px;
     margin-left: 2px;
     margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
 }
 
 .column {
