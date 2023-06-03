@@ -1,21 +1,20 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {useState} from "react";
 import FormulaTypeSelection from "./FormulaTypeSelection";
 import FormulaButtonArray from "./FormulaButtonArray";
 
-export default function Solver() {
-    const [formula, setFormula] = useState("")
+export default function Solver({formula, setFormula, solutionInfo, setSolutionInfo, model}) {
+    const [formulaType, setFormulaType] = useState("boolean")
     const [solution, setSolution] = useState("")
-    const [solutionHints, setSolutionHints] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
-    function handleChange(event: { target: { value: React.SetStateAction<string>; }; }) {
-        setFormula(event.target.value)
+    function handleChange({target}) {
+        setFormula(target.value)
     }
 
     return (
         <div className="column">
             <h3 className="center">Evaluate a formula</h3>
-            <FormulaTypeSelection />
+            <FormulaTypeSelection formulaType={formulaType} setFormulaType={setFormulaType}/>
             <textarea
                 className="textArea"
                 value={formula}
@@ -23,7 +22,14 @@ export default function Solver() {
                 onChange={handleChange}
                 name="formula"
             />
-            <FormulaButtonArray />
+            <FormulaButtonArray
+                formulaType={formulaType}
+                formula={formula}
+                model={model}
+                setFormula={setFormula}
+                setSolution={setSolution}
+                setSolutionInfo={setSolutionInfo}
+            />
             <p className="red">
                 {errorMessage}
             </p>
@@ -37,7 +43,7 @@ export default function Solver() {
             <textarea
                 readOnly={true}
                 className="textArea"
-                value={solutionHints}
+                value={solutionInfo}
                 placeholder="Solution information"
                 name="solutionInfo"
             />

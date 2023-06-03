@@ -6,31 +6,45 @@ import FormulaGenerator from "./FormulaGenerator";
 import ModelTypeSelector from "./ModelTypeSelector";
 import AlgorithmTester from "./AlgorithmTester";
 
-export default function Model() {
-    const [model, setModel] = useState("")
+export default function Model({setFormula, setSolutionInfo, model, setModel}) {
+    const [modelType, setModelType] = useState("kripke")
     const [graph, setGraph] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
-    function handleChange(event: { target: { value: React.SetStateAction<string>; }; }) {
-        setModel(event.target.value)
+    function handleChange({target: {value}}) {
+        setModel(value)
+    }
+
+    // whenever 'model' changes, the graph attempts to update
+    useEffect(() => {
         try {
             setGraph(kripkeString2Graph(model2Kripke(model)))
         } catch (e) {}
-    }
+    }, [model])
 
     return (
         <div className="column">
             <h3 className="center">Set parameters</h3>
             <div className="parameters">
                 <div className="smallColumn">
-                    <ModelTypeSelector/>
+                    <ModelTypeSelector
+                        modelType={modelType}
+                        setModelType={setModelType}
+                    />
                     <AlgorithmTester/>
                 </div>
                 <div className="smallColumn">
                     <FormulaGenerator/>
-                    <ModelEncoder/>
+                    <ModelEncoder
+                        setFormula={setFormula}
+                        setSolutionInfo={setSolutionInfo}
+                        model={model}
+                        model2Kripke={model2Kripke}
+                    />
                 </div>
-                <ModelGenerator/>
+                <ModelGenerator
+                    setModel={setModel}
+                />
             </div>
             <p className="red">
                 {errorMessage}
@@ -49,7 +63,7 @@ export default function Model() {
     )
 }
 
-const kripkeString2Graph = (kripke: string) => {
+const kripkeString2Graph = (kripke) => {
     let result = 'digraph {\n';
     result += 'ratio="0.5";\n';
     result += 'rankdir=LR;\n';
@@ -90,17 +104,17 @@ const kripkeString2Graph = (kripke: string) => {
     return result + "}";
 }
 
-const model2Kripke = (model: string) => {
+const model2Kripke = (model) => {
     if(!model) return "";
 
     const model_parts = model.split(";");
-    let unique_atoms: Set<string> = new Set();
-    let states_and_atoms: Map<string, string[]> = new Map();
+    let unique_atoms = new Set();
+    let states_and_atoms = new Map();
     const properties = model_parts[3].split(",");
     for(let i = 0; i < properties.length; i++) {
         const state_and_atoms = properties[i].split(":");
         const state_atoms = state_and_atoms[1].split(" ");
-        let clean_atoms: string[] = [];
+        let clean_atoms = [];
         state_atoms.forEach((s) => {
             if(s) {
                 unique_atoms.add(s);
@@ -111,19 +125,19 @@ const model2Kripke = (model: string) => {
     }
 
     const transitions = model_parts[2].split(",");
-    let states_and_transitions: Map<string, string[]> = new Map();
+    let states_and_transitions = new Map();
     for(let i = 0; i < transitions.length; i++) {
         const state_pair = transitions[i].split(":")[1].split("-");
         const from_state = state_pair[0].trim();
         const to_state = state_pair[1].trim();
-        if(!states_and_transitions.has(from_state)) states_and_transitions.set(from_state, [] as string[]);
+        if(!states_and_transitions.has(from_state)) states_and_transitions.set(from_state, []);
         if(!states_and_transitions.get(from_state)?.includes(to_state)) {
             states_and_transitions.get(from_state)?.push(to_state);
         }
     }
 
     const initial_states_parts = model_parts[1].split(":");
-    let initial_states: Set<string> = new Set();
+    let initial_states = new Set();
     if(initial_states_parts[1].trim()) {
         let init_states = initial_states_parts[1].trim().split(",");
         init_states.forEach((s) => {
@@ -152,7 +166,7 @@ const model2Kripke = (model: string) => {
         else result += "false";
         result += ";";
         if(states_and_transitions.has(state)) {
-            const successors = states_and_transitions.get(state) as string[];
+            const successors = states_and_transitions.get(state);
             let succ_cnt = successors?.length;
             for(let successor of successors) {
                 result += successor;
@@ -167,7 +181,7 @@ const model2Kripke = (model: string) => {
     return result;
 }
 
-const generatorPlaceholder: string =
+const generatorPlaceholder =
     "Example model:\n"
     + "s1, s2;          # model has 3 states S={s1, s2, s3}\n"
     + "initial: s1;     # model has 1 initial state I = {s1}\n"

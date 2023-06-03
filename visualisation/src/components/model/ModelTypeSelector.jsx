@@ -1,8 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 
-export default function ModelTypeSelector() {
-    const [modelType, setModelType] = useState("kripke")
-
+export default function ModelTypeSelector({modelType, setModelType}) {
     return (
         <div className="rows">
             <fieldset className="smallFieldset">

@@ -1,14 +1,12 @@
 import React, {useState} from "react";
 
-export default function ModelEncoder() {
+export default function ModelEncoder({setFormula, setSolutionInfo, model, model2Kripke}) {
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         compact: true
     })
 
-    function handleChange(event: { target: { name: string; value: string; type: string; checked: boolean; }; }) {
-        const {name, value, type, checked} = event.target
-
+    function handleChange({target: {name, value, type, checked}}) {
         setGenerationParameters(
             prevGenerationParameters => ({
                 ...prevGenerationParameters,
@@ -18,7 +16,16 @@ export default function ModelEncoder() {
     }
 
     function handleButtonClick() {
-
+        fetch('http://localhost:4000/kripke2' + (generationParameters.compact ? 'CompactF' : 'f') + 'ormula/' +
+            model2Kripke(model).replaceAll(';', ',') + '/' + generationParameters.steps)
+            .then(response => response.json())
+            .then(data => {
+                setFormula(getResultFromJSON(data))
+                if(generationParameters.compact) {
+                    delete data['result']
+                    setSolutionInfo(data['truth-table'].replace(/[+]/g, "\n"))
+                }
+            })
     }
 
     return (
@@ -55,3 +62,5 @@ export default function ModelEncoder() {
         </div>
     )
 }
+
+const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
