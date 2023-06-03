@@ -1,8 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 
-export default function FormulaTypeSelection() {
-    const [formulaType, setFormulaType] = useState("boolean")
-
+export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
     return (
         <fieldset className="fieldset">
             <legend>&nbsp;Choose a formula type&nbsp;</legend>

@@ -5,9 +5,7 @@ export default function FormulaGenerator() {
         variables: 3,
     })
 
-    function handleChange(event: { target: { name: string; value: string; type: string; checked: boolean; }; }) {
-        const {name, value, type, checked} = event.target
-
+    function handleChange({target: {name, value, type, checked}}) {
         setGenerationParameters(
             prevGenerationParameters => ({
                 ...prevGenerationParameters,

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export default function ModelGenerator() {
+export default function ModelGenerator({setModel}) {
     const [generationParameters, setGenerationParameters] = useState({
             nodes: 4,
             variables: 3,
@@ -11,9 +11,7 @@ export default function ModelGenerator() {
         }
     )
 
-    function handleChange(event: { target: { name: string; value: string; type: string; checked: boolean; }; }) {
-        const {name, value, type, checked} = event.target
-
+    function handleChange({target: {name, value, type, checked}}) {
         setGenerationParameters(
             prevGenerationParameters => ({
                     ...prevGenerationParameters,
@@ -23,7 +21,22 @@ export default function ModelGenerator() {
     }
 
     function handleButtonClick() {
-
+        fetch('http://localhost:4000/generate/' +
+            generationParameters.nodes + '_' +
+            generationParameters.initialNodes + '_' +
+            generationParameters.variables + '_' +
+            generationParameters.minSuccessors + '_' +
+            generationParameters.maxSuccessors + '_' +
+            generationParameters.allReachable)
+            .then(response => response.json())
+            .then(data => getResultFromJSON(data).replaceAll(';', ','))
+            .then(data => {
+                fetch('http://localhost:4000/kripkeString2ModelString/' + data)
+                    .then(response => response.json())
+                    .then(data => setModel(getResultFromJSON(data)
+                        .replace(/_/g, ";")
+                        .replace(/[+]/g, "\n")))
+            })
     }
 
     return (
@@ -110,3 +123,5 @@ export default function ModelGenerator() {
         </div>
     )
 }
+
+const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`

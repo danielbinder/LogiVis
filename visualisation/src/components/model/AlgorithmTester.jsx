@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 export default function AlgorithmTester() {
-    const [algorithm, setAlgorithm] = React.useState("")
+    const [algorithm, setAlgorithm] = useState("")
 
     function handleButtonClick() {
 
