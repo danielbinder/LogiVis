@@ -2,8 +2,7 @@ import React, {useState} from "react";
 import FormulaTypeSelection from "./FormulaTypeSelection";
 import FormulaButtonArray from "./FormulaButtonArray";
 
-export default function Solver({formula, setFormula, solutionInfo, setSolutionInfo, model}) {
-    const [formulaType, setFormulaType] = useState("boolean")
+export default function Solver({formulaType, setFormulaType, formula, setFormula, solutionInfo, setSolutionInfo, model}) {
     const [solution, setSolution] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
