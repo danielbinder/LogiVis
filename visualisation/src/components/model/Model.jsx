@@ -24,7 +24,7 @@ export default function Model({setFormulaType, setFormula, setSolutionInfo, mode
 
     return (
         <div className="column">
-            <h3 className="center">Set parameters</h3>
+            <h3 className="center">Tune and apply parameters</h3>
             <div className="parameters">
                 <div className="smallColumn">
                     <ModelTypeSelector
