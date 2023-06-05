@@ -31,7 +31,10 @@ export default function AlgorithmTester() {
                     </select>
                 </div>
                 <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>Test algorithm</button>
+                    <button className="button" onClick={handleButtonClick}>Apply algorithm here</button>
+                </div>
+                <div className="centerContainer">
+                    <button className="button" onClick={handleButtonClick}>Test your algorithm</button>
                 </div>
             </fieldset>
         </div>
