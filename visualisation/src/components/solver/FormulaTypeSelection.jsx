@@ -13,6 +13,15 @@ export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
                 onChange={() => setFormulaType("boolean")}
             />
             <label htmlFor="boolean">Boolean Algebra</label>
+            <input 
+                type="radio"
+                id="qbf"
+                name="formulaTypeSelection"
+                value="qbf"
+                checked={formulaType === "qbf"}
+                onChange={() => setFormulaType("qbf")}
+            />
+            <label htmlFor="qbf">QBF</label>
             <input
                 type="radio"
                 id="ctl"
@@ -21,7 +30,7 @@ export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
                 checked={formulaType === "ctl"}
                 onChange={() => setFormulaType("ctl")}
             />
-            <label htmlFor="ctl">CTL Expression</label>
+            <label htmlFor="ctl">CTL</label>
             <input
                 type="radio"
                 id="regex"
@@ -40,15 +49,6 @@ export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
                 onChange={() => setFormulaType("process")}
             />
             <label htmlFor="process">Process Algebra</label>
-            <input 
-                type="radio"
-                id="qbf"
-                name="formulaTypeSelection"
-                value="qbf"
-                checked={formulaType === "qbf"}
-                onChange={() => setFormulaType("qbf")}
-            />
-            <label htmlFor="qbf">QBF</label>
         </fieldset>
     )
 }
