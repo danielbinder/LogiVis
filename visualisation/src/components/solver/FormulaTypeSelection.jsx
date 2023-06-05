@@ -40,6 +40,15 @@ export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
                 onChange={() => setFormulaType("process")}
             />
             <label htmlFor="process">Process Algebra</label>
+            <input 
+                type="radio"
+                id="qbf"
+                name="formulaTypeSelection"
+                value="qbf"
+                checked={formulaType === "qbf"}
+                onChange={() => setFormulaType("qbf")}
+            />
+            <label htmlFor="qbf">QBF</label>
         </fieldset>
     )
 }
