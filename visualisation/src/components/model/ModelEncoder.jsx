@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export default function ModelEncoder({setFormulaType, setFormula, setSolutionInfo, model, model2Kripke}) {
+export default function ModelEncoder({setFormulaType, setFormula, setSolutionInfo, kripke}) {
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         compact: true
@@ -17,7 +17,7 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolutionInf
 
     function handleButtonClick() {
         fetch('http://localhost:4000/kripke2' + (generationParameters.compact ? 'CompactF' : 'f') + 'ormula/' +
-            model2Kripke(model).replaceAll(';', ',') + '/' + generationParameters.steps)
+            kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
             .then(response => response.json())
             .then(data => {
                 setFormulaType('boolean')

@@ -39,8 +39,7 @@ export default function Model({setFormulaType, setFormula, setSolutionInfo, mode
                         setFormulaType={setFormulaType}
                         setFormula={setFormula}
                         setSolutionInfo={setSolutionInfo}
-                        model={model}
-                        model2Kripke={model2Kripke}
+                        kripke={() => model2Kripke(model)}
                     />
                 </div>
                 <ModelGenerator
