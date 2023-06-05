@@ -74,31 +74,33 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
 
         for(int i = 0; i < steps; i++) {
             for(KripkeNode n : this) {
-                formula.append(" &\n ((");
+                if(n.successors.size() > 0) {
+                    formula.append(" &\n ((");
 
-                for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
-                    formula.append(e.getValue() ? "" : "!")
-                            .append(e.getKey())
-                            .append(i)
-                            .append(" & ");
-                }
-
-                formula.append("true) -> (false ");
-
-                for(KripkeNode succ : n.successors) {
-                    formula.append("| (");
-
-                    for(Map.Entry<String, Boolean> e : succ.stateMap.entrySet()) {
+                    for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
                         formula.append(e.getValue() ? "" : "!")
                                 .append(e.getKey())
-                                .append(i + 1)
+                                .append(i)
                                 .append(" & ");
                     }
 
-                    formula.append("true) ");
-                }
+                    formula.append("true) -> (false ");
 
-                formula.append("))");
+                    for(KripkeNode succ : n.successors) {
+                        formula.append("| (");
+
+                        for(Map.Entry<String, Boolean> e : succ.stateMap.entrySet()) {
+                            formula.append(e.getValue() ? "" : "!")
+                                    .append(e.getKey())
+                                    .append(i + 1)
+                                    .append(" & ");
+                        }
+
+                        formula.append("true) ");
+                    }
+
+                    formula.append("))");
+                }
             }
         }
 
