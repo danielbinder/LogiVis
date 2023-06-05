@@ -98,6 +98,7 @@ const kripkeString2Graph = (kripke) => {
         });
 
         result += `  ${nodeName} [label="${assignments}" fontcolor="#c7c7c7"];\n`;
+        // shape=doublecircle for final nodes
         result += `  ${nodeName} [shape=circle];\n`;
         result += `  ${nodeName} [color="#c7c7c7"];\n`;
     }
