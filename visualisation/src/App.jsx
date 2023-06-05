@@ -20,6 +20,7 @@ export default function App() {
                 model={model}
             />
             <Model
+                formulaType={formulaType}
                 setFormulaType={setFormulaType}
                 setFormula={setFormula}
                 setSolutionInfo={setSolutionInfo}

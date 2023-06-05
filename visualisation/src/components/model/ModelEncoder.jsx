@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export default function ModelEncoder({setFormulaType, setFormula, setSolutionInfo, kripke}) {
+export default function ModelEncoder({formulaType, setFormulaType, setFormula, setSolutionInfo, kripke}) {
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         compact: true
@@ -20,7 +20,10 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolutionInf
             kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
             .then(response => response.json())
             .then(data => {
-                setFormulaType('boolean')
+                if(formulaType !== 'qbf') {
+                    setFormulaType('boolean')
+                }
+
                 setFormula(getResultFromJSON(data))
                 if(generationParameters.compact) {
                     delete data['result']
@@ -46,15 +49,17 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolutionInf
                         />
                         <label htmlFor="steps">Steps</label>
                     </div>
-                    <input
-                        className="input"
-                        type="checkbox"
-                        id="compact"
-                        name="compact"
-                        checked={generationParameters.compact}
-                        onChange={handleChange}
-                    />
-                    <label htmlFor="compact">Compact</label>
+                    {formulaType !== 'qbf' && <div>
+                        <input
+                            className="input"
+                            type="checkbox"
+                            id="compact"
+                            name="compact"
+                            checked={generationParameters.compact}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="compact">Compact</label>
+                    </div>}
                 </div>
                 <div className="centerContainer">
                     <button className="button" onClick={handleButtonClick}>Encode model</button>
