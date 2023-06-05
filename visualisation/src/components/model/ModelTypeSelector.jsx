@@ -19,6 +19,17 @@ export default function ModelTypeSelector({modelType, setModelType}) {
                 <div>
                     <input
                         type="radio"
+                        id="buchi"
+                        name="modelTypeSelection"
+                        value="buchi"
+                        checked={modelType === "buchi"}
+                        onChange={() => setModelType("buchi")}
+                    />
+                    <label htmlFor="buchi">Büchi Automaton</label>
+                </div>
+                <div>
+                    <input
+                        type="radio"
                         id="mealy"
                         name="modelTypeSelection"
                         value="mealy"
