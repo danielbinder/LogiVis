@@ -183,9 +183,9 @@ const model2Kripke = (model) => {
 
 const generatorPlaceholder =
     "Example model:\n"
-    + "s1, s2;          # model has 3 states S={s1, s2, s3}\n"
-    + "initial: s1;     # model has 1 initial state I = {s1}\n"
+    + "s1, s2;          # model has two states S={s1, s2}\n"
+    + "initial: s1;     # model has one initial state I = {s1}\n"
     + "t1: s1 - s2,\n"
-    + "t2: s1 - s1;     # model has 3 transitions T={t1, t2}\n"
+    + "t2: s1 - s1;     # model has two transitions T={t1, t2}\n"
     + "s1: ,            # state s1 has no properties (i.e., {}) \n"
-    + "s2: p q;        # state s2 has property p and q\n"
+    + "s2: p q;         # state s2 has property p and q\n"
