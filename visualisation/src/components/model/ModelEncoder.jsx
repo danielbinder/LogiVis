@@ -89,7 +89,7 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolution, s
                             checked={generationParameters.encodingType === "compactQBF"}
                             onChange={handleChange}
                         />
-                        <label htmlFor="compactQBF">Compact QBF</label>
+                        <label htmlFor="compactQBF">Limboole QBF</label>
                     </div>
                 </div>
                 <div className="centerContainer">
