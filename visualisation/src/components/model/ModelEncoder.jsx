@@ -42,7 +42,7 @@ export default function ModelEncoder({setFormulaType, setFormula,
                     setFormulaType('boolean')
                     setFormula(getResultFromJSON(data))
                 } else {    // encodingType === 'compactQBF'
-                    setSolution(getResultFromJSON(data))
+                    setSolution(getResultFromJSON(data).replace(/[+]/g, "\n"))
                     setEvalStatusMessage(generateLimbooleLink(data))
                 }
 
@@ -120,4 +120,4 @@ export default function ModelEncoder({setFormulaType, setFormula,
 const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
 
 const generateLimbooleLink = (data) =>
-    <a href={"https://maximaximal.github.io/limboole/#2" + data}>Check in Limboole</a>
+    <a href={"https://maximaximal.github.io/limboole/#2" + getResultFromJSON(data).replace(/[+]/g, "\n")}>Check in Limboole</a>
