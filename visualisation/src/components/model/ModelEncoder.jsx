@@ -40,7 +40,7 @@ export default function ModelEncoder({setSolution, setSolutionInfo, kripke}) {
             <fieldset className="smallFieldset">
                 <legend>&nbsp;Encode a model&nbsp;</legend>
                 <div>
-                    <div>
+                    <div className="bottomSpace">
                         <input
                             className="input"
                             type="text"
