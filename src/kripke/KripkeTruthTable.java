@@ -61,11 +61,11 @@ public class KripkeTruthTable {
                     }
 
                     if(noAssignment) {
-                        formula.setLength(formula.length() - 9 - stateLiteral.length());
-                        formula.append(" (!")
+                        formula.setLength(formula.length() - 7 - stateLiteral.length());
+                        formula.append("!")
                                 .append(literal)
                                 .append(i + 1)
-                                .append(") & ");
+                                .append(" & ");
                     } else {
                         formula.setLength(formula.length() - 4);
                         formula.append(")) & ");
@@ -77,7 +77,7 @@ public class KripkeTruthTable {
             }
 
             formula.setLength(formula.length() - 3);
-            formula.append(") &\n");
+            formula.append(")) &\n");
         }
 
         formula.setLength(formula.length() - 3);
