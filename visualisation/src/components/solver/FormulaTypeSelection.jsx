@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
+export default function FormulaTypeSelection({formulaType, setFormulaType }) {
     return (
         <fieldset className="fieldset">
             <legend>&nbsp;Choose a formula type&nbsp;</legend>
