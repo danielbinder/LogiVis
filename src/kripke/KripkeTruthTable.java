@@ -34,55 +34,21 @@ public class KripkeTruthTable {
     }
 
     public String toFormulaString(int steps) {
-        StringBuilder formula = new StringBuilder();
-
-        for(int i = 0; i < steps; i++) {
-            formula.append("(");
-
-            for(int futureAss = 0; futureAss < maxSuccessors; futureAss++) {
-                formula.append("(");
-
-                for(String literal : literals) {
-                    String stateLiteral = literal + (i + 1);
-                    formula.append("(")
-                            .append(stateLiteral)
-                            .append(" <-> ((");
-
-                    boolean noAssignment = true;
-                    for(Map<String, Boolean> currAss : table.keySet()) {
-                        if(table.get(currAss).get(futureAss).get(literal)) {
-                            noAssignment = false;
-                            int finalI = i;
-                            formula.append(currAss.entrySet().stream()
-                                                   .map(e -> (e.getValue() ? "" : "!") + e.getKey() + finalI)
-                                                   .collect(Collectors.joining(" & ")))
-                                    .append(") | (");
-                        }
-                    }
-
-                    if(noAssignment) {
-                        formula.setLength(formula.length() - 7 - stateLiteral.length());
-                        formula.append("!")
-                                .append(literal)
-                                .append(i + 1)
-                                .append(" & ");
-                    } else {
-                        formula.setLength(formula.length() - 4);
-                        formula.append(")) & ");
-                    }
-                }
-
-                formula.setLength(formula.length() - 3);
-                formula.append(") |\n");
-            }
-
-            formula.setLength(formula.length() - 3);
-            formula.append(")) &\n");
-        }
-
-        formula.setLength(formula.length() - 3);
-
-        return formula.toString();
+        return IntStream.range(0, steps)
+                .mapToObj(i -> IntStream.range(0, maxSuccessors)
+                        .mapToObj(futureAss -> literals.stream()
+                                // if contains any assignments
+                                .map(literal -> table.keySet().stream().anyMatch(currAss -> table.get(currAss).get(futureAss).get(literal)) ?
+                                        "(" + literal + (i + 1) + " <-> " + table.keySet().stream()
+                                                .filter(currAss -> table.get(currAss).get(futureAss).get(literal))
+                                                .map(currAss -> currAss.entrySet().stream()
+                                                        .map(e -> (e.getValue() ? "" : "!") + e.getKey() + i)
+                                                        .collect(Collectors.joining(" & ", "(", ")")))
+                                                .collect(Collectors.joining(" | ", "(", ")")) + ")" :
+                                        "!" + literal + (i + 1))
+                                .collect(Collectors.joining(" & ", "(", ")")))
+                        .collect(Collectors.joining(" | ", "(", ")")))
+                .collect(Collectors.joining(" & ", "(", ")"));
     }
 
     public String toQBFString(int steps) {
