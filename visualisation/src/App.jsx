@@ -5,6 +5,8 @@ import Model from "./components/model/Model";
 export default function App() {
     const [formulaType, setFormulaType] = useState("boolean")
     const [formula, setFormula] = useState("")
+    const [evalStatusMessage, setEvalStatusMessage] = useState("")
+    const [modelStatusMessage, setModelStatusMessage] = useState("")
     const [solution, setSolution] = useState("")
     const [solutionInfo, setSolutionInfo] = useState("")
     const [model, setModel] = useState("")
@@ -16,6 +18,7 @@ export default function App() {
                 setFormulaType={setFormulaType}
                 formula={formula}
                 setFormula={setFormula}
+                evalStatusMessage={evalStatusMessage}
                 solution={solution}
                 setSolution={setSolution}
                 solutionInfo={solutionInfo}
@@ -25,8 +28,10 @@ export default function App() {
             <Model
                 setFormulaType={setFormulaType}
                 setFormula={setFormula}
+                setEvalStatusMessage={setEvalStatusMessage}
                 setSolution={setSolution}
                 setSolutionInfo={setSolutionInfo}
+                modelStatusMessage={modelStatusMessage}
                 model={model}
                 setModel={setModel}
             />

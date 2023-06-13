@@ -4,10 +4,10 @@ import FormulaButtonArray from "./FormulaButtonArray";
 
 export default function Solver({formulaType, setFormulaType,
                                    formula, setFormula,
+                                   evalStatusMessage,
                                    solution, setSolution,
                                    solutionInfo, setSolutionInfo,
                                    model}) {
-    const [errorMessage, setErrorMessage] = useState("")
 
     function handleChange({target}) {
         setFormula(target.value)
@@ -33,7 +33,7 @@ export default function Solver({formulaType, setFormulaType,
                 setSolutionInfo={setSolutionInfo}
             />
             <p className="red">
-                {errorMessage}
+                {evalStatusMessage}
             </p>
             <textarea
                 readOnly={true}

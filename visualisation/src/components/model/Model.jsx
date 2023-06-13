@@ -6,10 +6,13 @@ import FormulaGenerator from "./FormulaGenerator";
 import ModelTypeSelector from "./ModelTypeSelector";
 import AlgorithmTester from "./AlgorithmTester";
 
-export default function Model({setFormulaType, setFormula, setSolution, setSolutionInfo, model, setModel}) {
+export default function Model({setFormulaType, setFormula,
+                                  setEvalStatusMessage,
+                                  setSolution, setSolutionInfo,
+                                  modelStatusMessage,
+                                  model, setModel}) {
     const [modelType, setModelType] = useState("kripke")
     const [graph, setGraph] = useState("")
-    const [errorMessage, setErrorMessage] = useState("")
 
     function handleChange({target: {value}}) {
         setModel(value)
@@ -38,6 +41,7 @@ export default function Model({setFormulaType, setFormula, setSolution, setSolut
                     <ModelEncoder
                         setFormulaType={setFormulaType}
                         setFormula={setFormula}
+                        setEvalStatusMessage={setEvalStatusMessage}
                         setSolution={setSolution}
                         setSolutionInfo={setSolutionInfo}
                         kripke={() => model2Kripke(model)}
@@ -48,7 +52,7 @@ export default function Model({setFormulaType, setFormula, setSolution, setSolut
                 />
             </div>
             <p className="red">
-                {errorMessage}
+                {modelStatusMessage}
             </p>
             <div className="model">
                 <textarea
