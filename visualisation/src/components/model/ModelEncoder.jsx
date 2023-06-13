@@ -64,7 +64,8 @@ export default function ModelEncoder({setFormulaType, setFormula,
                     <div className="bottomSpace">
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="1"
                             id="steps"
                             name="steps"
                             placeholder="Steps"

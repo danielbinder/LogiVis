@@ -37,7 +37,8 @@ export default function FormulaGenerator() {
                 <div>
                     <input
                         className="input"
-                        type="text"
+                        type="number"
+                        min="1"
                         id="variables"
                         name="variables"
                         placeholder="Variables"
@@ -49,7 +50,8 @@ export default function FormulaGenerator() {
                 <div>
                     <input
                         className="input"
-                        type="text"
+                        type="number"
+                        min="1"
                         id="operators"
                         name="operators"
                         placeholder="Operators"

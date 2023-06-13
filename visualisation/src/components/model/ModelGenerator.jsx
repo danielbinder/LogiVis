@@ -64,7 +64,8 @@ export default function ModelGenerator({setModel}) {
                     <div>
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="1"
                             id="nodes"
                             name="nodes"
                             placeholder="Nodes"
@@ -76,7 +77,8 @@ export default function ModelGenerator({setModel}) {
                     <div>
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="1"
                             id="variables"
                             name="variables"
                             placeholder="Variables"
@@ -88,7 +90,8 @@ export default function ModelGenerator({setModel}) {
                     <div>
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="0"
                             id="minSuccessors"
                             name="minSuccessors"
                             placeholder="Min. Successors"
@@ -100,7 +103,8 @@ export default function ModelGenerator({setModel}) {
                     <div>
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="0"
                             id="maxSuccessors"
                             name="maxSuccessors"
                             placeholder="Max. Successors"
@@ -112,7 +116,8 @@ export default function ModelGenerator({setModel}) {
                     <div>
                         <input
                             className="input"
-                            type="text"
+                            type="number"
+                            min="0"
                             id="initialNodes"
                             name="initialNodes"
                             placeholder="Initial Nodes"
