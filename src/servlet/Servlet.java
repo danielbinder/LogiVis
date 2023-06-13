@@ -72,6 +72,16 @@ public class Servlet {
         return resultToJSON(results);
     }
 
+    @GET("/kripke2compactQBFFormula/:kripke/:steps")
+    public String kripke2QBFFormula(String kripke, String steps) {
+        String rawKripke = kripke.replace(",", ";");
+        KripkeTruthTable tt = new KripkeTruthTable(KripkeStructure.fromString(rawKripke));
+        Map<String, String> results = new HashMap<>(Map.of("result", tt.toQBFString(Integer.parseInt(steps))
+                                                            .replaceAll("\n", "+")));
+        results.put("truth-table", tt.toString().replaceAll("\n", "+"));
+        return resultToJSON(results);
+    }
+
     @GET("/kripkeString2ModelString/:kripkeString")
     public String kripkeString2ModelString(String kripkeString) {
         return resultToJSON(Map.of("result", KripkeStructure
