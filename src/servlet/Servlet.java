@@ -62,7 +62,7 @@ public class Servlet {
                                                             .replaceAll("\n", " ")));
     }
 
-    @GET("/kripke2CompactFormula/:kripke/:steps")
+    @GET("/kripke2compactFormula/:kripke/:steps")
     public String kripke2CompactFormula(String kripke, String steps) {
         String rawKripke = kripke.replace(",", ";");
         KripkeTruthTable tt = new KripkeTruthTable(KripkeStructure.fromString(rawKripke));

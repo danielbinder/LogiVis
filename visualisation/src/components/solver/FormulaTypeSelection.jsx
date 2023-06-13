@@ -13,15 +13,6 @@ export default function FormulaTypeSelection({ formulaType, setFormulaType }) {
                 onChange={() => setFormulaType("boolean")}
             />
             <label htmlFor="boolean">Boolean Algebra</label>
-            <input 
-                type="radio"
-                id="qbf"
-                name="formulaTypeSelection"
-                value="qbf"
-                checked={formulaType === "qbf"}
-                onChange={() => setFormulaType("qbf")}
-            />
-            <label htmlFor="qbf">QBF</label>
             <input
                 type="radio"
                 id="ctl"

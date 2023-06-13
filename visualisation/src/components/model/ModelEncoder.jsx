@@ -1,10 +1,16 @@
 import React, {useState} from "react";
 
-export default function ModelEncoder({formulaType, setFormulaType, setFormula, setSolutionInfo, kripke}) {
+export default function ModelEncoder({setSolution, setSolutionInfo, kripke}) {
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
-        compact: true
+        encodingType: 'compact'
     })
+
+    const urls = new Map([
+        ['naive', 'http://localhost:4000/kripke2formula/'],
+        ['compact', 'http://localhost:4000/kripke2compactFormula/'],
+        ['compactQBF', 'http://localhost:4000/kripke2compactQBFFormula/']
+    ])
 
     function handleChange({target: {name, value, type, checked}}) {
         setGenerationParameters(
@@ -16,16 +22,13 @@ export default function ModelEncoder({formulaType, setFormulaType, setFormula, s
     }
 
     function handleButtonClick() {
-        fetch('http://localhost:4000/kripke2' + (generationParameters.compact ? 'CompactF' : 'f') + 'ormula/' +
+        fetch(urls.get(generationParameters.encodingType) +
             kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
             .then(response => response.json())
             .then(data => {
-                if(formulaType !== 'qbf') {
-                    setFormulaType('boolean')
-                }
-
-                setFormula(getResultFromJSON(data))
-                if(generationParameters.compact) {
+                setSolution(getResultFromJSON(data))
+                if(generationParameters.encodingType === "compact" ||
+                    generationParameters.encodingType === "compactQBF") {
                     delete data['result']
                     setSolutionInfo(data['truth-table'].replace(/[+]/g, "\n"))
                 }
@@ -49,17 +52,39 @@ export default function ModelEncoder({formulaType, setFormulaType, setFormula, s
                         />
                         <label htmlFor="steps">Steps</label>
                     </div>
-                    {formulaType !== 'qbf' && <div>
+                    <div>
                         <input
-                            className="input"
-                            type="checkbox"
+                            type="radio"
+                            id="naive"
+                            name="encodingType"
+                            value="naive"
+                            checked={generationParameters.encodingType === "naive"}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="naive">Naive</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
                             id="compact"
-                            name="compact"
-                            checked={generationParameters.compact}
+                            name="encodingType"
+                            value="compact"
+                            checked={generationParameters.encodingType === "compact"}
                             onChange={handleChange}
                         />
                         <label htmlFor="compact">Compact</label>
-                    </div>}
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="compactQBF"
+                            name="encodingType"
+                            value="compactQBF"
+                            checked={generationParameters.encodingType === "compactQBF"}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="compactQBF">Compact QBF</label>
+                    </div>
                 </div>
                 <div className="centerContainer">
                     <button className="button" onClick={handleButtonClick}>Encode model</button>
