@@ -146,7 +146,7 @@
     height: 8px;
     border-radius: 50%;
     border: 3px solid;
-    border-color: #fff transparent #fff transparent;
+    border-color: #c7c7c7 transparent #c7c7c7 transparent;
     animation: loading 1.2s linear infinite;
 }
 
