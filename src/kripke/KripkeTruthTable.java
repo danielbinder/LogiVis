@@ -2,6 +2,7 @@ package kripke;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class KripkeTruthTable {
     /** Defines the order of literals */
@@ -42,9 +43,9 @@ public class KripkeTruthTable {
                 formula.append("(");
 
                 for(String literal : literals) {
+                    String stateLiteral = literal + (i + 1);
                     formula.append("(")
-                            .append(literal)
-                            .append(i + 1)
+                            .append(stateLiteral)
                             .append(" <-> ((");
 
                     boolean noAssignment = true;
@@ -60,8 +61,11 @@ public class KripkeTruthTable {
                     }
 
                     if(noAssignment) {
-                        formula.setLength(formula.length() - 2);
-                        formula.append("false) & ");
+                        formula.setLength(formula.length() - 9 - stateLiteral.length());
+                        formula.append(" (!")
+                                .append(literal)
+                                .append(i + 1)
+                                .append(") & ");
                     } else {
                         formula.setLength(formula.length() - 4);
                         formula.append(")) & ");
@@ -79,6 +83,54 @@ public class KripkeTruthTable {
         formula.setLength(formula.length() - 3);
 
         return formula.toString();
+    }
+
+    public String toQBFString(int steps) {
+        final StringBuilder sb = new StringBuilder();
+
+        final List<Integer> stepRange = IntStream.range(0, steps + 1).boxed().toList();
+        final TreeSet<String> universalStateLiterals = new TreeSet<>();
+        final TreeSet<String> existentialStateLiterals = new TreeSet<>();
+        stepRange.forEach(step -> literals.forEach(literal -> {
+                if(step == 0) {
+                    existentialStateLiterals.add(literal);
+                } else {
+                    existentialStateLiterals.add(literal + "n" + step);
+                }
+                universalStateLiterals.add(literal + step);
+            })
+        );
+
+        final StringBuilder quantifiedVariables = new StringBuilder();
+        // existentially quantify state variable aliases
+        existentialStateLiterals.forEach(literal -> quantifiedVariables.append("?").append(literal).append(" "));
+
+        quantifiedVariables.append("\n");
+
+        // universally quantify state variables
+        universalStateLiterals.forEach(literal -> quantifiedVariables.append("#").append(literal).append(" "));
+
+        quantifiedVariables.append("\n");
+        sb.append(quantifiedVariables);
+        sb.append("( ");
+
+        final StringBuilder aliases = new StringBuilder();
+        aliases.append("(");
+        List<String> existentialAliases = new ArrayList<>(existentialStateLiterals);
+        universalStateLiterals.forEach(literal -> aliases.append("(")
+                .append(literal)
+                .append(" <-> ")
+                .append(existentialAliases.remove(0))
+                .append(")")
+                .append(" & "));
+        aliases.setLength(aliases.length() - 3);
+        aliases.append(")");
+
+        sb.append(aliases);
+        sb.append("\n  -> \n");
+        sb.append(this.toFormulaString(steps));
+        sb.append("\n)");
+        return sb.toString();
     }
 
     @Override
