@@ -12,6 +12,8 @@ export default function App() {
     return (
         <div>
             <Solver
+                formulaType={formulaType}
+                setFormulaType={setFormulaType}
                 formula={formula}
                 setFormula={setFormula}
                 solution={solution}
