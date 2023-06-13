@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
 export default function ModelEncoder({setFormulaType, setFormula, setSolution, setSolutionInfo, kripke}) {
+    const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         encodingType: 'compact'
@@ -22,8 +23,16 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolution, s
     }
 
     function handleButtonClick() {
+        setLoading(true)
         fetch(urls.get(generationParameters.encodingType) +
             kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
+            .then(response => {
+                if(!response.ok) {
+                    setLoading(false)
+                }
+
+                return response
+            })
             .then(response => response.json())
             .then(data => {
                 if(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact') {
@@ -39,6 +48,7 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolution, s
                     setSolutionInfo(data['truth-table'].replace(/[+]/g, "\n"))
                 }
             })
+            .then(() => setLoading(false))
     }
 
     return (
@@ -93,7 +103,10 @@ export default function ModelEncoder({setFormulaType, setFormula, setSolution, s
                     </div>
                 </div>
                 <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>Encode model</button>
+                    <button className="button" onClick={handleButtonClick}>
+                        {loading && <div className="loading"></div>}
+                        Encode model
+                    </button>
                 </div>
             </fieldset>
         </div>

@@ -1,10 +1,22 @@
 import React, {useState} from "react";
 
 export default function AlgorithmTester() {
+    const [applyLoading, setApplyLoading] = useState(false)
+    const [testLoading, setTestLoading] = useState(false)
     const [algorithm, setAlgorithm] = useState("")
 
     function handleButtonClick() {
-
+        // setLoading(true)
+        // fetch('someURL')
+        //     .then(response => {
+        //         if(!response.ok) {
+        //             setLoading(false)
+        //         }
+        //
+        //         return response
+        //     })
+        //     .then()     // your code here
+        //     .then(() => setLoading(false))
     }
 
     return (
@@ -31,10 +43,16 @@ export default function AlgorithmTester() {
                     </select>
                 </div>
                 <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>Apply algorithm here</button>
+                    <button className="button" onClick={handleButtonClick}>
+                        {applyLoading && <div className="loading"></div>}
+                        Apply algorithm
+                    </button>
                 </div>
                 <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>Test your algorithm</button>
+                    <button className="button" onClick={handleButtonClick}>
+                        {testLoading && <div className="loading"></div>}
+                        Test your algorithm
+                    </button>
                 </div>
             </fieldset>
         </div>
