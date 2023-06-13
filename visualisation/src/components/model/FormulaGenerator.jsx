@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
 export default function FormulaGenerator() {
+    const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         variables: 3,
         operators: 5,
@@ -16,7 +17,17 @@ export default function FormulaGenerator() {
     }
 
     function handleButtonClick() {
-
+        // setLoading(true)
+        // fetch('someURL')
+        //     .then(response => {
+        //         if(!response.ok) {
+        //             setLoading(false)
+        //         }
+        //
+        //         return response
+        //     })
+        //     .then()     // your code here
+        //     .then(() => setLoading(false))
     }
 
     return (
@@ -48,7 +59,10 @@ export default function FormulaGenerator() {
                     <label htmlFor="operators">Operators</label>
                 </div>
                 <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>Generate formula</button>
+                    <button className="button" onClick={handleButtonClick}>
+                        {loading && <div className="loading"></div>}
+                        Generate formula
+                    </button>
                 </div>
             </fieldset>
         </div>

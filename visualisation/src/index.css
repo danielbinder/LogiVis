@@ -25,8 +25,11 @@
 }
 
 .textArea {
+    resize: vertical;
+    min-width: 99%;
     max-width: 99%;
     width: 99%;
+    min-height: 150px;
     height: 150px;
     margin-left: 2px;
     margin-top: 10px;
@@ -126,4 +129,32 @@
 
 .bottomSpace {
     margin-bottom: 3px;
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
+
+.loading:after {
+    content: " ";
+    display: flex;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 3px solid;
+    border-color: #fff transparent #fff transparent;
+    animation: loading 1.2s linear infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

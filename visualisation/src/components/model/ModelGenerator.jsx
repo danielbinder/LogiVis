@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
 export default function ModelGenerator({setModel}) {
+    const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
             nodes: 4,
             variables: 3,
@@ -21,6 +22,7 @@ export default function ModelGenerator({setModel}) {
     }
 
     function handleButtonClick() {
+        setLoading(true)
         fetch('http://localhost:4000/generate/' +
             generationParameters.nodes + '_' +
             generationParameters.initialNodes + '_' +
@@ -28,14 +30,29 @@ export default function ModelGenerator({setModel}) {
             generationParameters.minSuccessors + '_' +
             generationParameters.maxSuccessors + '_' +
             generationParameters.allReachable)
+            .then(response => {
+                if(!response.ok) {
+                    setLoading(false)
+                }
+
+                return response
+            })
             .then(response => response.json())
             .then(data => getResultFromJSON(data).replaceAll(';', ','))
             .then(data => {
                 fetch('http://localhost:4000/kripkeString2ModelString/' + data)
+                    .then(response => {
+                        if(!response.ok) {
+                            setLoading(false)
+                        }
+
+                        return response
+                    })
                     .then(response => response.json())
                     .then(data => setModel(getResultFromJSON(data)
                         .replace(/_/g, ";")
                         .replace(/[+]/g, "\n")))
+                    .then(() => setLoading(false))
             })
     }
 
@@ -116,7 +133,10 @@ export default function ModelGenerator({setModel}) {
                         <label htmlFor="allReachable">All reachable</label>
                     </div>
                     <div className="centerContainer">
-                        <button className="button" onClick={handleButtonClick}>Generate model</button>
+                        <button className="button" onClick={handleButtonClick}>
+                            {loading && <div className="loading"></div>}
+                            Generate Model
+                        </button>
                     </div>
                 </fieldset>
             </div>
