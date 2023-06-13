@@ -7,6 +7,7 @@ export default function App() {
     const [formula, setFormula] = useState("")
     const [evalStatusMessage, setEvalStatusMessage] = useState("")
     const [modelStatusMessage, setModelStatusMessage] = useState("")
+    // when using setSolution(), also set evalStatusMessage
     const [solution, setSolution] = useState("")
     const [solutionInfo, setSolutionInfo] = useState("")
     const [model, setModel] = useState("")
@@ -19,6 +20,7 @@ export default function App() {
                 formula={formula}
                 setFormula={setFormula}
                 evalStatusMessage={evalStatusMessage}
+                setEvalStatusMessage={setEvalStatusMessage}
                 solution={solution}
                 setSolution={setSolution}
                 solutionInfo={solutionInfo}

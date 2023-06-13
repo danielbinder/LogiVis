@@ -4,7 +4,7 @@ import FormulaButtonArray from "./FormulaButtonArray";
 
 export default function Solver({formulaType, setFormulaType,
                                    formula, setFormula,
-                                   evalStatusMessage,
+                                   evalStatusMessage, setEvalStatusMessage,
                                    solution, setSolution,
                                    solutionInfo, setSolutionInfo,
                                    model}) {
@@ -27,10 +27,11 @@ export default function Solver({formulaType, setFormulaType,
             <FormulaButtonArray
                 formulaType={formulaType}
                 formula={formula}
-                model={model}
                 setFormula={setFormula}
+                setEvalStatusMessage={setEvalStatusMessage}
                 setSolution={setSolution}
                 setSolutionInfo={setSolutionInfo}
+                model={model}
             />
             <p className="red">
                 {evalStatusMessage}

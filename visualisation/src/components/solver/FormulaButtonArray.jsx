@@ -1,6 +1,11 @@
 import React, {useState} from "react";
 
-export default function FormulaButtonArray({formulaType, formula, model, setFormula, setSolution, setSolutionInfo}) {
+export default function FormulaButtonArray({formulaType,
+                                               formula, setFormula,
+                                               setEvalStatusMessage,
+                                               setSolution,
+                                               setSolutionInfo,
+                                               model}) {
     const [simplifyFormulaLoading, setSimplifyFormulaLoading] = useState(false)
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
     const [allModelsLoading, setAllModelsLoading] = useState(false)
@@ -34,7 +39,10 @@ export default function FormulaButtonArray({formulaType, formula, model, setForm
             .then(response => response.json())
             .then(data => JSON.stringify(data))
             .then(data => setSolution(data))
-            .then(() => setCheckFormulaLoading(false))
+            .then(() => {
+                setEvalStatusMessage('')
+                setCheckFormulaLoading(false)
+            })
     }
 
     function handleAllModels() {
@@ -49,7 +57,10 @@ export default function FormulaButtonArray({formulaType, formula, model, setForm
             })
             .then(response => response.json())
             .then(data => setSolution(JSON.stringify(data)))
-            .then(() => setAllModelsLoading(false))
+            .then(() => {
+                setEvalStatusMessage('')
+                setAllModelsLoading(false)
+            })
     }
 
     function handleCheckModel() {
@@ -67,6 +78,7 @@ export default function FormulaButtonArray({formulaType, formula, model, setForm
                 setSolutionInfo(data['steps'].replaceAll(/_/g, "\n"))
                 delete data['steps'];
                 setSolution(JSON.stringify(data))
+                setEvalStatusMessage('')
             })
             .then(() => setCheckModelLoading(false))
     }
