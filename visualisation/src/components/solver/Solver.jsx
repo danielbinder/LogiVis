@@ -2,9 +2,11 @@ import React, {useState} from "react";
 import FormulaTypeSelection from "./FormulaTypeSelection";
 import FormulaButtonArray from "./FormulaButtonArray";
 
-export default function Solver({solution, setSolution, solutionInfo, setSolutionInfo, model}) {
-    const [formulaType, setFormulaType] = useState("boolean")
-    const [formula, setFormula] = useState("")
+export default function Solver({formulaType, setFormulaType,
+                                   formula, setFormula,
+                                   solution, setSolution,
+                                   solutionInfo, setSolutionInfo,
+                                   model}) {
     const [errorMessage, setErrorMessage] = useState("")
 
     function handleChange({target}) {

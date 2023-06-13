@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export default function ModelEncoder({setSolution, setSolutionInfo, kripke}) {
+export default function ModelEncoder({setFormulaType, setFormula, setSolution, setSolutionInfo, kripke}) {
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         encodingType: 'compact'
@@ -26,9 +26,15 @@ export default function ModelEncoder({setSolution, setSolutionInfo, kripke}) {
             kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
             .then(response => response.json())
             .then(data => {
-                setSolution(getResultFromJSON(data))
-                if(generationParameters.encodingType === "compact" ||
-                    generationParameters.encodingType === "compactQBF") {
+                if(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact') {
+                    setFormulaType('boolean')
+                    setFormula(getResultFromJSON(data))
+                } else {    // encodingType === 'compactQBF'
+                    setSolution(getResultFromJSON(data))
+                }
+
+                // Add truth table for compact and compactQBF
+                if( generationParameters.encodingType === 'compact' || generationParameters.encodingType === 'compactQBF') {
                     delete data['result']
                     setSolutionInfo(data['truth-table'].replace(/[+]/g, "\n"))
                 }

@@ -6,7 +6,7 @@ import FormulaGenerator from "./FormulaGenerator";
 import ModelTypeSelector from "./ModelTypeSelector";
 import AlgorithmTester from "./AlgorithmTester";
 
-export default function Model({setSolution, setSolutionInfo, model, setModel}) {
+export default function Model({setFormulaType, setFormula, setSolution, setSolutionInfo, model, setModel}) {
     const [modelType, setModelType] = useState("kripke")
     const [graph, setGraph] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
@@ -36,6 +36,8 @@ export default function Model({setSolution, setSolutionInfo, model, setModel}) {
                 <div className="smallColumn">
                     <FormulaGenerator/>
                     <ModelEncoder
+                        setFormulaType={setFormulaType}
+                        setFormula={setFormula}
                         setSolution={setSolution}
                         setSolutionInfo={setSolutionInfo}
                         kripke={() => model2Kripke(model)}
