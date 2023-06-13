@@ -37,7 +37,7 @@ public class KripkeTruthTable {
         return IntStream.range(0, steps)
                 .mapToObj(i -> IntStream.range(0, maxSuccessors)
                         .mapToObj(futureAss -> literals.stream()
-                                // if contains any assignments
+                                // if future assignement for current literal contains any true assignments
                                 .map(literal -> table.keySet().stream().anyMatch(currAss -> table.get(currAss).get(futureAss).get(literal)) ?
                                         "(" + literal + (i + 1) + " <-> " + table.keySet().stream()
                                                 .filter(currAss -> table.get(currAss).get(futureAss).get(literal))
