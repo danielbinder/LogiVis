@@ -58,6 +58,20 @@ public class CTLTest {
     s5 : ,
     s6 : ,
     s7 : ;
+
+    // "deadlock" automaton from BMC slides of Formal Models
+    0,1,2,3;
+    initial: 0;
+    t0: 0 - 1,
+    t1: 1 - 0,
+    t2: 0 - 2,
+    t3: 2 - 0,
+    t4: 1 - 3,
+    t5: 3 - 0;
+    0: ,
+    1: p,
+    2: q,
+    3: p q;
     */
 
     private static final String SIMPLE_KRIPKE = "s1, s2, s3, s4, s5, s6, s7;\n" +
