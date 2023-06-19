@@ -101,30 +101,24 @@ public class KripkeTruthTable {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-
-        result.append(String.join(" ", literals))
-                .append(" || ");
-
-        for(int i = 0; i < maxSuccessors; i++) {
-            result.append(literals.stream().map(l -> l + "'").collect(Collectors.joining("")))
-                    .append("| ");
-        }
-
-        result.append("\n");
-
-        for(Map<String, Boolean> key : table.keySet()) {
-            result.append(literals.stream().map(l -> key.get(l) ? "1" : "0").collect(Collectors.joining(" ")))
-                    .append(" || ");
-
-            for(Map<String, Boolean> value : table.get(key)) {
-                result.append(literals.stream().map(l -> value.get(l) ? "1" : "0").collect(Collectors.joining(" ")))
-                        .append(" | ");
-            }
-
-            result.append("\n");
-        }
-
-        return result.toString();
+        return String.join(" ", literals) +
+                " || " +
+                IntStream.range(0, maxSuccessors)
+                        .mapToObj(i -> literals.stream()
+                                .map(l -> l + "'")
+                                .collect(Collectors.joining()))
+                        .collect(Collectors.joining("| ")) +
+                "\n" +
+                table.entrySet().stream()
+                        .map(entry -> literals.stream()
+                                .map(l -> entry.getKey().get(l) ? "1" : "0")
+                                .collect(Collectors.joining(" ")) +
+                                " || " +
+                                entry.getValue().stream()
+                                        .map(value -> literals.stream()
+                                                .map(l -> value.get(l) ? "1" : "0")
+                                                .collect(Collectors.joining(" ")))
+                                        .collect(Collectors.joining(" | ")))
+                        .collect(Collectors.joining("\n"));
     }
 }
