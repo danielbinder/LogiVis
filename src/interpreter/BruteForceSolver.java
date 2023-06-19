@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BruteForceSolver {
     private final LogicNode formula;
@@ -119,10 +120,7 @@ public class BruteForceSolver {
      * @return Map<String, String>
      */
     private Map<String, String> transformedAssignmentMap() {
-        Map<String, String> assignmentMap = new HashMap<>();
-
-        for(Map.Entry<String, Boolean> e : currentAssignment.entrySet()) assignmentMap.put(e.getKey(), String.valueOf(e.getValue()));
-
-        return assignmentMap;
+        return currentAssignment.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue() + ""));
     }
 }
