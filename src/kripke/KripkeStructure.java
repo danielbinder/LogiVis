@@ -8,6 +8,7 @@ import temporal.model.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class KripkeStructure extends ArrayList<KripkeNode> {
     public KripkeNode get(String name) {
@@ -70,41 +71,19 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
     }
 
     public String toFormulaString(int steps) {
-        StringBuilder formula = new StringBuilder("true ");
-
-        for(int i = 0; i < steps; i++) {
-            for(KripkeNode n : this) {
-                if(n.successors.size() > 0) {
-                    formula.append(" &\n ((");
-
-                    for(Map.Entry<String, Boolean> e : n.stateMap.entrySet()) {
-                        formula.append(e.getValue() ? "" : "!")
-                                .append(e.getKey())
-                                .append(i)
-                                .append(" & ");
-                    }
-
-                    formula.append("true) -> (false ");
-
-                    for(KripkeNode succ : n.successors) {
-                        formula.append("| (");
-
-                        for(Map.Entry<String, Boolean> e : succ.stateMap.entrySet()) {
-                            formula.append(e.getValue() ? "" : "!")
-                                    .append(e.getKey())
-                                    .append(i + 1)
-                                    .append(" & ");
-                        }
-
-                        formula.append("true) ");
-                    }
-
-                    formula.append("))");
-                }
-            }
-        }
-
-        return formula.toString();
+        return IntStream.range(0, steps).mapToObj(step -> stream()
+                        .filter(kn -> kn.successors.size() > 0)
+                        .map(kn -> kn.stateMap.entrySet().stream()
+                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + step)
+                                .collect(Collectors.joining(" & ", "(", ")")) +
+                                " -> " +
+                                kn.successors.stream()
+                                        .map(succ -> succ.stateMap.entrySet().stream()
+                                                .map(succLiteral -> (succLiteral.getValue() ? "" : "!") + succLiteral.getKey() + (step + 1))
+                                                .collect(Collectors.joining(" & ", "(", ")")))
+                                        .collect(Collectors.joining(" | ", "(", ")")))
+                        .collect(Collectors.joining(" & ", "(", ")")))
+                .collect(Collectors.joining(" & ", "(", ")"));
     }
 
     @Override
