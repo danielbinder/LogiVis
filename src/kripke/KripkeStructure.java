@@ -12,7 +12,10 @@ import java.util.stream.IntStream;
 
 public class KripkeStructure extends ArrayList<KripkeNode> {
     public KripkeNode get(String name) {
-        return stream().filter(kn -> kn.name.equals(name)).findAny().orElseThrow(NoSuchElementException::new);
+        return stream()
+                .filter(kn -> kn.name.equals(name))
+                .findAny()
+                .orElseThrow(NoSuchElementException::new);
     }
 
     public void addStateMaps(List<Map<String, Boolean>> stateMaps) {
