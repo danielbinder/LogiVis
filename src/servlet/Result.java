@@ -58,6 +58,6 @@ public class Result {
         return map.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())     // Orders keys alphabetically
                 .map(e -> (e.getValue() ? "" : "!") + e.getKey())
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.joining(", "));
     }
 }
