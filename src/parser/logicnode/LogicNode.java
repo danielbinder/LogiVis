@@ -1,5 +1,8 @@
 package parser.logicnode;
 
+import lexer.Lexer;
+import parser.Parser;
+
 public sealed interface LogicNode permits
         ActionNode,
         AndNode,
@@ -7,5 +10,9 @@ public sealed interface LogicNode permits
         DoubleImplicationNode,
         ImplicationNode,
         NegationNode,
-        OrNode {}
+        OrNode {
+    static LogicNode of(String formula) {
+        return new Parser().parse(Lexer.tokenize(formula));
+    }
+}
 
