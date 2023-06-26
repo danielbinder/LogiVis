@@ -17,30 +17,32 @@ export default function App() {
     const [modelErrorMessage, setModelErrorMessage] = useState('');
 
     const setFormulaTab = (data) => {
-        setFormula(data['result'].replaceAll('$', '\n'))
-        setSolutionInfo(data['info'].replaceAll('$', '\n'))
+        setFormula(data['result'].replaceAll(/[$]/g, '\n'))
+        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
         setEvalStatusMessage('')
-        setEvalWarningMessage(data['warning'].replaceAll('$', '\n'))
-        setEvalErrorMessage(data['error'].replaceAll('$', '\n'))
+        setEvalWarningMessage(data['warning'].replaceAll(/[$]/g, '\n'))
+        setEvalErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
     }
 
     const setSolutionTab = (data) => {
-        setSolution(data['result'].replaceAll('$', '\n'))
-        setSolutionInfo(data['info'].replaceAll('$', '\n'))
+        setSolution(data['result'].replaceAll(/[$]/g, '\n'))
+        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
         setEvalStatusMessage('')
-        setEvalWarningMessage(data['warning'].replaceAll('$', '\n'))
-        setEvalErrorMessage(data['error'].replaceAll('$', '\n'))
+        setEvalWarningMessage(data['warning'].replaceAll(/[$]/g, '\n'))
+        setEvalErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
         return data
     }
 
     const setModelTab = (data) => {
-        setModel(data['result'].replaceAll('$', '\n')
+        console.log(data)
+        setModel(data['result']
+            .replaceAll(/[$]/g, '\n')
             .replaceAll(/_/g, ';')
             .replaceAll(/[+]/g, '\n'))
-        setSolutionInfo(data['info'].replaceAll('$', '\n'))
+        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
         setModelStatusMessage('')
-        setModelWarningmessage(data['warning'].replaceAll('$', '\n'))
-        setModelErrorMessage(data['error'].replaceAll('$', '\n'))
+        setModelWarningmessage(data['warning'].replaceAll(/[$]/g, '\n'))
+        setModelErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
     }
 
     const getFormula = () => formula.replaceAll('\n', '')
@@ -55,6 +57,8 @@ export default function App() {
                 setFormula={setFormula}
                 evalStatusMessage={evalStatusMessage}
                 setEvalStatusMessage={setEvalStatusMessage}
+                evalWarningMessage={evalWarningMessage}
+                evalErrorMessage={evalErrorMessage}
                 solution={solution}
                 setSolution={setSolution}
                 solutionInfo={solutionInfo}
@@ -65,11 +69,9 @@ export default function App() {
             />
             <Model
                 setFormulaType={setFormulaType}
-                setFormula={setFormula}
+                setFormulaTab={setFormulaTab}
+                setSolutionTab={setSolutionTab}
                 setEvalStatusMessage={setEvalStatusMessage}
-                setSolution={setSolution}
-                setSolutionInfo={setSolutionInfo}
-                setEvalTab={setSolutionTab}
                 modelStatusMessage={modelStatusMessage}
                 modelWarningMessage={modelWarningMessage}
                 modelErrorMessage={modelErrorMessage}

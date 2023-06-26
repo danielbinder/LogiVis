@@ -1,8 +1,8 @@
 package servlet;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Result {
@@ -23,6 +23,10 @@ public class Result {
         this(result, "", "", "");
     }
 
+    public Result(String result, String info) {
+        this(result, info, "", "");
+    }
+
     public Result(Map<String, Boolean> result) {
         this(result, "", "", "");
     }
@@ -41,8 +45,9 @@ public class Result {
 
     public String computeJSON() {
         return "{\n" +
-                "\t\"result\": \"" + result.replaceAll("\n", "$") + "\",\n" +
-                "\t\"info\": \"" + info.replaceAll("\n", "$") + "\",\n" +
+                // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
+                "\t\"result\": \"" + result.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"info\": \"" + info.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
                 "\t\"warning\": \"" + warning + "\",\n" +
                 "\t\"error\": \"" + error + "\"\n" +
                 "}";

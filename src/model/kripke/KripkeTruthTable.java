@@ -35,8 +35,12 @@ public class KripkeTruthTable {
         }
     }
 
+    public KripkeTruthTable(String kripkeStructure) {
+        this(KripkeStructure.fromString(kripkeStructure));
+    }
+
     public Result toFormulaStringWithResult(int steps) {
-        return new Result(toFormulaString(steps));
+        return new Result(toFormulaString(steps), toString());
     }
 
     public String toFormulaString(int steps) {
@@ -58,7 +62,7 @@ public class KripkeTruthTable {
     }
 
     public Result toQBFStringWithResult(int steps) {
-        return new Result(toQBFString(steps));
+        return new Result(toQBFString(steps), toString());
     }
 
     public String toQBFString(int steps) {

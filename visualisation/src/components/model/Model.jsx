@@ -6,9 +6,10 @@ import FormulaGenerator from './FormulaGenerator';
 import ModelTypeSelector from './ModelTypeSelector';
 import AlgorithmTester from './AlgorithmTester';
 
-export default function Model({setFormulaType, setFormula,
+export default function Model({setFormulaType,
+                                  setFormulaTab,
+                                  setSolutionTab,
                                   setEvalStatusMessage,
-                                  setSolution, setSolutionInfo,
                                   modelStatusMessage,
                                   modelWarningMessage,
                                   modelErrorMessage,
@@ -43,10 +44,9 @@ export default function Model({setFormulaType, setFormula,
                     <FormulaGenerator/>
                     <ModelEncoder
                         setFormulaType={setFormulaType}
-                        setFormula={setFormula}
+                        setFormulaTab={setFormulaTab}
+                        setSolutionTab={setSolutionTab}
                         setEvalStatusMessage={setEvalStatusMessage}
-                        setSolution={setSolution}
-                        setSolutionInfo={setSolutionInfo}
                         kripke={() => model2Kripke(model)}
                     />
                 </div>

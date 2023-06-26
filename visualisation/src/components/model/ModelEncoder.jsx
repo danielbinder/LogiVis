@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 
-export default function ModelEncoder({setFormulaType, setFormula,
+export default function ModelEncoder({setFormulaType,
+                                         setFormulaTab,
+                                         setSolutionTab,
                                          setEvalStatusMessage,
-                                         setSolution, setSolutionInfo,
                                          kripke}) {
     const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
@@ -29,31 +30,14 @@ export default function ModelEncoder({setFormulaType, setFormula,
         setLoading(true)
         fetch(urls.get(generationParameters.encodingType) +
             kripke().replaceAll(';', ',') + '/' + generationParameters.steps)
-            .then(response => {
-                if(!response.ok) {
-                    setLoading(false)
-                }
-
-                return response
-            })
             .then(response => response.json())
-            .then(data => {
-                if(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact') {
-                    setFormulaType('boolean')
-                    setFormula(getResultFromJSON(data))
-                } else {    // encodingType === 'compactQBF'
-                    const qbfData = getResultFromJSON(data);
-                    setSolution(qbfData.replace(/[+]/g, '\n'))
-                    setEvalStatusMessage(generateLimbooleLink(qbfData.replace(/[+]/g, '')))
-                }
-
-                // Add truth table for compact and compactQBF
-                if( generationParameters.encodingType === 'compact' || generationParameters.encodingType === 'compactQBF') {
-                    delete data['result']
-                    setSolutionInfo(data['truth-table'].replace(/[+]/g, '\n'))
-                }
-            })
-            .then(() => setLoading(false))
+            .then(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
+                ? setFormulaTab
+                : setSolutionTab)
+            .then(data => generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
+                ? setFormulaType('boolean')
+                : setEvalStatusMessage(generateLimbooleLink(data['result'])))
+            .finally(() => setLoading(false))
     }
 
     return (
@@ -119,10 +103,8 @@ export default function ModelEncoder({setFormulaType, setFormula,
     )
 }
 
-const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
-
 const generateLimbooleLink = (data) =>
-    <a href={'https://maximaximal.github.io/limboole/#2' + data}
+    <a href={'https://maximaximal.github.io/limboole/#2' + data.replaceAll(/[$]/g, '\n')}
        target='_blank'>
         Check in Limboole
     </a>
