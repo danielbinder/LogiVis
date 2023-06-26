@@ -1,4 +1,6 @@
-package kripke;
+package model.kripke;
+
+import servlet.Result;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +35,10 @@ public class KripkeTruthTable {
         }
     }
 
+    public Result toFormulaStringWithResult(int steps) {
+        return new Result(toFormulaString(steps));
+    }
+
     public String toFormulaString(int steps) {
         return IntStream.range(0, steps)
                 .mapToObj(i -> IntStream.range(0, maxSuccessors)
@@ -49,6 +55,10 @@ public class KripkeTruthTable {
                                 .collect(Collectors.joining(" & ", "(", ")")))
                         .collect(Collectors.joining(" | ", "(", ")")))
                 .collect(Collectors.joining(" & ", "(", ")"));
+    }
+
+    public Result toQBFStringWithResult(int steps) {
+        return new Result(toQBFString(steps));
     }
 
     public String toQBFString(int steps) {

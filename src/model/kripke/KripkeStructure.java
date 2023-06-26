@@ -1,8 +1,9 @@
-package kripke;
+package model.kripke;
 
 import lexer.Lexer;
 import parser.Parser;
 import parser.logicnode.LogicNode;
+import servlet.Result;
 import temporal.model.State;
 import temporal.model.Transition;
 
@@ -70,7 +71,11 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
     }
 
     public LogicNode toFormula(int steps) {
-        return new Parser().parse(Lexer.tokenize(toFormulaString(steps)));
+        return LogicNode.of(toFormulaString(steps));
+    }
+
+    public Result toFormulaStringWithResult(int steps) {
+        return new Result(toFormulaString(steps));
     }
 
     public String toFormulaString(int steps) {
@@ -89,6 +94,10 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
                                 ")")
                         .collect(Collectors.joining(" & ", "(", ")")))
                 .collect(Collectors.joining(" & ", "(", ")"));
+    }
+
+    public Result toResult() {
+        return new Result(toString());
     }
 
     @Override
