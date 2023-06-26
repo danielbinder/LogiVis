@@ -1,12 +1,14 @@
 package interpreter;
 
+import org.eclipse.jetty.util.log.Log;
+import parser.Parser;
 import parser.logicnode.*;
+import servlet.Result;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class BruteForceSolver {
     private final LogicNode formula;
@@ -18,38 +20,83 @@ public class BruteForceSolver {
         this.formula = formula;
     }
 
-    public static Map<String, String> solve(LogicNode formula) {
+    private BruteForceSolver(String formula) {
+        this(LogicNode.of(formula));
+    }
+
+    /* I N T E R F A C E */
+
+    public static Result solveWithResult(String formula) {
+        return new BruteForceSolver(formula).solveWithResult();
+    }
+
+    public static Map<String, Boolean> solve(String formula) {
         return new BruteForceSolver(formula).solve();
     }
 
-    public static List<Map<String, String>> solveAll(LogicNode formula) {
+    public static Result solveWithResult(LogicNode formula) {
+        return new BruteForceSolver(formula).solveWithResult();
+    }
+
+    public static Map<String, Boolean> solve(LogicNode formula) {
+        return new BruteForceSolver(formula).solve();
+    }
+
+    public static Result solveAllWithResult(String formula) {
+        return new BruteForceSolver(formula).solveAllWithResult();
+    }
+
+    public static Result solveAllWithResult(LogicNode formula) {
+        return new BruteForceSolver(formula).solveAllWithResult();
+    }
+
+    public static List<Map<String, Boolean>> solveAll(String formula) {
         return new BruteForceSolver(formula).solveAll();
     }
 
-    private Map<String, String> solve() {
+    public static List<Map<String, Boolean>> solveAll(LogicNode formula) {
+        return new BruteForceSolver(formula).solveAll();
+    }
+
+    /* H E L P E R S */
+
+    private Result solveWithResult() {
+        Map<String, Boolean> satisfiableAssignment = solve();
+
+        if(satisfiableAssignment == null) return new Result("unsatisfiable");
+        return new Result(satisfiableAssignment);
+    }
+
+    private Map<String, Boolean> solve() {
         initAssignmentMap(formula);
         initAssignmentList();
         assignNext();
 
         while(!checkCurrentAssignment(formula) && assignmentIndex < assignments.size()) assignNext();
 
-        return checkCurrentAssignment(formula) ? transformedAssignmentMap() : null;
+        return checkCurrentAssignment(formula) ? new HashMap<>(currentAssignment) : null;
     }
 
-    private List<Map<String, String>> solveAll() {
-        List<Map<String, String>> satisfiableAssignments = new ArrayList<>();
+    private Result solveAllWithResult() {
+        List<Map<String, Boolean>> satisfiableAssignments = solveAll();
+
+        if(satisfiableAssignments.isEmpty()) return new Result("unsatisfiable");
+        if(satisfiableAssignments.size() == assignments.size()) return new Result("valid");
+        return new Result(satisfiableAssignments);
+    }
+
+    private List<Map<String, Boolean>> solveAll() {
+        List<Map<String, Boolean>> satisfiableAssignments = new ArrayList<>();
         initAssignmentMap(formula);
         initAssignmentList();
 
         while(assignmentIndex < assignments.size()) {
             assignNext();
 
-            if(checkCurrentAssignment(formula)) satisfiableAssignments.add(transformedAssignmentMap());
+            if(checkCurrentAssignment(formula)) satisfiableAssignments.add(new HashMap<>(currentAssignment));
         }
 
-        if(satisfiableAssignments.size() == assignments.size()) return List.of(Map.of("result", "valid"));
-
-        return satisfiableAssignments.size() > 0 ? satisfiableAssignments : null;
+        return satisfiableAssignments;
     }
 
     private void initAssignmentMap(LogicNode formula) {
@@ -113,14 +160,5 @@ public class BruteForceSolver {
                 yield true;
             }
         };
-    }
-
-    /**
-     * Transforms Map<String, Boolean> to Map<String, String>
-     * @return Map<String, String>
-     */
-    private Map<String, String> transformedAssignmentMap() {
-        return currentAssignment.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue() + ""));
     }
 }

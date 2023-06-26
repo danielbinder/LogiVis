@@ -1,13 +1,26 @@
 package interpreter;
 
 import parser.logicnode.*;
+import servlet.Result;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class Simplification {
-    public static LogicNode of(LogicNode node) {
-        LogicNode current = node;
+    public static Result ofWithResult(String formula) {
+        return new Result(of(formula).toString());
+    }
+
+    public static Result ofWithResult(LogicNode formula) {
+        return new Result(of(formula).toString());
+    }
+
+    public static LogicNode of(String formula) {
+        return of(LogicNode.of(formula));
+    }
+
+    public static LogicNode of(LogicNode formula) {
+        LogicNode current = formula;
         LogicNode simplification = simplifyChildren(current);
 
         while(simplest(current, simplification) != current) {

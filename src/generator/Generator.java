@@ -1,12 +1,17 @@
 package generator;
 
-import kripke.KripkeNode;
-import kripke.KripkeStructure;
+import model.kripke.KripkeNode;
+import model.kripke.KripkeStructure;
+import servlet.Result;
 
 import java.util.*;
 
 public class Generator {
     private static final Random rand = new Random();
+
+    public static Result generateKripkeStructureWithResult(String paramString, int maxRegeneration) {
+        return new Result(generateKripkeStructure(paramString, maxRegeneration).toString());
+    }
 
     /**
      * @param paramString format: nodes_initialNodes_variables_minSuccessors_maxSuccessors_allStatesReachable
