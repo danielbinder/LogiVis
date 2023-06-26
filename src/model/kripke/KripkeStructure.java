@@ -92,8 +92,8 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
                                                 .collect(Collectors.joining(" & ", "(", ")")))
                                         .collect(Collectors.joining(" | ", "(", ")")) +
                                 ")")
-                        .collect(Collectors.joining(" & ", "(", ")")))
-                .collect(Collectors.joining(" & ", "(", ")"));
+                        .collect(Collectors.joining(" &\n", "(", ")")))
+                .collect(Collectors.joining(" &\n\n", "(", ")"));
     }
 
     public Result toResult() {

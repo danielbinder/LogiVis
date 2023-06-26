@@ -57,8 +57,8 @@ public class KripkeTruthTable {
                                                 .collect(Collectors.joining(" | ", "(", ")")) + ")" :
                                         "!" + literal + (i + 1))
                                 .collect(Collectors.joining(" & ", "(", ")")))
-                        .collect(Collectors.joining(" | ", "(", ")")))
-                .collect(Collectors.joining(" & ", "(", ")"));
+                        .collect(Collectors.joining(" |\n", "(", ")")))
+                .collect(Collectors.joining(" &\n\n", "(", ")"));
     }
 
     public Result toQBFStringWithResult(int steps) {
