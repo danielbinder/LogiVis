@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 
-export default function ModelGenerator({setModel}) {
+export default function ModelGenerator({setModelTab}) {
     const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
             nodes: 4,
@@ -16,7 +16,7 @@ export default function ModelGenerator({setModel}) {
         setGenerationParameters(
             prevGenerationParameters => ({
                     ...prevGenerationParameters,
-                    [name]: type === "checkbox" ? checked : value
+                    [name]: type === 'checkbox' ? checked : value
                 })
         )
     }
@@ -41,105 +41,96 @@ export default function ModelGenerator({setModel}) {
             .then(data => getResultFromJSON(data).replaceAll(';', ','))
             .then(data => {
                 fetch('http://localhost:4000/kripkeString2ModelString/' + data)
-                    .then(response => {
-                        if(!response.ok) {
-                            setLoading(false)
-                        }
-
-                        return response
-                    })
                     .then(response => response.json())
-                    .then(data => setModel(getResultFromJSON(data)
-                        .replace(/_/g, ";")
-                        .replace(/[+]/g, "\n")))
-                    .then(() => setLoading(false))
+                    .then(setModelTab)
+                    .finally(() => setLoading(false))
             })
     }
 
     return (
-        <div className="smallColumn">
-            <div className="rows">
-                <fieldset className="smallFieldset">
+        <div className='smallColumn'>
+            <div className='rows'>
+                <fieldset className='smallFieldset'>
                     <legend>&nbsp;Generate a model&nbsp;</legend>
                     <div>
                         <input
-                            className="input"
-                            type="number"
-                            min="1"
-                            id="nodes"
-                            name="nodes"
-                            placeholder="Nodes"
+                            className='input'
+                            type='number'
+                            min='1'
+                            id='nodes'
+                            name='nodes'
+                            placeholder='Nodes'
                             value={generationParameters.nodes}
                             onChange={handleChange}
                         />
-                        <label htmlFor="nodes">Nodes</label>
+                        <label htmlFor='nodes'>Nodes</label>
                     </div>
                     <div>
                         <input
-                            className="input"
-                            type="number"
-                            min="1"
-                            id="variables"
-                            name="variables"
-                            placeholder="Variables"
+                            className='input'
+                            type='number'
+                            min='1'
+                            id='variables'
+                            name='variables'
+                            placeholder='Variables'
                             value={generationParameters.variables}
                             onChange={handleChange}
                         />
-                        <label htmlFor="variables">Variables</label>
+                        <label htmlFor='variables'>Variables</label>
                     </div>
                     <div>
                         <input
-                            className="input"
-                            type="number"
-                            min="0"
-                            id="minSuccessors"
-                            name="minSuccessors"
-                            placeholder="Min. Successors"
+                            className='input'
+                            type='number'
+                            min='0'
+                            id='minSuccessors'
+                            name='minSuccessors'
+                            placeholder='Min. Successors'
                             value={generationParameters.minSuccessors}
                             onChange={handleChange}
                         />
-                        <label htmlFor="minSuccessors">Min. Successors</label>
+                        <label htmlFor='minSuccessors'>Min. Successors</label>
                     </div>
                     <div>
                         <input
-                            className="input"
-                            type="number"
-                            min="0"
-                            id="maxSuccessors"
-                            name="maxSuccessors"
-                            placeholder="Max. Successors"
+                            className='input'
+                            type='number'
+                            min='0'
+                            id='maxSuccessors'
+                            name='maxSuccessors'
+                            placeholder='Max. Successors'
                             value={generationParameters.maxSuccessors}
                             onChange={handleChange}
                         />
-                        <label htmlFor="maxSuccessors">Max. Successors</label>
+                        <label htmlFor='maxSuccessors'>Max. Successors</label>
                     </div>
                     <div>
                         <input
-                            className="input"
-                            type="number"
-                            min="0"
-                            id="initialNodes"
-                            name="initialNodes"
-                            placeholder="Initial Nodes"
+                            className='input'
+                            type='number'
+                            min='0'
+                            id='initialNodes'
+                            name='initialNodes'
+                            placeholder='Initial Nodes'
                             value={generationParameters.initialNodes}
                             onChange={handleChange}
                         />
-                        <label htmlFor="initialNodes">Initial Nodes</label>
+                        <label htmlFor='initialNodes'>Initial Nodes</label>
                     </div>
                     <div>
                         <input
-                            className="input"
-                            type="checkbox"
-                            id="allReachable"
-                            name="allReachable"
+                            className='input'
+                            type='checkbox'
+                            id='allReachable'
+                            name='allReachable'
                             checked={generationParameters.allReachable}
                             onChange={handleChange}
                         />
-                        <label htmlFor="allReachable">All reachable</label>
+                        <label htmlFor='allReachable'>All reachable</label>
                     </div>
-                    <div className="centerContainer">
-                        <button className="button" onClick={handleButtonClick}>
-                            {loading && <div className="loading"></div>}
+                    <div className='centerContainer'>
+                        <button className='button' onClick={handleButtonClick}>
+                            {loading && <div className='loading'></div>}
                             Generate Model
                         </button>
                     </div>

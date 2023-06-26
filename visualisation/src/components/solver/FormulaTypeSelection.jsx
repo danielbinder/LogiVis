@@ -1,45 +1,45 @@
-import React from "react";
+import React from 'react';
 
 export default function FormulaTypeSelection({formulaType, setFormulaType }) {
     return (
-        <fieldset className="fieldset">
+        <fieldset className='fieldset'>
             <legend>&nbsp;Choose a formula type&nbsp;</legend>
             <input
-                type="radio"
-                id="boolean"
-                name="formulaTypeSelection"
-                value="boolean"
-                checked={formulaType === "boolean"}
-                onChange={() => setFormulaType("boolean")}
+                type='radio'
+                id='boolean'
+                name='formulaTypeSelection'
+                value='boolean'
+                checked={formulaType === 'boolean'}
+                onChange={() => setFormulaType('boolean')}
             />
-            <label htmlFor="boolean">Boolean Algebra</label>
+            <label htmlFor='boolean'>Boolean Algebra</label>
             <input
-                type="radio"
-                id="ctl"
-                name="formulaTypeSelection"
-                value="ctl"
-                checked={formulaType === "ctl"}
-                onChange={() => setFormulaType("ctl")}
+                type='radio'
+                id='ctl'
+                name='formulaTypeSelection'
+                value='ctl'
+                checked={formulaType === 'ctl'}
+                onChange={() => setFormulaType('ctl')}
             />
-            <label htmlFor="ctl">CTL</label>
+            <label htmlFor='ctl'>CTL</label>
             <input
-                type="radio"
-                id="regex"
-                name="formulaTypeSelection"
-                value="regex"
-                checked={formulaType === "regex"}
-                onChange={() => setFormulaType("regex")}
+                type='radio'
+                id='regex'
+                name='formulaTypeSelection'
+                value='regex'
+                checked={formulaType === 'regex'}
+                onChange={() => setFormulaType('regex')}
             />
-            <label htmlFor="regex">Regular Expression</label>
+            <label htmlFor='regex'>Regular Expression</label>
             <input
-                type="radio"
-                id="process"
-                name="formulaTypeSelection"
-                value="process"
-                checked={formulaType === "process"}
-                onChange={() => setFormulaType("process")}
+                type='radio'
+                id='process'
+                name='formulaTypeSelection'
+                value='process'
+                checked={formulaType === 'process'}
+                onChange={() => setFormulaType('process')}
             />
-            <label htmlFor="process">Process Algebra</label>
+            <label htmlFor='process'>Process Algebra</label>
         </fieldset>
     )
 }

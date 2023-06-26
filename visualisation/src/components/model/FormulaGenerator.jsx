@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 
 export default function FormulaGenerator() {
     const [loading, setLoading] = useState(false)
@@ -11,7 +11,7 @@ export default function FormulaGenerator() {
         setGenerationParameters(
             prevGenerationParameters => ({
                 ...prevGenerationParameters,
-                [name]: type === "checkbox" ? checked : value
+                [name]: type === 'checkbox' ? checked : value
             })
         )
     }
@@ -31,38 +31,38 @@ export default function FormulaGenerator() {
     }
 
     return (
-        <div className="rows">
-            <fieldset className="smallFieldset">
+        <div className='rows'>
+            <fieldset className='smallFieldset'>
                 <legend>&nbsp;Generate a formula&nbsp;</legend>
                 <div>
                     <input
-                        className="input"
-                        type="number"
-                        min="1"
-                        id="variables"
-                        name="variables"
-                        placeholder="Variables"
+                        className='input'
+                        type='number'
+                        min='1'
+                        id='variables'
+                        name='variables'
+                        placeholder='Variables'
                         value={generationParameters.variables}
                         onChange={handleChange}
                     />
-                    <label htmlFor="variables">Variables</label>
+                    <label htmlFor='variables'>Variables</label>
                 </div>
                 <div>
                     <input
-                        className="input"
-                        type="number"
-                        min="1"
-                        id="operators"
-                        name="operators"
-                        placeholder="Operators"
+                        className='input'
+                        type='number'
+                        min='1'
+                        id='operators'
+                        name='operators'
+                        placeholder='Operators'
                         value={generationParameters.operators}
                         onChange={handleChange}
                     />
-                    <label htmlFor="operators">Operators</label>
+                    <label htmlFor='operators'>Operators</label>
                 </div>
-                <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>
-                        {loading && <div className="loading"></div>}
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleButtonClick}>
+                        {loading && <div className='loading'></div>}
                         Generate formula
                     </button>
                 </div>

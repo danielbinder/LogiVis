@@ -1,53 +1,53 @@
-import React from "react";
+import React from 'react';
 
 export default function ModelTypeSelector({modelType, setModelType}) {
     return (
-        <div className="rows">
-            <fieldset className="smallFieldset">
+        <div className='rows'>
+            <fieldset className='smallFieldset'>
                 <legend>&nbsp;Choose a model type&nbsp;</legend>
                 <div>
                     <input
-                        type="radio"
-                        id="kripke"
-                        name="modelTypeSelection"
-                        value="kripke"
-                        checked={modelType === "kripke"}
-                        onChange={() => setModelType("kripke")}
+                        type='radio'
+                        id='kripke'
+                        name='modelTypeSelection'
+                        value='kripke'
+                        checked={modelType === 'kripke'}
+                        onChange={() => setModelType('kripke')}
                     />
-                    <label htmlFor="kripke">Kripke Structure</label>
+                    <label htmlFor='kripke'>Kripke Structure</label>
                 </div>
                 <div>
                     <input
-                        type="radio"
-                        id="buchi"
-                        name="modelTypeSelection"
-                        value="buchi"
-                        checked={modelType === "buchi"}
-                        onChange={() => setModelType("buchi")}
+                        type='radio'
+                        id='buchi'
+                        name='modelTypeSelection'
+                        value='buchi'
+                        checked={modelType === 'buchi'}
+                        onChange={() => setModelType('buchi')}
                     />
-                    <label htmlFor="buchi">Büchi Automaton</label>
+                    <label htmlFor='buchi'>Büchi Automaton</label>
                 </div>
                 <div>
                     <input
-                        type="radio"
-                        id="mealy"
-                        name="modelTypeSelection"
-                        value="mealy"
-                        checked={modelType === "mealy"}
-                        onChange={() => setModelType("mealy")}
+                        type='radio'
+                        id='mealy'
+                        name='modelTypeSelection'
+                        value='mealy'
+                        checked={modelType === 'mealy'}
+                        onChange={() => setModelType('mealy')}
                     />
-                    <label htmlFor="mealy">Mealy Automaton</label>
+                    <label htmlFor='mealy'>Mealy Automaton</label>
                 </div>
                 <div>
                     <input
-                        type="radio"
-                        id="moore"
-                        name="modelTypeSelection"
-                        value="moore"
-                        checked={modelType === "moore"}
-                        onChange={() => setModelType("moore")}
+                        type='radio'
+                        id='moore'
+                        name='modelTypeSelection'
+                        value='moore'
+                        checked={modelType === 'moore'}
+                        onChange={() => setModelType('moore')}
                     />
-                    <label htmlFor="moore">Moore Automaton</label>
+                    <label htmlFor='moore'>Moore Automaton</label>
                 </div>
             </fieldset>
         </div>

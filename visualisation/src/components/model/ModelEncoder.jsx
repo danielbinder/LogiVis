@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 
 export default function ModelEncoder({setFormulaType, setFormula,
                                          setEvalStatusMessage,
@@ -20,7 +20,7 @@ export default function ModelEncoder({setFormulaType, setFormula,
         setGenerationParameters(
             prevGenerationParameters => ({
                 ...prevGenerationParameters,
-                [name]: type === "checkbox" ? checked : value
+                [name]: type === 'checkbox' ? checked : value
             })
         )
     }
@@ -43,74 +43,74 @@ export default function ModelEncoder({setFormulaType, setFormula,
                     setFormula(getResultFromJSON(data))
                 } else {    // encodingType === 'compactQBF'
                     const qbfData = getResultFromJSON(data);
-                    setSolution(qbfData.replace(/[+]/g, "\n"))
-                    setEvalStatusMessage(generateLimbooleLink(qbfData.replace(/[+]/g, "")))
+                    setSolution(qbfData.replace(/[+]/g, '\n'))
+                    setEvalStatusMessage(generateLimbooleLink(qbfData.replace(/[+]/g, '')))
                 }
 
                 // Add truth table for compact and compactQBF
                 if( generationParameters.encodingType === 'compact' || generationParameters.encodingType === 'compactQBF') {
                     delete data['result']
-                    setSolutionInfo(data['truth-table'].replace(/[+]/g, "\n"))
+                    setSolutionInfo(data['truth-table'].replace(/[+]/g, '\n'))
                 }
             })
             .then(() => setLoading(false))
     }
 
     return (
-        <div className="rows">
-            <fieldset className="smallFieldset">
+        <div className='rows'>
+            <fieldset className='smallFieldset'>
                 <legend>&nbsp;Encode a model&nbsp;</legend>
                 <div>
-                    <div className="bottomSpace">
+                    <div className='bottomSpace'>
                         <input
-                            className="input"
-                            type="number"
-                            min="1"
-                            id="steps"
-                            name="steps"
-                            placeholder="Steps"
+                            className='input'
+                            type='number'
+                            min='1'
+                            id='steps'
+                            name='steps'
+                            placeholder='Steps'
                             value={generationParameters.steps}
                             onChange={handleChange}
                         />
-                        <label htmlFor="steps">Steps</label>
+                        <label htmlFor='steps'>Steps</label>
                     </div>
                     <div>
                         <input
-                            type="radio"
-                            id="naive"
-                            name="encodingType"
-                            value="naive"
-                            checked={generationParameters.encodingType === "naive"}
+                            type='radio'
+                            id='naive'
+                            name='encodingType'
+                            value='naive'
+                            checked={generationParameters.encodingType === 'naive'}
                             onChange={handleChange}
                         />
-                        <label htmlFor="naive">Naive</label>
+                        <label htmlFor='naive'>Naive</label>
                     </div>
                     <div>
                         <input
-                            type="radio"
-                            id="compact"
-                            name="encodingType"
-                            value="compact"
-                            checked={generationParameters.encodingType === "compact"}
+                            type='radio'
+                            id='compact'
+                            name='encodingType'
+                            value='compact'
+                            checked={generationParameters.encodingType === 'compact'}
                             onChange={handleChange}
                         />
-                        <label htmlFor="compact">Compact</label>
+                        <label htmlFor='compact'>Compact</label>
                     </div>
                     <div>
                         <input
-                            type="radio"
-                            id="compactQBF"
-                            name="encodingType"
-                            value="compactQBF"
-                            checked={generationParameters.encodingType === "compactQBF"}
+                            type='radio'
+                            id='compactQBF'
+                            name='encodingType'
+                            value='compactQBF'
+                            checked={generationParameters.encodingType === 'compactQBF'}
                             onChange={handleChange}
                         />
-                        <label htmlFor="compactQBF">Limboole QBF</label>
+                        <label htmlFor='compactQBF'>Limboole QBF</label>
                     </div>
                 </div>
-                <div className="centerContainer">
-                    <button className="button" onClick={handleButtonClick}>
-                        {loading && <div className="loading"></div>}
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleButtonClick}>
+                        {loading && <div className='loading'></div>}
                         Encode model
                     </button>
                 </div>
@@ -122,7 +122,7 @@ export default function ModelEncoder({setFormulaType, setFormula,
 const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
 
 const generateLimbooleLink = (data) =>
-    <a href={"https://maximaximal.github.io/limboole/#2" + data}
-       target="_blank">
+    <a href={'https://maximaximal.github.io/limboole/#2' + data}
+       target='_blank'>
         Check in Limboole
     </a>

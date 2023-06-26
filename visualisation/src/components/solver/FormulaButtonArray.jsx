@@ -1,10 +1,12 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 
 export default function FormulaButtonArray({formulaType,
-                                               formula, setFormula,
+                                               getFormula,
                                                setEvalStatusMessage,
                                                setSolution,
                                                setSolutionInfo,
+                                               setFormulaTab,
+                                               setSolutionTab,
                                                model}) {
     const [simplifyFormulaLoading, setSimplifyFormulaLoading] = useState(false)
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
@@ -13,102 +15,66 @@ export default function FormulaButtonArray({formulaType,
 
     function handleSimplify() {
         setSimplifyFormulaLoading(true)
-        fetch('http://localhost:4000/simplify/' + formula)
-            .then(response => {
-                if(!response.ok) {
-                    setSimplifyFormulaLoading(false)
-                }
-
-                return response
-            })
+        fetch('http://localhost:4000/simplify/' + getFormula())
             .then(response => response.json())
-            .then(data => setFormula(getResultFromJSON(data)))
-            .then(() => setSimplifyFormulaLoading(false))
+            .then(setFormulaTab)
+            .finally(() => setSimplifyFormulaLoading(false))
     }
 
     function handleCheckFormula() {
         setCheckFormulaLoading(true)
-        fetch('http://localhost:4000/solve/' +  formula)
-            .then(response => {
-                if(!response.ok) {
-                    setCheckFormulaLoading(false)
-                }
-
-                return response
-            })
+        fetch('http://localhost:4000/solve/' +  getFormula())
             .then(response => response.json())
-            .then(data => JSON.stringify(data))
-            .then(data => setSolution(data))
-            .then(() => {
-                setEvalStatusMessage('')
-                setCheckFormulaLoading(false)
-            })
+            .then(setSolutionTab)
+            .finally(() => setCheckFormulaLoading(false))
+
     }
 
     function handleAllModels() {
         setAllModelsLoading(true)
-        fetch('http://localhost:4000/solveAll/' + formula)
-            .then(response => {
-                if(!response.ok) {
-                    setAllModelsLoading(false)
-                }
-
-                return response
-            })
+        fetch('http://localhost:4000/solveAll/' + getFormula())
             .then(response => response.json())
-            .then(data => setSolution(JSON.stringify(data)))
-            .then(() => {
-                setEvalStatusMessage('')
-                setAllModelsLoading(false)
-            })
+            .then(setSolutionTab)
+            .finally(() => setAllModelsLoading(false))
     }
 
     function handleCheckModel() {
         setCheckModelLoading(true)
-        fetch('http://localhost:4000/solveCTL/' + formula + '/' + formatModel(model))
-            .then(response => {
-                if(!response.ok) {
-                    setCheckModelLoading(false)
-                }
-
-                return response
-            })
+        fetch('http://localhost:4000/solveCTL/' + getFormula() + '/' + formatModel(model))
             .then(response => response.json())
             .then(data => {
-                setSolutionInfo(data['steps'].replaceAll(/_/g, "\n"))
+                setSolutionInfo(data['steps'].replaceAll(/_/g, '\n'))
                 delete data['steps'];
                 setSolution(JSON.stringify(data))
                 setEvalStatusMessage('')
             })
-            .then(() => setCheckModelLoading(false))
+            .finally(() => setCheckModelLoading(false))
     }
 
     return (
-        <div className="centerContainer">
-            {formulaType === "boolean"  &&
-                <button className="button" onClick={handleSimplify}>
-                    {simplifyFormulaLoading && <div className="loading"></div>}
+        <div className='centerContainer'>
+            {formulaType === 'boolean'  &&
+                <button className='button' onClick={handleSimplify}>
+                    {simplifyFormulaLoading && <div className='loading'></div>}
                     Simplify formula
                 </button>}
-            {formulaType === "boolean" &&
-                <button className="button" onClick={handleCheckFormula}>
-                    {checkFormulaLoading && <div className="loading"></div>}
+            {formulaType === 'boolean' &&
+                <button className='button' onClick={handleCheckFormula}>
+                    {checkFormulaLoading && <div className='loading'></div>}
                     Check formula
                 </button>}
-            {formulaType === "boolean" &&
-                <button className="button" onClick={handleAllModels}>
-                    {allModelsLoading && <div className="loading"></div>}
+            {formulaType === 'boolean' &&
+                <button className='button' onClick={handleAllModels}>
+                    {allModelsLoading && <div className='loading'></div>}
                     All models
                 </button>}
-            {formulaType === "ctl" &&
-                <button className="button" onClick={handleCheckModel}>
-                    {checkModelLoading && <div className="loading"></div>}
+            {formulaType === 'ctl' &&
+                <button className='button' onClick={handleCheckModel}>
+                    {checkModelLoading && <div className='loading'></div>}
                     Check model
                 </button>}
         </div>
     )
 }
 
-const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
-
-const formatModel = (raw_model) => raw_model.replace(/\n/g, "").replace(/;/g, "_")
+const formatModel = (raw_model) => raw_model.replace(/\n/g, '').replace(/;/g, '_')
