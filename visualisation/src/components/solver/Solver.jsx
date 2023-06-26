@@ -28,7 +28,9 @@ export default function Solver({formulaType, setFormulaType,
                 placeholder='Enter a formula'
                 onChange={handleChange}
                 name='formula'
-                onDoubleClick={() => navigator.clipboard.writeText(formula)}
+                onDoubleClick={() =>
+                    navigator.clipboard.writeText(formula)
+                        .then(() => setEvalStatusMessage('Copied Formula to Clipboard'))}
             />
             <FormulaButtonArray
                 formulaType={formulaType}
@@ -49,7 +51,9 @@ export default function Solver({formulaType, setFormulaType,
                 value={solution}
                 placeholder='Solution'
                 name='solution'
-                onDoubleClick={() => navigator.clipboard.writeText(solution)}
+                onDoubleClick={() =>
+                    navigator.clipboard.writeText(solution)
+                        .then(() => setEvalStatusMessage('Copied Solution to Clipboard'))}
             />
             <textarea
                 readOnly={true}
@@ -57,7 +61,9 @@ export default function Solver({formulaType, setFormulaType,
                 value={solutionInfo}
                 placeholder='Solution information'
                 name='solutionInfo'
-                onDoubleClick={() => navigator.clipboard.writeText(solutionInfo)}
+                onDoubleClick={() =>
+                    navigator.clipboard.writeText(solutionInfo)
+                        .then(() => setEvalStatusMessage('Copied Solution Information to Clipboard'))}
             />
         </div>
     )

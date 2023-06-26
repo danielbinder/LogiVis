@@ -10,7 +10,7 @@ export default function Model({setFormulaType,
                                   setFormulaTab,
                                   setSolutionTab,
                                   setEvalStatusMessage,
-                                  modelStatusMessage,
+                                  modelStatusMessage, setModelStatusMessage,
                                   modelWarningMessage,
                                   modelErrorMessage,
                                   model, setModel,
@@ -24,6 +24,8 @@ export default function Model({setFormulaType,
 
     // whenever 'model' changes, the graph attempts to update
     useEffect(() => {
+        setModelStatusMessage('')
+
         if(model === 'this') {
             setModel(generatorPlaceholder)
         }
@@ -34,43 +36,49 @@ export default function Model({setFormulaType,
     }, [model])
 
     return (
-        <div className='column'>
-            <h3 className='center'>Tune and apply parameters</h3>
-            <div className='parameters'>
-                <div className='smallColumn'>
-                    <ModelTypeSelector
-                        modelType={modelType}
-                        setModelType={setModelType}
+        <div>
+            <div className='column'>
+                <h3 className='center'>Tune and apply parameters</h3>
+                <div className='parameters'>
+                    <div className='smallColumn'>
+                        <ModelTypeSelector
+                            modelType={modelType}
+                            setModelType={setModelType}
+                        />
+                        <AlgorithmTester/>
+                    </div>
+                    <div className='smallColumn'>
+                        <FormulaGenerator/>
+                        <ModelEncoder
+                            setFormulaType={setFormulaType}
+                            setFormulaTab={setFormulaTab}
+                            setSolutionTab={setSolutionTab}
+                            setEvalStatusMessage={setEvalStatusMessage}
+                            kripke={() => model2Kripke(model)}
+                        />
+                    </div>
+                    <ModelGenerator
+                        setModelTab={setModelTab}
                     />
-                    <AlgorithmTester/>
                 </div>
-                <div className='smallColumn'>
-                    <FormulaGenerator/>
-                    <ModelEncoder
-                        setFormulaType={setFormulaType}
-                        setFormulaTab={setFormulaTab}
-                        setSolutionTab={setSolutionTab}
-                        setEvalStatusMessage={setEvalStatusMessage}
-                        kripke={() => model2Kripke(model)}
-                    />
-                </div>
-                <ModelGenerator
-                    setModelTab={setModelTab}
-                />
-            </div>
-            <p className='green'>{modelStatusMessage}</p>
-            <p className='orange'>{modelWarningMessage}</p>
-            <p className='red'>{modelErrorMessage}</p>
-            <div className='model'>
+        </div>
+            <div className='column'>
+                <p className='green'>{modelStatusMessage}</p>
+                <p className='orange'>{modelWarningMessage}</p>
+                <p className='red'>{modelErrorMessage}</p>
+                <div className='model'>
                 <textarea
                     className='textArea'
                     value={model}
                     placeholder={generatorPlaceholder}
                     onChange={handleChange}
                     name='model'
-                    onDoubleClick={() => navigator.clipboard.writeText(model)}
+                    onDoubleClick={() =>
+                        navigator.clipboard.writeText(model)
+                            .then(() => setModelStatusMessage('Copied Model to Clipboard'))}
                 />
-                {graph && <Graphviz className='graph' dot={graph}/>}
+                    {graph && <Graphviz className='graph' dot={graph}/>}
+                </div>
             </div>
         </div>
     )

@@ -22,14 +22,20 @@
 
 .green {
     color: #11d10a;
+    width: 99%;
+    text-align: center;
 }
 
 .orange {
     color: #d1740a;
+    width: 99%;
+    text-align: center;
 }
 
 .red {
     color: #d10a0a;
+    width: 99%;
+    text-align: center;
 }
 
 .textArea {

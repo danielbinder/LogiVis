@@ -73,6 +73,7 @@ export default function App() {
                 setSolutionTab={setSolutionTab}
                 setEvalStatusMessage={setEvalStatusMessage}
                 modelStatusMessage={modelStatusMessage}
+                setModelStatusMessage={setModelStatusMessage}
                 modelWarningMessage={modelWarningMessage}
                 modelErrorMessage={modelErrorMessage}
                 model={model}
