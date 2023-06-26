@@ -28,6 +28,7 @@ export default function Solver({formulaType, setFormulaType,
                 placeholder='Enter a formula'
                 onChange={handleChange}
                 name='formula'
+                onDoubleClick={() => navigator.clipboard.writeText(formula)}
             />
             <FormulaButtonArray
                 formulaType={formulaType}
@@ -48,6 +49,7 @@ export default function Solver({formulaType, setFormulaType,
                 value={solution}
                 placeholder='Solution'
                 name='solution'
+                onDoubleClick={() => navigator.clipboard.writeText(solution)}
             />
             <textarea
                 readOnly={true}
@@ -55,6 +57,7 @@ export default function Solver({formulaType, setFormulaType,
                 value={solutionInfo}
                 placeholder='Solution information'
                 name='solutionInfo'
+                onDoubleClick={() => navigator.clipboard.writeText(solutionInfo)}
             />
         </div>
     )

@@ -64,6 +64,7 @@ export default function Model({setFormulaType,
                     placeholder={generatorPlaceholder}
                     onChange={handleChange}
                     name='model'
+                    onDoubleClick={() => navigator.clipboard.writeText(model)}
                 />
                 {graph && <Graphviz className='graph' dot={graph}/>}
             </div>
