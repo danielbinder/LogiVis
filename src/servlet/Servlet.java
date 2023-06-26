@@ -5,8 +5,6 @@ import model.kripke.KripkeStructure;
 import model.kripke.KripkeTruthTable;
 import interpreter.BruteForceSolver;
 import interpreter.Simplification;
-import lexer.Lexer;
-import parser.Parser;
 import rest.GET;
 import rest.REST;
 import temporal.solver.CTLSolver;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class Servlet {
     private static final int SERVLET_PORT = 4000;
     private static final int APP_PORT = 3000;
-    private static final Parser PARSER = new Parser();
 
     public static void main(String[] args) {
         REST.start(SERVLET_PORT);
@@ -29,7 +26,8 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return BruteForceSolver.solveWithResult(formula).computeJSON();
+        return BruteForceSolver.solveWithResult(formula)
+                .computeJSON();
     }
 
     @GET("/solveCTL/:formula/:model")
@@ -46,19 +44,21 @@ public class Servlet {
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return BruteForceSolver.solveAllWithResult(formula).computeJSON();
+        return BruteForceSolver.solveAllWithResult(formula)
+                .computeJSON();
     }
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return Generator.generateKripkeStructureWithResult(params, 10).computeJSON();
+        return Generator.generateKripkeStructureWithResult(params, 10)
+                .computeJSON();
     }
 
     @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps)   {
-        String rawKripke = kripke.replace(",", ";");
-        return KripkeStructure.fromString(rawKripke)
-                .toFormulaStringWithResult(Integer.parseInt(steps)).computeJSON();
+        return KripkeStructure.fromString(kripke.replace(",", ";"))
+                .toFormulaStringWithResult(Integer.parseInt(steps))
+                .computeJSON();
     }
 
     @GET("/kripke2compactFormula/:kripke/:steps")
@@ -93,17 +93,9 @@ public class Servlet {
 
     @GET("/simplify/:formula")
     public String simplify(String formula) {
-        return Simplification.ofWithResult(formula).computeJSON();
+        return Simplification.ofWithResult(formula)
+                .computeJSON();
     }
-
-    private static String resultToJSON(List<Map<String, String>> assignments) {
-        if(assignments == null) return "{\"result\":\"unsatisfiable\"}";
-        if(assignments.stream().anyMatch(m -> "valid".equals(m.get("result")))) return "{\"result\":\"valid\"}";
-        return "{" + assignments.stream()
-                        .map(a -> "\"assignment_" + assignments.indexOf(a) + "\":" + resultToJSON(a))
-                        .collect(Collectors.joining(",")) + "}";
-    }
-
 
     private static String resultToJSON(Map<String, String> map) {
         if(map == null) return "{\"result\":\"unsatisfiable\"}";
