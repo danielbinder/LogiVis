@@ -1,5 +1,6 @@
 package parser;
 
+import lexer.Lexer;
 import lexer.token.Token;
 import lexer.token.TokenType;
 import parser.logicnode.*;
@@ -10,6 +11,10 @@ public class Parser {
     private List<Token> tokens;
     private Token current;
     private int i;
+
+    public LogicNode parse(String input) {
+        return parse(Lexer.tokenize(input));
+    }
 
     public LogicNode parse(List<Token> tokens) {
         this.tokens = tokens;
