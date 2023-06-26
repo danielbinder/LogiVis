@@ -24,6 +24,10 @@ export default function Model({setFormulaType,
 
     // whenever 'model' changes, the graph attempts to update
     useEffect(() => {
+        if(model === 'this') {
+            setModel(generatorPlaceholder)
+        }
+
         try {
             setGraph(kripkeString2Graph(model2Kripke(model)))
         } catch (e) {}
@@ -192,7 +196,7 @@ const model2Kripke = (model) => {
 }
 
 const generatorPlaceholder =
-    'Example model:\n'
+    'Example model (type \'this\' to use this model):\n'
     + 's1, s2;          # model has two states S={s1, s2}\n'
     + 'initial: s1;     # model has one initial state I = {s1}\n'
     + 't1: s1 - s2,\n'
