@@ -1,5 +1,5 @@
 import generator.Generator;
-import kripke.KripkeStructure;
+import model.kripke.KripkeStructure;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
