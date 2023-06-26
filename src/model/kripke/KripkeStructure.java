@@ -1,7 +1,5 @@
 package model.kripke;
 
-import lexer.Lexer;
-import parser.Parser;
 import parser.logicnode.LogicNode;
 import servlet.Result;
 import temporal.model.State;
