@@ -1,0 +1,20 @@
+Formula         =               Expression
+
+Expression      =               Logic
+
+Logic           =               Implication '<->' Implication
+
+Implication     =               Or '->' Or
+
+Or              =               And '|' And
+
+And             =               Not '&' Not
+
+Not             =               '!' Formula
+                |               Action
+                |               Constant
+                |               '(' Formula ')'
+
+Action          =               \Regex: [a-z]+
+
+Constant        =               'false' | 'true' | '0' | '1'
