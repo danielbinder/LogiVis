@@ -1,8 +1,6 @@
-package interpreter;
+package bool.interpreter;
 
-import org.eclipse.jetty.util.log.Log;
-import parser.Parser;
-import parser.logicnode.*;
+import bool.parser.logicnode.*;
 import servlet.Result;
 
 import java.util.ArrayList;

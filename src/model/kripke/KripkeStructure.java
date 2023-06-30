@@ -1,6 +1,6 @@
 package model.kripke;
 
-import parser.logicnode.LogicNode;
+import bool.parser.logicnode.LogicNode;
 import servlet.Result;
 import temporal.model.State;
 import temporal.model.Transition;

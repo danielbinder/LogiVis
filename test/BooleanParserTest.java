@@ -1,14 +1,15 @@
+import bool.parser.logicnode.*;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
-import parser.Parser;
-import parser.logicnode.*;
+import bool.parser.BooleanParser;
+import bool.logicnode.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Assumption: Lexer is correct!
  */
-public class ParserTest {
+public class BooleanParserTest {
     @Test
     public void testGeneric() {
         assertEquals(new ImplicationNode(new ActionNode("a"),
@@ -59,6 +60,6 @@ public class ParserTest {
     }
 
     private LogicNode runInput(String input) {
-        return new Parser().parse(Lexer.tokenize(input));
+        return new BooleanParser().parse(Lexer.tokenizeBooleanFormula(input));
     }
 }

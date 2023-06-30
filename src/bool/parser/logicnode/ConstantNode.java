@@ -1,4 +1,4 @@
-package parser.logicnode;
+package bool.parser.logicnode;
 
 /**
  * false/0 or true/1

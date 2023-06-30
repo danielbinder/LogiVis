@@ -1,23 +1,22 @@
-package generator;
+package model.kripke;
 
-import model.kripke.KripkeNode;
-import model.kripke.KripkeStructure;
+import marker.Generator;
 import servlet.Result;
 
 import java.util.*;
 
-public class Generator {
+public class KripkeGenerator implements Generator {
     private static final Random rand = new Random();
 
-    public static Result generateKripkeStructureWithResult(String paramString, int maxRegeneration) {
-        return new Result(generateKripkeStructure(paramString, maxRegeneration).toString());
+    public static Result generateWithResult(String paramString, int maxRegeneration) {
+        return new Result(generate(paramString, maxRegeneration).toString());
     }
 
     /**
      * @param paramString format: nodes_initialNodes_variables_minSuccessors_maxSuccessors_allStatesReachable
      * @return Kripke Structure
      */
-    public static KripkeStructure generateKripkeStructure(String paramString, int maxRegeneration) {
+    public static KripkeStructure generate(String paramString, int maxRegeneration) {
         Random rand = new Random();
         KripkeStructure ks = null;
 

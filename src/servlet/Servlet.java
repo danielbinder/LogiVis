@@ -1,12 +1,12 @@
 package servlet;
 
-import generator.Generator;
+import model.kripke.KripkeGenerator;
 import model.kripke.KripkeStructure;
 import model.kripke.KripkeTruthTable;
-import interpreter.BruteForceSolver;
-import interpreter.Simplification;
-import rest.GET;
-import rest.REST;
+import bool.interpreter.BruteForceSolver;
+import bool.interpreter.Simplification;
+import servlet.rest.GET;
+import servlet.rest.REST;
 import temporal.solver.CTLSolver;
 
 import java.util.Map;
@@ -48,7 +48,7 @@ public class Servlet {
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return Generator.generateKripkeStructureWithResult(params, 10)
+        return KripkeGenerator.generateWithResult(params, 10)
                 .computeJSON();
     }
 

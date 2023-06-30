@@ -1,14 +1,14 @@
 package lexer;
 
-import lexer.token.Token;
+import bool.token.BooleanToken;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Lexer {
-    public static List<Token> tokenize(final String input) {
-        final List<Token> tokens = new ArrayList<>();
+    public static List<BooleanToken> tokenizeBooleanFormula(final String input) {
+        final List<BooleanToken> booleanTokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
 
         for(int i = 0; i < input.length(); i++) {
@@ -22,11 +22,11 @@ public class Lexer {
                     Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
-                tokens.add(Token.fromString(current.toString()));       // this is where the magic happens
+                booleanTokens.add(BooleanToken.fromString(current.toString()));       // this is where the magic happens
                 current = new StringBuilder();
             } catch(NoSuchElementException ignored) {}
         }
 
-        return tokens;
+        return booleanTokens;
     }
 }

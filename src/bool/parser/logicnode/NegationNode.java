@@ -1,4 +1,4 @@
-package parser.logicnode;
+package bool.parser.logicnode;
 
 import java.util.Objects;
 

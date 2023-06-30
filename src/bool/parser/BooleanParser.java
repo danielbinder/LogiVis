@@ -1,23 +1,24 @@
-package parser;
+package bool.parser;
 
+import bool.parser.logicnode.*;
 import lexer.Lexer;
-import lexer.token.Token;
-import lexer.token.TokenType;
-import parser.logicnode.*;
+import bool.token.BooleanToken;
+import bool.token.BooleanTokenType;
+import marker.Parser;
 
 import java.util.List;
 
-public class Parser {
-    private List<Token> tokens;
-    private Token current;
+public class BooleanParser implements Parser {
+    private List<BooleanToken> booleanTokens;
+    private BooleanToken current;
     private int i;
 
     public LogicNode parse(String input) {
-        return parse(Lexer.tokenize(input));
+        return parse(Lexer.tokenizeBooleanFormula(input));
     }
 
-    public LogicNode parse(List<Token> tokens) {
-        this.tokens = tokens;
+    public LogicNode parse(List<BooleanToken> booleanTokens) {
+        this.booleanTokens = booleanTokens;
         i = 0;
         advance();
 
@@ -34,7 +35,7 @@ public class Parser {
     private LogicNode doubleImplication() {
         LogicNode result = implication();
 
-        while(isType(TokenType.DOUBLE_IMPLICATION)) {
+        while(isType(BooleanTokenType.DOUBLE_IMPLICATION)) {
             advance();
             result = new DoubleImplicationNode(result, implication());
         }
@@ -48,7 +49,7 @@ public class Parser {
     private LogicNode implication() {
         LogicNode result = expression();
 
-        while(isType(TokenType.IMPLICATION)) {
+        while(isType(BooleanTokenType.IMPLICATION)) {
             advance();
             result = new ImplicationNode(result, expression());
         }
@@ -62,7 +63,7 @@ public class Parser {
     private LogicNode expression() {
         LogicNode result = term();
 
-        while(isType(TokenType.OR)) {
+        while(isType(BooleanTokenType.OR)) {
             advance();
             result = new OrNode(result, term());
         }
@@ -76,7 +77,7 @@ public class Parser {
     private LogicNode term() {
         LogicNode result = factor();
 
-        while(isType(TokenType.AND)) {
+        while(isType(BooleanTokenType.AND)) {
             advance();
             result = new AndNode(result, factor());
         }
@@ -89,7 +90,7 @@ public class Parser {
      *        | Atom
      */
     private LogicNode factor() {
-        if(isType(TokenType.NOT)) {
+        if(isType(BooleanTokenType.NOT)) {
             advance();
             return new NegationNode(factor());
         }
@@ -111,7 +112,7 @@ public class Parser {
             case LPAREN -> {
                 advance();
                 result = formula();
-                assert(isType(TokenType.RPAREN));
+                assert(isType(BooleanTokenType.RPAREN));
             }
             default -> throw new IllegalArgumentException("Illegal TokenType " + current.type);
         }
@@ -123,10 +124,10 @@ public class Parser {
     /* H E L P E R S */
 
     private void advance() {
-        if(i < tokens.size()) current = tokens.get(i++);
+        if(i < booleanTokens.size()) current = booleanTokens.get(i++);
     }
 
-    private boolean isType(TokenType type) {
+    private boolean isType(BooleanTokenType type) {
         return current.type == type;
     }
 }

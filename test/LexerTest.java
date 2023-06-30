@@ -1,6 +1,6 @@
 import lexer.Lexer;
-import lexer.token.Token;
-import lexer.token.TokenType;
+import bool.token.BooleanToken;
+import bool.token.BooleanTokenType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LexerTest {
     @Test
     public void testGeneric() {
-        assertEquals(List.of(new Token(TokenType.ACTION, "a"),
-                             new Token(TokenType.IMPLICATION),
-                             new Token(TokenType.ACTION, "b")),
-                     Lexer.tokenize("a -> b"));
+        assertEquals(List.of(new BooleanToken(BooleanTokenType.ACTION, "a"),
+                             new BooleanToken(BooleanTokenType.IMPLICATION),
+                             new BooleanToken(BooleanTokenType.ACTION, "b")),
+                     Lexer.tokenizeBooleanFormula("a -> b"));
     }
 }

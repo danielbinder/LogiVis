@@ -1,7 +1,7 @@
-package parser.logicnode;
+package bool.parser.logicnode;
 
 import lexer.Lexer;
-import parser.Parser;
+import bool.parser.BooleanParser;
 
 public sealed interface LogicNode permits
         ActionNode,
@@ -12,7 +12,7 @@ public sealed interface LogicNode permits
         NegationNode,
         OrNode {
     static LogicNode of(String formula) {
-        return new Parser().parse(Lexer.tokenize(formula));
+        return new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula));
     }
 }
 

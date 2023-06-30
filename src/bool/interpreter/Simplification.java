@@ -1,6 +1,6 @@
-package interpreter;
+package bool.interpreter;
 
-import parser.logicnode.*;
+import bool.parser.logicnode.*;
 import servlet.Result;
 
 import java.util.Arrays;

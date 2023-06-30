@@ -1,4 +1,4 @@
-package rest;
+package servlet.rest;
 
 import servlet.Servlet;
 

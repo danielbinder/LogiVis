@@ -1,8 +1,8 @@
-import generator.Generator;
+import model.kripke.KripkeGenerator;
 import model.kripke.KripkeStructure;
 import org.junit.jupiter.api.Test;
 
-public class GeneratorTest {
+public class KripkeGeneratorTest {
     @Test
     public void testParameters() {
         int nodes = 4;
@@ -13,7 +13,7 @@ public class GeneratorTest {
         boolean allStatesReachable = true;
 
         for(int i = 0; i < 10; i++) {
-            KripkeStructure ks = Generator.generateKripkeStructure(nodes + "_" +
+            KripkeStructure ks = KripkeGenerator.generate(nodes + "_" +
                                                                            initialNodes + "_" +
                                                                            variables + "_" +
                                                                            minSuccessors + "_" +

@@ -1,10 +1,10 @@
-package lexer.token;
+package bool.token;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-public enum TokenType {
+public enum BooleanTokenType {
     CONSTANT(Pattern.compile("[01]|true|false")),
     ACTION(Pattern.compile("[a-z]+([a-z]*[0-9]*)*")),
 
@@ -29,11 +29,11 @@ public enum TokenType {
 
     public final Pattern pattern;
 
-    TokenType(Pattern pattern) {
+    BooleanTokenType(Pattern pattern) {
         this.pattern = pattern;
     }
 
-    public static TokenType fromString(String s) {
+    public static BooleanTokenType fromString(String s) {
         return Arrays.stream(values())
                 .filter(v -> s.matches(v.pattern.pattern()))
                 .findFirst()

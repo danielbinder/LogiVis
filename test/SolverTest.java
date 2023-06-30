@@ -1,7 +1,7 @@
-import interpreter.BruteForceSolver;
+import bool.interpreter.BruteForceSolver;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
-import parser.Parser;
+import bool.parser.BooleanParser;
 
 import java.util.List;
 import java.util.Map;
@@ -153,13 +153,13 @@ public class SolverTest {
     }
 
     private Map<String, String> getAssignment(String formula) {
-        var assignment = BruteForceSolver.solve(new Parser().parse(Lexer.tokenize(formula)));
+        var assignment = BruteForceSolver.solve(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula)));
         System.out.println(assignment);
         return assignment;
     }
 
     private List<Map<String, String>> getAllAssignments(String formula) {
-        var allAssignments = BruteForceSolver.solveAll(new Parser().parse(Lexer.tokenize(formula)));
+        var allAssignments = BruteForceSolver.solveAll(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula)));
         System.out.println(allAssignments);
         return allAssignments;
     }

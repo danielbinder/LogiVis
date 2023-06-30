@@ -1,8 +1,8 @@
 package temporal.solver;
 
-import interpreter.Simplification;
+import bool.interpreter.Simplification;
 import lexer.Lexer;
-import parser.Parser;
+import bool.parser.BooleanParser;
 import temporal.model.KripkeStructure;
 import temporal.model.State;
 import temporal.model.Transition;
@@ -534,7 +534,7 @@ public class CTLSolver {
      * */
     private String simplifyExpression(String expression) {
         if(SolverConstants.TEMPORAL_SYMBOLS.stream().noneMatch(expression::contains)) {
-            String simplified = Simplification.of(new Parser().parse(Lexer.tokenize(expression))).toString();
+            String simplified = Simplification.of(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(expression))).toString();
             logStep("Simplified expression %s to %s", expression, simplified);
             return simplified;
         }

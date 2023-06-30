@@ -1,14 +1,14 @@
-package parser.logicnode;
+package bool.parser.logicnode;
 
 import java.util.Objects;
 
 /**
- * left -> right i.e., !left | right
+ * left | right
  */
-public record ImplicationNode(LogicNode left, LogicNode right) implements LogicNode {
+public record OrNode(LogicNode left, LogicNode right) implements LogicNode {
     @Override
     public String toString() {
-        return "(" + left.toString() + " -> " + right.toString() + ")";
+        return "(" + left.toString() + " | " + right.toString() + ")";
     }
 
     @Override
@@ -16,10 +16,10 @@ public record ImplicationNode(LogicNode left, LogicNode right) implements LogicN
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        ImplicationNode that = (ImplicationNode) o;
+        OrNode orNode = (OrNode) o;
 
-        if(!Objects.equals(left, that.left)) return false;
-        return Objects.equals(right, that.right);
+        if(!Objects.equals(left, orNode.left)) return false;
+        return Objects.equals(right, orNode.right);
     }
 
     @Override
