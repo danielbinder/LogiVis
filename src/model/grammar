@@ -1,6 +1,12 @@
 Model           =               Traditional
                 |               Compact
 
+Label           =               {Name | String}
+
+Name            =               \Regex: [a-z]+([a-z]*[0-9]*)*
+
+String          =               \Regex: '.*'
+
 * * * T R A D I T I O N A L * * *
 
 Traditional     =               \Unordered: States [Initial] [Transitions] [Final]
@@ -12,12 +18,6 @@ Initial         =               'I' '=' '{' [Name {',' Name}] '}'
 Transitions     =               'T' '=' '{' ['(' Name ',' Name ')' [Label] {',' '(' Name ',' Name ')' [Label]}] '}'
 
 Final           =               'F' '=' '{' [Name {',' Name}] '}'
-
-Label           =               {Name | String}
-
-Name            =               \Regex: [a-z]+([a-z]*[0-9]*)*
-
-String          =               \Regex: '.*'
 
 * * * C O M P A C T * * *
 
