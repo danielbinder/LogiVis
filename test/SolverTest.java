@@ -2,7 +2,9 @@ import bool.interpreter.BruteForceSolver;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 import bool.parser.BooleanParser;
+import servlet.Result;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,28 +18,28 @@ public class SolverTest {
     @Test
     public void testPrecedenceFormula() {
         String formula = "a | !b & c <-> !(a | b) & c";
-        var expected = Map.of("a", "false", "b", "false", "c", "false");
+        var expected = new HashMap<>(Map.of("a", false, "b", false, "c", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testImplicationPrecedence() {
         String formula = "(p -> q) | (q -> p)";
-        var expected = Map.of("p", "false", "q", "false");
+        var expected = new HashMap<>(Map.of("p", false, "q", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testAndOrFormula() {
         String formula = "(a & b) | c";
-        var expected = Map.of("a", "false", "b", "false", "c", "true");
+        var expected = new HashMap<>(Map.of("a", false, "b", false, "c", true));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testTautology() {
         String formula = "a & a";
-        var expected = Map.of("a", "true");
+        var expected = new HashMap<>(Map.of("a", true));
         assertEquals(expected, getAssignment(formula));
     }
 
@@ -50,14 +52,14 @@ public class SolverTest {
     @Test
     public void testConstant() {
         String formula = "a & !b | true";
-        var expected = Map.of("a", "false", "b", "false");
+        var expected = new HashMap<>(Map.of("a", false, "b", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testConjunction() {
         String formula = "a & !b & c & d";
-        var expected = Map.of("a", "true", "b", "false", "c", "true", "d", "true");
+        var expected = new HashMap<>(Map.of("a", true, "b", false, "c", true, "d", true));
         assertEquals(expected, getAssignment(formula));
     }
 
@@ -65,39 +67,39 @@ public class SolverTest {
     public void testAllSolutions() {
         String formula = "a -> b & !c";
         var expected = List.of(
-                Map.of("a", "false", "b", "false", "c", "false"),
-                Map.of("a", "false", "b", "false", "c", "true"),
-                Map.of("a", "false", "b", "true", "c", "false"),
-                Map.of("a", "false", "b", "true", "c", "true"),
-                Map.of("a", "true", "b", "true", "c", "false"));
+                new HashMap<>(Map.of("a", false, "b", false, "c", false)),
+                new HashMap<>(Map.of("a", false, "b", false, "c", true)),
+                new HashMap<>(Map.of("a", false, "b", true, "c", false)),
+                new HashMap<>(Map.of("a", false, "b", true, "c", true)),
+                new HashMap<>(Map.of("a", true, "b", true, "c", false)));
         assertEquals(expected, getAllAssignments(formula));
     }
 
     @Test
     public void testValid() {
         String formula = "a | !a";
-        var expected = List.of(Map.of("result", "valid"));
-        assertEquals(expected, getAllAssignments(formula));
+        var expected = new Result("valid").computeJSON();
+        assertEquals(expected, getAllAssignmentsWithResult(formula));
     }
 
     @Test
     public void testLongVariableNames() {
         String formula = "apples | !bananas & carrots <-> !(apples | bananas) & carrots";
-        var expected = Map.of("apples", "false", "bananas", "false", "carrots", "false");
+        var expected = new HashMap<>(Map.of("apples", false, "bananas", false, "carrots", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testSingleVariable() {
         String formula = "a";
-        var expected = Map.of("a", "true");
+        var expected = new HashMap<>(Map.of("a", true));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testRepeatedVariables() {
         String formula = "a | !a & a";
-        var expected = Map.of("a", "true");
+        var expected = new HashMap<>(Map.of("a", true));
         assertEquals(expected, getAssignment(formula));
     }
 
@@ -105,35 +107,35 @@ public class SolverTest {
     @Test
     public void testParentheses() {
         String formula = "a & (b | c)";
-        var expected = Map.of("a", "true", "b", "false", "c", "true");
+        var expected = new HashMap<>(Map.of("a", true, "b", false, "c", true));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testMixedFormula() {
         String formula = "(a | b) & (c | d)";
-        var expected = Map.of("a", "false", "b", "true", "c", "false", "d", "true");
+        var expected = new HashMap<>(Map.of("a", false, "b", true, "c", false, "d", true));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testMixedOperators() {
         String formula = "(a & b) <-> (c | d)";
-        var expected = Map.of("a", "false", "b", "false", "c", "false", "d", "false");
+        var expected = new HashMap<>(Map.of("a", false, "b", false, "c", false, "d", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testOnlyNegations() {
         String formula = "!(a & b)";
-        var expected = Map.of("a", "false", "b", "false");
+        var expected = new HashMap<>(Map.of("a", false, "b", false));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testOnlyConjunctions() {
         String formula = "a & b & c";
-        var expected = Map.of("a", "true", "b", "true", "c", "true");
+        var expected = new HashMap<>(Map.of("a", true, "b", true, "c", true));
         assertEquals(expected, getAssignment(formula));
     }
 
@@ -141,26 +143,32 @@ public class SolverTest {
     @Test
     public void testOnlyDisjunctions() {
         String formula = "a | b | c";
-        var expected = Map.of("a", "false", "b", "false", "c", "true");
+        var expected = new HashMap<>(Map.of("a", false, "b", false, "c", true));
         assertEquals(expected, getAssignment(formula));
     }
 
     @Test
     public void testVariablesWithNumbers() {
         String formula = "(a0 & b0) | c0";
-        var expected = Map.of("a0", "true", "b0", "true", "c0", "false");
+        var expected = new HashMap<>(Map.of("a0", true, "b0", true, "c0", false));
         assertEquals(expected, getAssignment(formula));
     }
 
-    private Map<String, String> getAssignment(String formula) {
+    private Map<String, Boolean> getAssignment(String formula) {
         var assignment = BruteForceSolver.solve(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula)));
         System.out.println(assignment);
         return assignment;
     }
 
-    private List<Map<String, String>> getAllAssignments(String formula) {
+    private List<Map<String, Boolean>> getAllAssignments(String formula) {
         var allAssignments = BruteForceSolver.solveAll(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula)));
         System.out.println(allAssignments);
         return allAssignments;
+    }
+
+    private String getAllAssignmentsWithResult(String formula) {
+        var result = BruteForceSolver.solveAllWithResult(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula))).computeJSON();
+        System.out.println(result);
+        return result;
     }
 }

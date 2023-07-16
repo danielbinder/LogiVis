@@ -2,7 +2,7 @@ import bool.parser.logicnode.*;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 import bool.parser.BooleanParser;
-import bool.logicnode.*;
+import bool.parser.logicnode.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
