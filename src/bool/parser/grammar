@@ -15,6 +15,6 @@ Not             =               '!' Formula
                 |               Constant
                 |               '(' Formula ')'
 
-Action          =               \Regex: [a-z]+
+Action          =               \Regex: [a-z]+([a-z]*[0-9]*)*
 
 Constant        =               'false' | 'true' | '0' | '1'

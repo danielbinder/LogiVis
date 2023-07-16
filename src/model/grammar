@@ -1,0 +1,32 @@
+Model           =               Traditional
+                |               Compact
+
+Label           =               {Name | String}
+
+Name            =               \Regex: [a-z]+([a-z]*[0-9]*)*
+
+String          =               \Regex: '.*'
+
+* * * T R A D I T I O N A L * * *
+
+Traditional     =               \Unordered: States [Initial] [Transitions] [Final]
+
+States          =               'S' '=' '{' Name ['\''] ['\'\'' | '"']) [Label] {',' Name ['\''] ['\'\'' | '"']) [Label]} '}'
+
+Initial         =               'I' '=' '{' [Name {',' Name}] '}'
+
+Transitions     =               'T' '=' '{' ['(' Name ',' Name ')' [Label] {',' '(' Name ',' Name ')' [Label]}] '}'
+
+Final           =               'F' '=' '{' [Name {',' Name}] '}'
+
+* * * C O M P A C T * * *
+
+Compact         =               CStates CTransitions
+
+CStates         =               CState {',' CState}
+
+CState          =               Name (\Unordered: ['_'] ['*'] ['\''] ['\'\'' | '"']) [Label]
+
+CTransitions    =               CTransition {',' CTransition}
+
+CTransition     =               Name '-' ['>'] Name [Label]
