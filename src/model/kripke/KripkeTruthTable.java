@@ -47,7 +47,7 @@ public class KripkeTruthTable {
         return IntStream.range(0, steps)
                 .mapToObj(i -> IntStream.range(0, maxSuccessors)
                         .mapToObj(futureAss -> literals.stream()
-                                // if future assignement for current literal contains any true assignments
+                                // if future assignment for current literal contains any true assignments
                                 .map(literal -> table.keySet().stream().anyMatch(currAss -> table.get(currAss).get(futureAss).get(literal)) ?
                                         "(" + literal + (i + 1) + " <-> " + table.keySet().stream()
                                                 .filter(currAss -> table.get(currAss).get(futureAss).get(literal))
@@ -66,19 +66,24 @@ public class KripkeTruthTable {
     }
 
     public String toQBFString(int steps) {
+        if(steps < 1) return "()";
         final StringBuilder sb = new StringBuilder();
 
+        final List<Integer> initialRange = IntStream.range(0, 2).boxed().toList();
+        final Set<String> universalStateLiterals = new LinkedHashSet<>();
+        initialRange.forEach(step -> literals.forEach(literal -> {
+            universalStateLiterals.add(literal + step);
+        }));
+
         final List<Integer> stepRange = IntStream.range(0, steps + 1).boxed().toList();
-        final TreeSet<String> universalStateLiterals = new TreeSet<>();
-        final TreeSet<String> existentialStateLiterals = new TreeSet<>();
+        final Set<String> existentialStateLiterals = new LinkedHashSet<>();
         stepRange.forEach(step -> literals.forEach(literal -> {
-                if(step == 0) {
-                    existentialStateLiterals.add(literal);
-                } else {
-                    existentialStateLiterals.add(literal + "n" + step);
-                }
-                universalStateLiterals.add(literal + step);
-            })
+                    if(step == 0) {
+                        existentialStateLiterals.add(literal);
+                    } else {
+                        existentialStateLiterals.add(literal + "n" + step);
+                    }
+                })
         );
 
         final StringBuilder quantifiedVariables = new StringBuilder();
@@ -95,20 +100,53 @@ public class KripkeTruthTable {
         sb.append("( ");
 
         final StringBuilder aliases = new StringBuilder();
-        aliases.append("(");
-        List<String> existentialAliases = new ArrayList<>(existentialStateLiterals);
-        universalStateLiterals.forEach(literal -> aliases.append("(")
-                .append(literal)
-                .append(" <-> ")
-                .append(existentialAliases.remove(0))
-                .append(")")
-                .append(" & "));
-        aliases.setLength(aliases.length() - 3);
-        aliases.append(")");
+        try {
+            final List<String> existentialStateLiteralsList = new ArrayList<>(existentialStateLiterals);
+            final List<String> existentialAliases = new ArrayList<>(existentialStateLiteralsList);
+            final List<String> tempList = new ArrayList<>();
+            if(steps > 1) {
+                // duplicate all sets of existential literals in between the first and last set
+                int startIdx = literals.size();
+                int endIdx = existentialStateLiteralsList.size() - literals.size();
+                while(startIdx < endIdx) {
+                    tempList.addAll(existentialStateLiteralsList.subList(startIdx, startIdx + literals.size()));
+                    startIdx += literals.size();
+                }
+
+                int insertionStart = 0;
+                int insertionEnd = tempList.size() / literals.size();
+                while(insertionStart < insertionEnd) {
+                    final List<String> subList = tempList.subList(0, literals.size());
+                    existentialAliases.addAll(existentialAliases.indexOf(tempList.get(0)), subList);
+                    tempList.removeAll(subList);
+                    insertionStart++;
+                }
+            }
+
+            int iterationCount = 0;
+            if(steps > 1) aliases.append("(");
+            while(iterationCount < steps) {
+                aliases.append("(");
+                universalStateLiterals.forEach(literal -> aliases.append("(")
+                        .append(literal)
+                        .append(" <-> ")
+                        .append(existentialAliases.remove(0))
+                        .append(")")
+                        .append(" & "));
+                aliases.setLength(aliases.length() - 3);
+                aliases.append(") | ");
+                iterationCount++;
+            }
+            aliases.setLength(aliases.length() - 3);
+            if(steps > 1) aliases.append(")");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "()";
+        }
 
         sb.append(aliases);
         sb.append("\n  -> \n");
-        sb.append(this.toFormulaString(steps));
+        sb.append(this.toFormulaString(1));
         sb.append("\n)");
         return sb.toString();
     }
