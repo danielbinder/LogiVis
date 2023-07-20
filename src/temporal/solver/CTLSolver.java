@@ -3,7 +3,10 @@ package temporal.solver;
 import bool.interpreter.Simplification;
 import lexer.Lexer;
 import bool.parser.BooleanParser;
-import temporal.model.KripkeStructure;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import servlet.Result;
+import temporal.model.KripkeStruct;
 import temporal.model.State;
 import temporal.model.Transition;
 
@@ -12,15 +15,26 @@ import java.util.stream.Collectors;
 
 public class CTLSolver {
 
-    private final KripkeStructure kripkeStructure;
+    /** This kripke structure will be analyzed in order to evaluate whether the
+     * properties (i.e., atoms) of individual nodes satisfy the given CTL expression. */
+    private final KripkeStruct kripkeStructure;
+
+    /** StringBuilder used to log conducted solving steps. Will be reset when a new
+     * CTL expression is to be tested with the same CTLSolver instance. */
     private final StringBuilder solverSteps;
 
-    public CTLSolver(KripkeStructure kripkeStructure) {
+    public CTLSolver(KripkeStruct kripkeStructure) {
         this.kripkeStructure = kripkeStructure;
         this.solverSteps = new StringBuilder();
     }
 
-    public TreeMap<String, String> getSatisfyingStates(String expression) {
+    public Result getSatisfyingStatesAsResult(String expression) {
+        CTLSolverResult solverResult = getSatisfyingStates(expression);
+        if(solverResult.isValid()) return new Result(solverResult.getSolverResult(), solverResult.getSolverSteps());
+        else return new Result(solverResult.getErrorMessage(), solverResult.getSolverSteps());
+    }
+
+    public CTLSolverResult getSatisfyingStates(String expression) {
         try {
             // reset recorded solver steps
             resetSolverSteps();
@@ -39,20 +53,20 @@ public class CTLSolver {
 
             // return ordered mapping of state names to a boolean value indicating if associated
             // state satisfies the passed expression
-            Map<String, String> result = kripkeStructure.getStates()
+            Map<String, Boolean> result = kripkeStructure.getStates()
                     .stream()
                     .collect(Collectors.toMap(
                             State::getStateName,
-                            state -> String.valueOf(states.contains(state))
+                            states::contains
                     ));
-            return new TreeMap<>(result);
+            return new CTLSolverResult(new TreeMap<>(result), getSolverSteps());
         } catch(Exception ex) {
             String exMessage = ex.getMessage();
             StackTraceElement ste = ex.getStackTrace()[0];
             if(!ste.getClassName().equals(this.getClass().getName())) {
                 exMessage = "invalid expression";
             }
-            return new TreeMap<>(Map.of(expression, exMessage));
+            return new CTLSolverResult(getSolverSteps(), exMessage);
         }
     }
 
@@ -551,7 +565,7 @@ public class CTLSolver {
                 message = String.format(message, params);
             }
             this.solverSteps.append(message);
-            this.solverSteps.append(System.lineSeparator());
+            this.solverSteps.append("\n");
         }
     }
 
@@ -575,5 +589,22 @@ public class CTLSolver {
         logStep("Transformed expression %s to %s by leveraging semantic equivalence.", originalExpr, newExpr);
     }
 
-    public String getSolverSteps() { return this.solverSteps.toString(); }
+    private String getSolverSteps() { return this.solverSteps.toString(); }
+
+    @Getter
+    @AllArgsConstructor
+    public class CTLSolverResult {
+        private Map<String, Boolean> solverResult;
+        private String solverSteps;
+        private boolean valid;
+        private String errorMessage;
+
+        public CTLSolverResult(Map<String, Boolean> solverResult, String solverSteps) {
+            this(solverResult, solverSteps, true, null);
+        }
+
+        public CTLSolverResult(String solverSteps, String errorMessage) {
+            this(null, solverSteps, false, errorMessage);
+        }
+    }
 }

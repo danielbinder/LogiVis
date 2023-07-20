@@ -1,10 +1,12 @@
 package temporal.model;
 
+import servlet.Result;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class KripkeStructure {
+public class KripkeStruct {
 
     private static final int STRUCTURE_ELEM_LEN = 4;
     private static final int SUB_STRUCTURE_SPLIT_LEN = 2;
@@ -14,19 +16,18 @@ public class KripkeStructure {
     private final List<State> states = new ArrayList<>();
     private final List<String> atoms = new ArrayList<>();
 
-    public KripkeStructure(List<State> states,
-                           List<State> initialStates,
-                           List<Transition> transitions,
-                           List<String> atoms) {
+    public KripkeStruct(List<State> states,
+                        List<State> initialStates,
+                        List<Transition> transitions,
+                        List<String> atoms) {
         this.states.addAll(states);
         this.initialStates.addAll(initialStates);
         this.transitions.addAll(transitions);
         this.atoms.addAll(atoms);
     }
 
-    public KripkeStructure(String structureDefinition) {
+    public KripkeStruct(String structureDefinition) {
         String [] structure = structureDefinition
-                .replace(System.lineSeparator(), "")
                 .replace("\n", "")
                 .split(";");
 
@@ -106,6 +107,10 @@ public class KripkeStructure {
 
     public List<String> getAtoms() { return atoms; }
 
+    public Result toModelStringAsResult() {
+        return new Result(toModelString());
+    }
+
     public String toModelString() {
         String result = "";
 
@@ -129,14 +134,14 @@ public class KripkeStructure {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("States (with atoms): ");
-        sb.append(System.lineSeparator());
+        sb.append("\n");
         List<String> stateStrings = new ArrayList<>();
         getStates().forEach(state -> {
             stateStrings.add(String.format("%s: %s", state.getStateName(),
                     String.join(", ", state.getAtoms())));
         });
-        sb.append(String.join(System.lineSeparator(), stateStrings));
-        sb.append(System.lineSeparator());
+        sb.append(String.join("\n", stateStrings));
+        sb.append("\n");
 
         sb.append("Initial state(s): ");
         if(!getInitialStates().isEmpty()) {
@@ -144,16 +149,16 @@ public class KripkeStructure {
         } else {
             sb.append("none");
         }
-        sb.append(System.lineSeparator());
+        sb.append("\n");
 
         sb.append("Transitions: ");
-        sb.append(System.lineSeparator());
+        sb.append("\n");
         List<String> transitionStrings = new ArrayList<>();
         getTransitions().forEach(transition -> {
             transitionStrings.add(String.format("%s: %s -> %s", transition.getTransitionName(),
                     transition.getFromState().getStateName(), transition.getToState().getStateName()));
         });
-        sb.append(String.join(System.lineSeparator(), transitionStrings));
+        sb.append(String.join("\n", transitionStrings));
         return sb.toString();
     }
 }

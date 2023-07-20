@@ -3,6 +3,7 @@ package model.kripke;
 import bool.parser.logicnode.LogicNode;
 import servlet.Result;
 import temporal.model.State;
+import temporal.model.KripkeStruct;
 import temporal.model.Transition;
 
 import java.util.*;
@@ -41,7 +42,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         return ks;
     }
 
-    public temporal.model.KripkeStructure toOtherKripke() {
+    public KripkeStruct toOtherKripke() {
         List<State> states = new ArrayList<>();
         List<State> initial = new ArrayList<>();
         Map<KripkeNode, State> stateMap = new HashMap<>();
@@ -65,7 +66,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
 
         List<String> atoms = get(0).stateMap.keySet().stream().toList();
 
-        return new temporal.model.KripkeStructure(states, initial, transitions, atoms);
+        return new KripkeStruct(states, initial, transitions, atoms);
     }
 
     public LogicNode toFormula(int steps) {

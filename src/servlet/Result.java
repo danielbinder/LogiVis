@@ -31,6 +31,8 @@ public class Result {
         this(result, "", "", "");
     }
 
+    public Result(Map<String, Boolean> result, String info) { this(result, info, "", ""); }
+
     public Result(Map<String, Boolean> result, String info, String warning, String error) {
         this(JSONof(result), info, warning, error);
     }

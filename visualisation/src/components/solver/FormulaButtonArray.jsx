@@ -27,7 +27,6 @@ export default function FormulaButtonArray({formulaType,
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckFormulaLoading(false))
-
     }
 
     function handleAllModels() {
@@ -42,12 +41,7 @@ export default function FormulaButtonArray({formulaType,
         setCheckModelLoading(true)
         fetch('http://localhost:4000/solveCTL/' + getFormula() + '/' + formatModel(model))
             .then(response => response.json())
-            .then(data => {
-                setSolutionInfo(data['steps'].replaceAll(/_/g, '\n'))
-                delete data['steps'];
-                setSolution(JSON.stringify(data))
-                setEvalStatusMessage('')
-            })
+            .then(setSolutionTab)
             .finally(() => setCheckModelLoading(false))
     }
 
