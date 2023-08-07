@@ -3,8 +3,6 @@ package temporal.solver;
 import bool.interpreter.Simplification;
 import lexer.Lexer;
 import bool.parser.BooleanParser;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import servlet.Result;
 import temporal.model.KripkeStruct;
 import temporal.model.State;
@@ -30,8 +28,8 @@ public class CTLSolver {
 
     public Result getSatisfyingStatesAsResult(String expression) {
         CTLSolverResult solverResult = getSatisfyingStates(expression);
-        if(solverResult.isValid()) return new Result(solverResult.getSolverResult(), solverResult.getSolverSteps());
-        else return new Result(solverResult.getErrorMessage(), solverResult.getSolverSteps());
+        if(solverResult.isValid) return new Result(solverResult.solverResult, solverResult.solverSteps);
+        else return new Result(solverResult.errorMessage, solverResult.solverSteps);
     }
 
     public CTLSolverResult getSatisfyingStates(String expression) {
@@ -591,13 +589,18 @@ public class CTLSolver {
 
     private String getSolverSteps() { return this.solverSteps.toString(); }
 
-    @Getter
-    @AllArgsConstructor
-    public class CTLSolverResult {
-        private Map<String, Boolean> solverResult;
-        private String solverSteps;
-        private boolean valid;
-        private String errorMessage;
+    public static class CTLSolverResult {
+        public final Map<String, Boolean> solverResult;
+        public final String solverSteps;
+        public final boolean isValid;
+        public final String errorMessage;
+
+        private CTLSolverResult(Map<String, Boolean> solverResult, String solverSteps, boolean isValid, String errorMessage) {
+            this.solverResult = solverResult;
+            this.solverSteps = solverSteps;
+            this.isValid = isValid;
+            this.errorMessage = errorMessage;
+        }
 
         public CTLSolverResult(Map<String, Boolean> solverResult, String solverSteps) {
             this(solverResult, solverSteps, true, null);

@@ -241,7 +241,7 @@ public class CTLTest {
                         "s4", false,
                         "s5", true,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("p -> q").getSolverResult());
+                        "s7", true), solver.getSatisfyingStates("p -> q").solverResult);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("p <-> q").getSolverResult());
+                        "s7", true), solver.getSatisfyingStates("p <-> q").solverResult);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class CTLTest {
                         "s4", true,
                         "s5", false,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("((p | q) & q) -> p").getSolverResult());
+                        "s7", true), solver.getSatisfyingStates("((p | q) & q) -> p").solverResult);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class CTLTest {
                         "s4", false,
                         "s5", true,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("(p | true) & q").getSolverResult());
+                        "s7", false), solver.getSatisfyingStates("(p | true) & q").solverResult);
     }
 
     @Test
@@ -293,7 +293,7 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("true & false").getSolverResult());
+                        "s7", false), solver.getSatisfyingStates("true & false").solverResult);
     }
 
     @Test
@@ -306,7 +306,7 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("q & EXp").getSolverResult());
+                        "s7", false), solver.getSatisfyingStates("q & EXp").solverResult);
     }
 
     @Test
@@ -319,21 +319,21 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6", false,
-                        "s7", false), solver.getSatisfyingStates("EX(p & q)").getSolverResult());
+                        "s7", false), solver.getSatisfyingStates("EX(p & q)").solverResult);
     }
 
     @Test
     public void testFaultyExpression() {
         KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
         CTLSolver solver = new CTLSolver(structure);
-        assertEquals("invalid expression", solver.getSatisfyingStates("a &&&& b").getErrorMessage());
+        assertEquals("invalid expression", solver.getSatisfyingStates("a &&&& b").errorMessage);
     }
 
     @Test
     public void testFaultyCTLExpression() {
         KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
         CTLSolver solver = new CTLSolver(structure);
-        assertEquals("Unknown expression/atom/constant '(y)'.", solver.getSatisfyingStates("EX(y)").getErrorMessage());
+        assertEquals("Unknown expression/atom/constant '(y)'.", solver.getSatisfyingStates("EX(y)").errorMessage);
     }
 
     @Test
@@ -346,7 +346,7 @@ public class CTLTest {
                 "s4", false,
                 "s5", true,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("!!q").getSolverResult());
+                "s7", false), solver.getSatisfyingStates("!!q").solverResult);
     }
 
     @Test
@@ -359,7 +359,7 @@ public class CTLTest {
                 "s4", true,
                 "s5", true,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("!!!(p & false)").getSolverResult());
+                "s7", true), solver.getSatisfyingStates("!!!(p & false)").solverResult);
     }
 
     @Test
@@ -372,7 +372,7 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("EX(kiwis)").getSolverResult());
+                "s7", false), solver.getSatisfyingStates("EX(kiwis)").solverResult);
     }
 
     @Test
@@ -385,7 +385,7 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("(false & true) | (p & q)").getSolverResult());
+                "s7", false), solver.getSatisfyingStates("(false & true) | (p & q)").solverResult);
     }
 
     @Test
@@ -398,7 +398,7 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", false,
-                "s7", true), solver.getSatisfyingStates("!(!bananas & !kiwis)").getSolverResult());
+                "s7", true), solver.getSatisfyingStates("!(!bananas & !kiwis)").solverResult);
     }
 
     @Test
@@ -411,7 +411,7 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("(q | true) & AXp").getSolverResult());
+                "s7", false), solver.getSatisfyingStates("(q | true) & AXp").solverResult);
     }
 
     @Test
@@ -424,7 +424,7 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("E(p U q)").getSolverResult());
+                "s7", true), solver.getSatisfyingStates("E(p U q)").solverResult);
     }
 
     @Test
@@ -437,7 +437,7 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("A(p U q)").getSolverResult());
+                "s7", true), solver.getSatisfyingStates("A(p U q)").solverResult);
     }
 
     @Test
@@ -447,7 +447,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("EGp & AGp").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("EGp & AGp").solverResult);
     }
 
     @Test
@@ -457,7 +457,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("(!AGp) | EFq").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("(!AGp) | EFq").solverResult);
     }
 
     @Test
@@ -467,7 +467,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EG(r -> t)").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("EG(r -> t)").solverResult);
     }
 
     @Test
@@ -477,7 +477,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("AX(r -> p)").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("AX(r -> p)").solverResult);
     }
 
     @Test
@@ -487,7 +487,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("AXq").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("AXq").solverResult);
     }
 
     @Test
@@ -497,7 +497,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", false,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("EXq").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("EXq").solverResult);
     }
 
     @Test
@@ -507,7 +507,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("!AXq").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("!AXq").solverResult);
     }
 
     @Test
@@ -517,7 +517,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("!EXq").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("!EXq").solverResult);
     }
 
     @Test
@@ -527,7 +527,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("A(p U q)").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("A(p U q)").solverResult);
     }
 
     @Test
@@ -537,7 +537,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("E(p U q)").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("E(p U q)").solverResult);
     }
 
     @Test
@@ -547,7 +547,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("AXq & A(p U q)").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("AXq & A(p U q)").solverResult);
     }
 
     @Test
@@ -557,7 +557,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("AXq | A(p U q)").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("AXq | A(p U q)").solverResult);
     }
 
     @Test
@@ -567,7 +567,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EFr").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("EFr").solverResult);
     }
 
     @Test
@@ -577,7 +577,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AFr").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("AFr").solverResult);
     }
 
     @Test
@@ -587,7 +587,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("EGt").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("EGt").solverResult);
     }
 
     @Test
@@ -597,7 +597,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("AGq").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("AGq").solverResult);
     }
 
     @Test
@@ -607,7 +607,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AX((EFp) | (AFr))").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("AX((EFp) | (AFr))").solverResult);
     }
 
     @Test
@@ -617,7 +617,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EX((AFp) | (EFr))").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("EX((AFp) | (EFr))").solverResult);
     }
 
     @Test
@@ -627,7 +627,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("A(p U A(q U r))").getSolverResult());
+                "s4", false), solver.getSatisfyingStates("A(p U A(q U r))").solverResult);
     }
 
     @Test
@@ -637,7 +637,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("E(A(q U r) U t)").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("E(A(q U r) U t)").solverResult);
     }
 
     @Test
@@ -647,7 +647,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AG(p -> A(p U (!p & A(!p U q))))").getSolverResult());
+                "s4", true), solver.getSatisfyingStates("AG(p -> A(p U (!p & A(!p U q))))").solverResult);
     }
 
     @Test
@@ -662,7 +662,7 @@ public class CTLTest {
                 "s6", true,
                 "s7", true,
                 "s8", true,
-                "s9", true), solver.getSatisfyingStates("AG(t1 -> (AF c1))").getSolverResult());
+                "s9", true), solver.getSatisfyingStates("AG(t1 -> (AF c1))").solverResult);
     }
 
     @Test
@@ -678,7 +678,7 @@ public class CTLTest {
                 "s7", false,
                 "s8", true,
                 "s9", true,
-                "s10", true), solver.getSatisfyingStates("EGq").getSolverResult());
+                "s10", true), solver.getSatisfyingStates("EGq").solverResult);
     }
 
     @Test
@@ -694,7 +694,7 @@ public class CTLTest {
                 "s7", true,
                 "s8", true,
                 "s9", true,
-                "s10", true), solver.getSatisfyingStates("AGp").getSolverResult());
+                "s10", true), solver.getSatisfyingStates("AGp").solverResult);
     }
 
     @Test
@@ -704,6 +704,6 @@ public class CTLTest {
         assertEquals(Map.of("0", false,
                 "1", false,
                 "2", true,
-                "3", true), solver.getSatisfyingStates("EX((a & b) | !!!!c) & true").getSolverResult());
+                "3", true), solver.getSatisfyingStates("EX((a & b) | !!!!c) & true").solverResult);
     }
 }
