@@ -55,16 +55,16 @@ export default function Model({setFormulaType,
                 <p className='orange'>{modelWarningMessage}</p>
                 <p className='red'>{modelErrorMessage}</p>
                 <div className='model'>
-                <textarea
-                    className='textArea'
-                    value={model}
-                    placeholder={generatorPlaceholder}
-                    onChange={handleChange}
-                    name='model'
-                    onDoubleClick={() =>
-                        navigator.clipboard.writeText(model)
-                            .then(() => setModelStatusMessage('Copied Model to Clipboard'))}
-                />
+                    <textarea
+                        className='textArea'
+                        value={model}
+                        placeholder={generatorPlaceholder}
+                        onChange={handleChange}
+                        name='model'
+                        onDoubleClick={() =>
+                            navigator.clipboard.writeText(model)
+                                .then(() => setModelStatusMessage('Copied Model to Clipboard'))}
+                    />
                     <ErrorBoundary>
                         <Graph
                             setModelStatusMessage={setModelStatusMessage}
@@ -74,8 +74,7 @@ export default function Model({setFormulaType,
                     </ErrorBoundary>
                 </div>
             </div>
-        </div>
-    )
+        </div>)
 }
 
 const model2Kripke = (model) => {
