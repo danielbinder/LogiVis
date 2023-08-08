@@ -31,7 +31,7 @@ const model2Graph = (model) => {
 
     model = removeComments(model)
 
-    return result + (removeWhiteSpaces(model).includes('S={') ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
+    return result + ((/S\s*?=\s*?[{].*?[}]/g).test(model) ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
 }
 
 const traditionalModel2Graph = (model) => {
@@ -79,140 +79,87 @@ const traditionalModel2Graph = (model) => {
 }
 
 const compactModel2Graph = (model) => {
+    const transitions = model.split(',')
 
+    return transitions.map(t => {
+        if(t.includes('->')) {
+            return t.split('->').map(createGraphNodeFromCState).join('')
+        } else if(t.includes('-')) {
+            return t.split('-').map(createGraphNodeFromCState).join('')
+        } else {
+            return createGraphNodeFromCState(t)
+        }
+    }).join('') +
+        transitions.map(t => {
+            if(t.includes('->')) {
+                return createInitialAndFinalNode(transitions.indexOf(t), t.split('->')[0], 'l') +
+                createInitialAndFinalNode(transitions.indexOf(t), t.split('->')[1], 'r')
+            } else if(t.includes('-')) {
+                return createInitialAndFinalNode(transitions.indexOf(t), t.split('-')[0], 'l') +
+                createInitialAndFinalNode(transitions.indexOf(t), t.split('-')[1], 'r')
+            } else {
+                return createInitialAndFinalNode(transitions.indexOf(t), t, 'c')
+            }
+        }).join('') +
+        transitions.map(t => {
+            if(t.includes('->')) {
+                return `${getStateName(t.split('->')[0])} -> ${getStateName(t.split('->')[1])} ` +
+                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}"];\n`
+            } else if(t.includes('-')) {
+                return `${getStateName(t.split('-')[0])} -> ${getStateName(t.split('-')[1])} ` +
+                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}" arrowhead=none];\n`
+            }
+
+            return ''
+        }).join('')
 }
+
+const getStateName = (s) => removeStateDescriptors(withoutLabel(s))
 
 const removeWhiteSpaces = (s) => s.replaceAll(/\s/g,'')
 
-const removeComments = (s) => s.replaceAll(/#.*?\n/g, '\n')
+const removeComments = (s) => s.replaceAll(/#.*?(\n|$)/g, '\n')
 
 const getLabel = (s) => s.includes('[')
-    ? s.match(/\[.*]/g)[0].replace('[', '').replace(']', '')
+    ? s.match(/\[.*?]/g)[0].replace('[', '').replace(']', '')
+    : ''
+
+const getCStateLabel = (s) => (/[a-z]+([a-z]*[0-9]*)*\s*?\[/g).test(s)
+    ? s.match(/[a-z]+([a-z]*[0-9]*)*\s*?\[.*?]/g)[0].replaceAll(/[a-z]+([a-z]*[0-9]*)*\s*?\[/g, '').replace(']', '')
+    : ''
+
+const getCTransitionLabel = (s) => (/->?\s*?\[/g).test(s)
+    ? s.match(/->?\s*?\[.*?]/g)[0].replaceAll(/->?\s*?\[/g, '').replace(']', '')
     : ''
 
 const withoutLabel = (s) => s.includes('[')
-    ? removeWhiteSpaces(s.replace(s.match(/\[.*]/g)[0], ''))
+    ? removeWhiteSpaces(s.replaceAll(/\[.*?]/g, ''))
     : removeWhiteSpaces(s)
 
 const removeStateDescriptors = (s) => s.replace('_', '').replace('*', '').replace('>', '').replace('<', '')
 
-const kripkeString2Graph = (kripke) => {
-    let result = 'digraph {\n';
-    result += 'ratio="0.5";\n';
-    result += 'rankdir=LR;\n';
-    result += 'bgcolor="#1c1c1c";\n';
+const createGraphNodeFromCState = (s) =>
+    `${getStateName(s)} ` +
+    `[${getCStateLabel(s) ? `label="${getCStateLabel(s)}"` : ''} fontcolor="#c7c7c7" ` +
+    (withoutLabel(s).includes('>') && withoutLabel(s).includes('<')
+        ? `style=filled fillcolor="#1a7a5a" `
+        : withoutLabel(s).includes('>')
+            ? `style=filled fillcolor="#1a4a7a" `
+            : withoutLabel(s).includes('<')
+                ? `style=filled fillcolor="#1a7a2a" `
+                : ``) +
+    `${withoutLabel(s).includes('*') ? 'shape=doublecircle' : 'shape=circle'} ` +
+    `color="#c7c7c7"];\n`
 
-    const nodeList = kripke.split('_');
-    for (let i = 0; i < nodeList.length; i++) {
-        const parts = nodeList[i].split(';');
-        const name = parts[0];
-        const assignments = parts[1]
-            .split('+')
-            .map(a => (a.split(':')[1] === 'true' ? ' ' : '!') + a.split(':')[0])
-            .join(' ');
-        const isInitialNode = parts[2] === 'true';
-        const successors = parts[3].split('+');
-        const nodeName = name;
-
-        if (isInitialNode) {
-            result += `  none${i} -> ${nodeName} [color="#c7c7c7"];\n`; // use backticks for string interpolation
-            result += `  none${i} [shape=none];\n`;
-            result += `  none${i} [label=""];\n`;
-        }
-
-        successors.forEach((s) => {
-            const raw_name = s.trim();
-            if(raw_name) {
-                const sName = raw_name.replace(/\+/g, '_')
-                    .replace(/-/g, '_');
-                result += `  ${nodeName} -> ${sName} [color="#c7c7c7"];\n`;
-            }
-        });
-
-        result += `  ${nodeName} [label="${assignments}" fontcolor="#c7c7c7"];\n`;
-        // shape=doublecircle for final nodes
-        result += `  ${nodeName} [shape=circle];\n`;
-        result += `  ${nodeName} [color="#c7c7c7"];\n`;
-    }
-
-    return result + '}';
-}
-
-const model2Kripke = (model) => {
-    if(!model) return '';
-
-    const model_parts = model.split(';');
-    let unique_atoms = new Set();
-    let states_and_atoms = new Map();
-    const properties = model_parts[3].split(',');
-    for(let i = 0; i < properties.length; i++) {
-        const state_and_atoms = properties[i].split(':');
-        const state_atoms = state_and_atoms[1].split(' ');
-        let clean_atoms = [];
-        state_atoms.forEach((s) => {
-            if(s) {
-                unique_atoms.add(s);
-                clean_atoms.push(s);
-            }
-        });
-        states_and_atoms.set(state_and_atoms[0].trim(), clean_atoms);
-    }
-
-    const transitions = model_parts[2].split(',');
-    let states_and_transitions = new Map();
-    for(let i = 0; i < transitions.length; i++) {
-        const state_pair = transitions[i].split(':')[1].split('-');
-        const from_state = state_pair[0].trim();
-        const to_state = state_pair[1].trim();
-        if(!states_and_transitions.has(from_state)) states_and_transitions.set(from_state, []);
-        if(!states_and_transitions.get(from_state)?.includes(to_state)) {
-            states_and_transitions.get(from_state)?.push(to_state);
-        }
-    }
-
-    const initial_states_parts = model_parts[1].split(':');
-    let initial_states = new Set();
-    if(initial_states_parts[1].trim()) {
-        let init_states = initial_states_parts[1].trim().split(',');
-        init_states.forEach((s) => {
-            const state_name = s.trim();
-            if(states_and_atoms.has(state_name)) initial_states.add(state_name);
-        });
-    }
-
-    let result = '';
-    let state_cnt = states_and_atoms.size;
-    for(let state of Array.from(states_and_atoms.keys())) {
-        result += state + ';';
-        const state_properties = states_and_atoms.get(state);
-        let elem_cnt = unique_atoms.size;
-        const unique_atoms_array = Array.from(unique_atoms);
-        unique_atoms_array.sort();
-        for(let property of unique_atoms_array) {
-            result += property + ':';
-            if(state_properties?.includes(property)) result += 'true';
-            else result += 'false';
-            elem_cnt--;
-            if(elem_cnt > 0) result += '+';
-        }
-        result += ';';
-        if(initial_states.has(state)) result += 'true';
-        else result += 'false';
-        result += ';';
-        if(states_and_transitions.has(state)) {
-            const successors = states_and_transitions.get(state);
-            let succ_cnt = successors?.length;
-            for(let successor of successors) {
-                result += successor;
-                succ_cnt--;
-                if(succ_cnt > 0) result += '+';
-            }
-        }
-        state_cnt--;
-        if(state_cnt > 0) result += '_';
-    }
-
-    return result;
+const createInitialAndFinalNode = (index, s, uniqueAddition) => {
+    return (withoutLabel(s).includes('_')
+        ? `none${index + uniqueAddition} [shape=none label=""];\n` +
+            `none${index + uniqueAddition} -> ${getStateName(s)} ` +
+            `[color="#c7c7c7"];\n`
+        : '') +
+        (withoutLabel(s).includes('*')
+            ? `${getStateName(s)} [shape=doublecircle];\n`
+            : '')
 }
 
 const modelPlaceholder =
