@@ -1,78 +1,68 @@
 import React, {useEffect, useState} from 'react';
-import ModelGenerator from './ModelGenerator';
-import ModelEncoder from './ModelEncoder';
-import FormulaGenerator from './FormulaGenerator';
-import ModelTypeSelector from './ModelTypeSelector';
-import AlgorithmTester from './AlgorithmTester';
-import Graph from "./Graph";
+import Graphviz from 'graphviz-react';
 
-export default function Model({setFormulaType,
-                                  setFormulaTab,
-                                  setSolutionTab,
-                                  setEvalStatusMessage,
-                                  modelStatusMessage, setModelStatusMessage,
-                                  modelWarningMessage,
-                                  modelErrorMessage,
-                                  model, setModel,
-                                  setModelTab}) {
-    const [modelType, setModelType] = useState('kripke')
+export default function Graph({setModelStatusMessage,
+                                  model, setModel}) {
+    const [graph, setGraph] = useState('')
 
+    // whenever 'model' changes, the graph attempts to update
+    useEffect(() => {
+        setModelStatusMessage('')
 
-    function handleChange({target: {value}}) {
-        setModel(value)
+        if(model === 'this') {
+            setModel(compactModelPlaceholder)
+        }
+
+        try {
+            setGraph(kripkeString2Graph(model2Kripke(model)))
+        } catch (e) {}
+    }, [model])
+
+    return <div>
+        {graph && <Graphviz className='graph' dot={graph}/>}
+    </div>
+}
+
+const kripkeString2Graph = (kripke) => {
+    let result = 'digraph {\n';
+    result += 'ratio="0.5";\n';
+    result += 'rankdir=LR;\n';
+    result += 'bgcolor="#1c1c1c";\n';
+
+    const nodeList = kripke.split('_');
+    for (let i = 0; i < nodeList.length; i++) {
+        const parts = nodeList[i].split(';');
+        const name = parts[0];
+        const assignments = parts[1]
+            .split('+')
+            .map(a => (a.split(':')[1] === 'true' ? ' ' : '!') + a.split(':')[0])
+            .join(' ');
+        const isInitialNode = parts[2] === 'true';
+        const successors = parts[3].split('+');
+        const nodeName = name;
+
+        if (isInitialNode) {
+            result += `  none${i} -> ${nodeName} [color="#c7c7c7"];\n`; // use backticks for string interpolation
+            result += `  none${i} [shape=none];\n`;
+            result += `  none${i} [label=""];\n`;
+        }
+
+        successors.forEach((s) => {
+            const raw_name = s.trim();
+            if(raw_name) {
+                const sName = raw_name.replace(/\+/g, '_')
+                    .replace(/-/g, '_');
+                result += `  ${nodeName} -> ${sName} [color="#c7c7c7"];\n`;
+            }
+        });
+
+        result += `  ${nodeName} [label="${assignments}" fontcolor="#c7c7c7"];\n`;
+        // shape=doublecircle for final nodes
+        result += `  ${nodeName} [shape=circle];\n`;
+        result += `  ${nodeName} [color="#c7c7c7"];\n`;
     }
 
-    return (
-        <div>
-            <div className='column'>
-                <h3 className='center'>Tune and apply parameters</h3>
-                <div className='parameters'>
-                    <div className='smallColumn'>
-                        <ModelTypeSelector
-                            modelType={modelType}
-                            setModelType={setModelType}
-                        />
-                        <AlgorithmTester/>
-                    </div>
-                    <div className='smallColumn'>
-                        <FormulaGenerator/>
-                        <ModelEncoder
-                            setFormulaType={setFormulaType}
-                            setFormulaTab={setFormulaTab}
-                            setSolutionTab={setSolutionTab}
-                            setEvalStatusMessage={setEvalStatusMessage}
-                            kripke={() => model2Kripke(model)}
-                        />
-                    </div>
-                    <ModelGenerator
-                        setModelTab={setModelTab}
-                    />
-                </div>
-        </div>
-            <div className='column'>
-                <p className='green'>{modelStatusMessage}</p>
-                <p className='orange'>{modelWarningMessage}</p>
-                <p className='red'>{modelErrorMessage}</p>
-                <div className='model'>
-                <textarea
-                    className='textArea'
-                    value={model}
-                    placeholder={generatorPlaceholder}
-                    onChange={handleChange}
-                    name='model'
-                    onDoubleClick={() =>
-                        navigator.clipboard.writeText(model)
-                            .then(() => setModelStatusMessage('Copied Model to Clipboard'))}
-                />
-                    <Graph
-                        setModelStatusMessage={setModelStatusMessage}
-                        model={model}
-                        setModel={setModel}
-                    />
-                </div>
-            </div>
-        </div>
-    )
+    return result + '}';
 }
 
 const model2Kripke = (model) => {
