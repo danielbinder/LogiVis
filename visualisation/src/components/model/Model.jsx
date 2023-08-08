@@ -5,6 +5,7 @@ import FormulaGenerator from './FormulaGenerator';
 import ModelTypeSelector from './ModelTypeSelector';
 import AlgorithmTester from './AlgorithmTester';
 import Graph from "./Graph";
+import {ErrorBoundary} from "../ErrorBoundary";
 
 export default function Model({setFormulaType,
                                   setFormulaTab,
@@ -64,11 +65,13 @@ export default function Model({setFormulaType,
                         navigator.clipboard.writeText(model)
                             .then(() => setModelStatusMessage('Copied Model to Clipboard'))}
                 />
-                    <Graph
-                        setModelStatusMessage={setModelStatusMessage}
-                        model={model}
-                        setModel={setModel}
-                    />
+                    <ErrorBoundary>
+                        <Graph
+                            setModelStatusMessage={setModelStatusMessage}
+                            model={model}
+                            setModel={setModel}
+                        />
+                    </ErrorBoundary>
                 </div>
             </div>
         </div>
