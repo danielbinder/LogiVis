@@ -14,7 +14,7 @@ export default function Graph({setModelStatusMessage,
         }
 
         try {
-            setGraph(kripkeString2Graph(model2Kripke(model)))
+            setGraph(model2Graph(model))
         } catch (e) {}
     }, [model])
 
@@ -22,6 +22,79 @@ export default function Graph({setModelStatusMessage,
         {graph && <Graphviz className='graph' dot={graph}/>}
     </div>
 }
+
+const model2Graph = (model) => {
+    const result = 'digraph {\n' +
+        'ratio="0.5";\n' +
+        'rankdir=LR;\n' +
+        'bgcolor="#1c1c1c";\n'
+
+    model = removeComments(model)
+
+    return result + (removeWhiteSpaces(model).includes('S={') ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
+}
+
+const traditionalModel2Graph = (model) => {
+    const states = model.match(/S\s*?=\s*?[{].*?[}]/g)[0]
+        .replaceAll(/S\s*?=\s*?[{]/g, '')
+        .replace('}', '')
+        .split(',')
+    const initial = model.match(/I\s*?=\s*?[{].*?[}]/g)?.[0]
+        .replaceAll(/I\s*?=\s*?[{]/g, '')
+        .replace('}', '')
+        .split(',')
+        ?? []
+    const transitions = model.match(/T\s*?=\s*?[{].*?[}]/g)?.[0]
+        .replaceAll(/T\s*?=\s*?[{]/g, '')
+        .replace('}', '')
+        .match(/\(.+?\)(\s*?\[.*?])?/g)
+        ?? []
+    const final = removeWhiteSpaces(model).match(/F=[{].*?[}]/g)?.[0]
+        .replace('F={', '')
+        .replace('}', '')
+        .split(',')
+        ?? []
+
+    return states
+        .map(s =>
+            `${removeStateDescriptors(withoutLabel(s))} ` +
+            `[label="${getLabel(s)}" fontcolor="#c7c7c7" ` +
+            (withoutLabel(s).includes('>') && withoutLabel(s).includes('<')
+                ? `style=filled fillcolor="#1a7a5a" `
+                : withoutLabel(s).includes('>')
+                    ? `style=filled fillcolor="#1a4a7a" `
+                    : withoutLabel(s).includes('<')
+                        ? `style=filled fillcolor="#1a7a2a" `
+                        : ``) +
+            `${final.includes(removeStateDescriptors(withoutLabel(removeWhiteSpaces(s)))) ? 'shape=doublecircle' : 'shape=circle'} ` +
+            `color="#c7c7c7"];\n`).join('') +
+        initial.map(s => `none${initial.indexOf(s)} [shape=none label=""];\n`).join('') +
+        initial.map(s => `none${initial.indexOf(s)} -> ${withoutLabel(s)} ` +
+            `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getLabel(s)}"];\n`).join('') +
+        transitions.map(t =>
+            `${withoutLabel(t).replace('(', '')
+                .replace(')', '')
+                .replace(',', ' -> ')} ` +
+            `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getLabel(t)}"];\n`).join('')
+}
+
+const compactModel2Graph = (model) => {
+
+}
+
+const removeWhiteSpaces = (s) => s.replaceAll(/\s/g,'')
+
+const removeComments = (s) => s.replaceAll(/#.*?\n/g, '\n')
+
+const getLabel = (s) => s.includes('[')
+    ? s.match(/\[.*]/g)[0].replace('[', '').replace(']', '')
+    : ''
+
+const withoutLabel = (s) => s.includes('[')
+    ? removeWhiteSpaces(s.replace(s.match(/\[.*]/g)[0], ''))
+    : removeWhiteSpaces(s)
+
+const removeStateDescriptors = (s) => s.replace('_', '').replace('*', '').replace('>', '').replace('<', '')
 
 const kripkeString2Graph = (kripke) => {
     let result = 'digraph {\n';
