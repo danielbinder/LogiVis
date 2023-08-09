@@ -62,7 +62,7 @@ public class Lexer {
                             Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
-                if(input.charAt(i) == '-') continue;
+                if(input.charAt(i) == '-' && i + 1 < input.length() && input.charAt(i + 1) == '>') continue;
                 modelTokens.add(ModelToken.fromString(current.toString(), line, col));       // this is where the magic happens
                 current = new StringBuilder();
             } catch(NoSuchElementException ignored) {}
