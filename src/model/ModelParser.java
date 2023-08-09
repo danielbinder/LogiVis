@@ -116,6 +116,8 @@ public class ModelParser implements Parser {
             model.get(stateName).isInitialNodeNode = true;
             advance();
 
+            label();        // read over initial labels, since they are only for display purposes
+
             if(isType(COMMA)) advance();
         }
 
@@ -179,10 +181,9 @@ public class ModelParser implements Parser {
         if(i < modelTokens.size() - 1) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
 
         // resolve delayed transitions since all nodes exist now
-        delayedTransitions.entrySet().stream()
-                .filter(e -> !e.getKey().endsWith("_label"))
-                .forEach(e -> e.getValue()
-                        .forEach((succ, label) -> model.get(e.getKey()).successors.put(model.get(succ), label)));
+        delayedTransitions
+                .forEach((startState, endStates) -> endStates
+                        .forEach((endState, label) -> model.get(startState).successors.put(model.get(endState), label)));
     }
 
     private void cTransition() {
@@ -200,7 +201,7 @@ public class ModelParser implements Parser {
             String node2 = cState();
             if(!delayedTransitions.containsKey(node1)) delayedTransitions.put(node1, new HashMap<>());
             delayedTransitions.get(node1).put(node2, label);
-            if(!delayedTransitions.containsKey(node2)) delayedTransitions.put(node1, new HashMap<>());
+            if(!delayedTransitions.containsKey(node2)) delayedTransitions.put(node2, new HashMap<>());
             delayedTransitions.get(node2).put(node1, "");
         }
 
@@ -231,6 +232,7 @@ public class ModelParser implements Parser {
                 }
                 case ENCODING_END -> {
                     node.isEncodingEndPoint = true;
+                    advance();
                 }
             }
         }
