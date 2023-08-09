@@ -2,6 +2,7 @@ package model;
 
 import model.kripke.KripkeNode;
 import model.kripke.KripkeStructure;
+import servlet.Result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,16 +12,19 @@ import java.util.stream.Collectors;
 public class Model extends ArrayList<ModelNode> {
     public Model() {}
 
-    public Model(KripkeStructure ks) {
+    private Model(KripkeStructure ks) {
         ks.forEach(kn -> add(new ModelNode(kn)));
 
         ks.forEach(kn -> kn.successors
-                .forEach(succ ->
-                        forEach(gn -> gn.successors.put(get(succ.name), ""))));
+                .forEach(succ -> get(kn.name).successors.put(get(succ.name), "")));
     }
 
     public static Model of(String modelString) {
         return new ModelParser().parse(modelString);
+    }
+
+    public static Model of(KripkeStructure ks) {
+        return new Model(ks);
     }
 
     public void addAll(ModelNode...modelNodes) {
@@ -50,6 +54,23 @@ public class Model extends ArrayList<ModelNode> {
                                           l -> !l.startsWith("!"))));
 
         return ks;
+    }
+
+    public Result toModelStringWithResult() {
+        return new Result(
+                "S = {" + stream()
+                        .map(n -> n.name + (!n.label.isBlank() ? " [" + n.label + "]" : ""))
+                        .collect(Collectors.joining(", ")) + "}\n" +
+                "I = {" + stream()
+                        .filter(n -> n.isInitialNodeNode)
+                        .map(n -> n.name)
+                        .collect(Collectors.joining(", ")) + "}\n" +
+                "T = {" + stream()
+                        .map(n -> n.successors.entrySet().stream()
+                                .map(succ -> "(" + n.name + ", " + succ.getKey().name +
+                                        (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
+                                .collect(Collectors.joining(", ")))
+                        .collect(Collectors.joining(", ")) + "}\n");
     }
 
     @Override
