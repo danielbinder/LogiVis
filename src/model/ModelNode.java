@@ -67,7 +67,6 @@ public class ModelNode {
         result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (isEncodingStartPoint ? 1 : 0);
         result = 31 * result + (isEncodingEndPoint ? 1 : 0);
-        result = 31 * result + successors.hashCode();
         return result;
     }
 
