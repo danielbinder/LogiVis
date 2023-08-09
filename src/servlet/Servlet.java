@@ -2,8 +2,6 @@ package servlet;
 
 import model.Model;
 import model.kripke.KripkeGenerator;
-import model.kripke.KripkeStructure;
-import model.kripke.KripkeTruthTable;
 import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Simplification;
 import servlet.rest.GET;
@@ -68,15 +66,6 @@ public class Servlet {
                 .toKripkeStructure()
                 .toKripkeTruthTable()
                 .toQBFStringWithResult(Integer.parseInt(steps))
-                .computeJSON();
-    }
-
-    @GET("/kripkeString2ModelString/:kripkeString")
-    public String kripkeString2ModelString(String kripkeString) {
-        return KripkeStructure
-                .fromString(kripkeString.replace(",", ";"))
-                .toOtherKripke()
-                .toModelStringAsResult()
                 .computeJSON();
     }
 

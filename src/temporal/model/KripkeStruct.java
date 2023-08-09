@@ -107,29 +107,6 @@ public class KripkeStruct {
 
     public List<String> getAtoms() { return atoms; }
 
-    public Result toModelStringAsResult() {
-        return new Result(toModelString());
-    }
-
-    public String toModelString() {
-        String result = "";
-
-        result += states.stream().map(State::getStateName).collect(Collectors.joining(","));
-        result += ";\ninitial: ";
-        result += initialStates.stream().map(State::getStateName).collect(Collectors.joining(","));
-        result += ";\n";
-        AtomicInteger tCount = new AtomicInteger();
-        result += transitions.stream()
-                .map(t -> "t" + tCount.getAndIncrement() + " : " + t.getFromState() + " - " + t.getToState())
-                .collect(Collectors.joining(",\n"));
-        result += ";\n";
-        result += states.stream()
-                .map(s -> s + " : " + String.join(" ", s.getAtoms()))
-                .collect(Collectors.joining(",\n"));
-
-        return result + ";";
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
