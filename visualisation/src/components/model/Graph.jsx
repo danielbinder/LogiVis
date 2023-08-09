@@ -18,9 +18,10 @@ export default function Graph({setModelStatusMessage,
         } catch (e) {}
     }, [model])
 
-    return <div>
-        {graph && <Graphviz className='graph' dot={graph}/>}
-    </div>
+    return (
+        <div>
+            {graph && <Graphviz className='graph' dot={graph}/>}
+        </div>)
 }
 
 const model2Graph = (model) => {
