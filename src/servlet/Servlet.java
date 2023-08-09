@@ -39,7 +39,8 @@ public class Servlet {
 
     @GET("/generate/:params")
     public String generate(String params) {
-        return KripkeGenerator.generateWithResult(params, 10)
+        return Model.of(KripkeGenerator.generate(params, 10))
+                .toModelStringWithResult()
                 .computeJSON();
     }
 

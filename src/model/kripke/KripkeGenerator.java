@@ -1,16 +1,11 @@
 package model.kripke;
 
 import marker.Generator;
-import servlet.Result;
 
 import java.util.*;
 
 public class KripkeGenerator implements Generator {
     private static final Random rand = new Random();
-
-    public static Result generateWithResult(String paramString, int maxRegeneration) {
-        return new Result(generate(paramString, maxRegeneration).toString());
-    }
 
     /**
      * @param paramString format: nodes_initialNodes_variables_minSuccessors_maxSuccessors_allStatesReachable
@@ -37,7 +32,7 @@ public class KripkeGenerator implements Generator {
 
         while(regenerate && regenerated < maxRegeneration) {
             ks = new KripkeStructure();
-            for(int i = 0; i < nodes; i++) ks.add(new KripkeNode(i + ""));
+            for(int i = 0; i < nodes; i++) ks.add(new KripkeNode("n" + i));
 
             for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
             ks.addStateMaps(generateRandomStateMaps(variables, nodes));
