@@ -69,6 +69,10 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         return new KripkeStruct(states, initial, transitions, atoms);
     }
 
+    public KripkeTruthTable toKripkeTruthTable() {
+        return new KripkeTruthTable(this);
+    }
+
     public LogicNode toFormula(int steps) {
         return LogicNode.of(toFormulaString(steps));
     }
