@@ -30,21 +30,9 @@ export default function ModelGenerator({setModelTab}) {
             generationParameters.minSuccessors + '_' +
             generationParameters.maxSuccessors + '_' +
             generationParameters.allReachable)
-            .then(response => {
-                if(!response.ok) {
-                    setLoading(false)
-                }
-
-                return response
-            })
             .then(response => response.json())
-            .then(data => getResultFromJSON(data).replaceAll(';', ','))
-            .then(data => {
-                fetch('http://localhost:4000/kripkeString2ModelString/' + data)
-                    .then(response => response.json())
-                    .then(setModelTab)
-                    .finally(() => setLoading(false))
-            })
+            .then(setModelTab)
+            .finally(() => setLoading(false))
     }
 
     return (
@@ -139,5 +127,3 @@ export default function ModelGenerator({setModelTab}) {
         </div>
     )
 }
-
-const getResultFromJSON = (data) => `${JSON.parse(JSON.stringify(data))['result']}`
