@@ -34,7 +34,6 @@ export default function App() {
     }
 
     const setModelTab = (data) => {
-        console.log(data)
         setModel(data['result']
             .replaceAll(/[$]/g, '\n')
             .replaceAll(/_/g, ';')
