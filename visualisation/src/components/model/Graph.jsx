@@ -111,7 +111,7 @@ const compactModel2Graph = (model) => {
                     `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}"];\n`
             } else if(t.includes('-')) {
                 return `${getStateName(t.split('-')[0])} -> ${getStateName(t.split('-')[1])} ` +
-                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}" arrowhead=none];\n`
+                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}" dir="both"];\n`
             }
 
             return ''
