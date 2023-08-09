@@ -1,5 +1,6 @@
 package servlet;
 
+import model.Model;
 import model.kripke.KripkeGenerator;
 import model.kripke.KripkeStructure;
 import model.kripke.KripkeTruthTable;
@@ -46,21 +47,26 @@ public class Servlet {
 
     @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps)   {
-        return KripkeStructure.fromString(kripke.replace(",", ";"))
+        return Model.of(kripke)
+                .toKripkeStructure()
                 .toFormulaStringWithResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 
     @GET("/kripke2compactFormula/:kripke/:steps")
     public String kripke2CompactFormula(String kripke, String steps) {
-        return new KripkeTruthTable(kripke.replace(",", ";"))
+        return Model.of(kripke)
+                .toKripkeStructure()
+                .toKripkeTruthTable()
                 .toFormulaStringWithResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 
     @GET("/kripke2compactQBFFormula/:kripke/:steps")
     public String kripke2QBFFormula(String kripke, String steps) {
-        return new KripkeTruthTable(kripke.replace(",", ";"))
+        return Model.of(kripke)
+                .toKripkeStructure()
+                .toKripkeTruthTable()
                 .toQBFStringWithResult(Integer.parseInt(steps))
                 .computeJSON();
     }
