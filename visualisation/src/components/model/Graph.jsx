@@ -10,7 +10,7 @@ export default function Graph({setModelStatusMessage,
         setModelStatusMessage('')
 
         if(model === 'this') {
-            setModel(compactModelPlaceholder)
+            setModel(modelPlaceholder)
         }
 
         try {
@@ -182,12 +182,3 @@ const compactModelPlaceholder =
     '# or \'-\' for bidirectional transitions\n' +
     's1_ [p q] -> s1, s2_* [p] - s3 [q], [\'unsafe transition\'], s4*\n' +
     's1 -> s2, s3 -> s4 # you could also list your transitions afterwards'
-
-const generatorPlaceholder =
-    'Example model (type \'this\' to use this model):\n'
-    + 's1, s2;          # model has two states S={s1, s2}\n'
-    + 'initial: s1;     # model has one initial state I = {s1}\n'
-    + 't1: s1 - s2,\n'
-    + 't2: s1 - s1;     # model has two transitions T={t1, t2}\n'
-    + 's1: ,            # state s1 has no properties (i.e., {}) \n'
-    + 's2: p q;         # state s2 has property p and q\n'
