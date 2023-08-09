@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Graphviz from 'graphviz-react';
 
 export default function Graph({setModelStatusMessage,
+                                  modelPlaceholder, compactModelPlaceholder,
                                   model, setModel}) {
     const [graph, setGraph] = useState('')
 
@@ -11,6 +12,8 @@ export default function Graph({setModelStatusMessage,
 
         if(model === 'this') {
             setModel(modelPlaceholder)
+        } else if(model === 'compact') {
+            setModel(compactModelPlaceholder)
         }
 
         try {
@@ -30,9 +33,9 @@ const model2Graph = (model) => {
         'rankdir=LR;\n' +
         'bgcolor="#1c1c1c";\n'
 
-    model = removeComments(model)
+    model = removeComments(model).replaceAll('\n', ' ')
 
-    return result + ((/S\s*?=\s*?[{].*?[}]/g).test(model) ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
+    return result + ((/S\s*?=\s*?\{.*?}/g).test(model) ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
 }
 
 const traditionalModel2Graph = (model) => {
@@ -162,23 +165,3 @@ const createInitialAndFinalNode = (index, s, uniqueAddition) => {
             ? `${getStateName(s)} [shape=doublecircle];\n`
             : '')
 }
-
-const modelPlaceholder =
-    '# Model = (S, I, T, F)           Type \'this\' to use this model\n' +
-    'S = {s1 [p q], s2}             # Set of states\n' +
-    'I = {s1}                       # Set of initial states\n' +
-    'T = {(s1, s1), (s1, s2)}       # Set of transitions (s, s\')\n' +
-    'F = {}                         # Set of final states (you can omit empty sets)\n' +
-    '# For encoding this into a boolean formula,\n' +
-    '# use \' as state suffix to denote start states (e.g. s1\')\n' +
-    '# and \'\' as state suffix to denote goal states (e.g. s1\'\')'
-
-const compactModelPlaceholder =
-    '# Type \'this\' to use this model\n' +
-    '# Initial states are denoted by \'_\' as suffix, final states by \'*\'\n' +
-    '# For boolean formula encoding use \'>\' as suffix for start-, and \'<\' for goal states\n' +
-    '# Both states and transitions can be labeled with \'[\'Text: \' var1 var2]\'\n' +
-    '# Transition labels are denoted by either \'->\' for unidirectional transitions\n' +
-    '# or \'-\' for bidirectional transitions\n' +
-    's1_ [p q] -> s1, s2_* [p] - s3 [q], [\'unsafe transition\'], s4*\n' +
-    's1 -> s2, s3 -> s4 # you could also list your transitions afterwards'
