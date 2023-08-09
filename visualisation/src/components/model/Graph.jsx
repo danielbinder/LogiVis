@@ -128,8 +128,8 @@ const getLabel = (s) => s.includes('[')
     ? s.match(/\[.*?]/g)[0].replace('[', '').replace(']', '')
     : ''
 
-const getCStateLabel = (s) => (/[a-z]+([a-z]*[0-9]*)*\s*?\[/g).test(s)
-    ? s.match(/[a-z]+([a-z]*[0-9]*)*\s*?\[.*?]/g)[0].replaceAll(/[a-z]+([a-z]*[0-9]*)*\s*?\[/g, '').replace(']', '')
+const getCStateLabel = (s) => (/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[/g).test(s)
+    ? s.match(/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[.*?]/g)[0].replaceAll(/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[/g, '').replace(']', '')
     : ''
 
 const getCTransitionLabel = (s) => (/->?\s*?\[/g).test(s)
