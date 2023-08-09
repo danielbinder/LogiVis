@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public enum ModelTokenType {
     PART_TYPE(Pattern.compile("[SITF]")),
 
-    NAME(Pattern.compile("[a-z]+([a-z]*[0-9]*)*")),
+    NAME(Pattern.compile("!?[a-z]+([a-z]*[0-9]*)*")),
     STRING(Pattern.compile("'.*'")),
 
     EQUALS(Pattern.compile("=")),

@@ -3,7 +3,7 @@ Model           =               Traditional
 
 Label           =               '[' {Name | String} ']'
 
-Name            =               \Regex: [a-z]+([a-z]*[0-9]*)*
+Name            =               \Regex: !?[a-z]+([a-z]*[0-9]*)*
 
 String          =               \Regex: '.*'
 
@@ -25,7 +25,7 @@ Compact         =               CTransitions
 
 CTransitions    =               CTransition {',' CTransition}
 
-CTransition     =               CState ['-' ['>'] [Label] [CState [Label]]]
+CTransition     =               CState ['-' ['>'] [Label] [CState]]
 
 CState          =               Name (\Unordered: ['_'] ['*'] ['>'] ['<']) [Label]
 

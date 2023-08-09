@@ -135,6 +135,21 @@ public class ModelParserTest {
                 # another comment at the end"""));
     }
 
+    @Test
+    public void testNegativeProperties() {
+        Model m = new Model();
+        ModelNode a = new ModelNode("a", false, false, "x");
+        ModelNode b = new ModelNode("b", false, false, "!x");
+        a.successors.put(b, "");
+        m.addAll(a, b);
+
+        assertEqualModels(m, Model.of("""
+                                              S = {a [x], b [!x]}
+                                              T = {(a, b)}"""));
+
+        assertEqualModels(m, Model.of("a [x] -> b [!x]"));
+    }
+
     // H E L P E R S
     private void assertEqualModels(Model expected, Model actual) {
         assertEquals(expected.toString(), actual.toString());
