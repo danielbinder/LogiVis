@@ -45,6 +45,7 @@ public class Model extends ArrayList<ModelNode> {
         forEach(gn -> gn.successors
                 .forEach((key, value) -> ks.get(gn.name).successors.add(ks.get(key.name))));
         forEach(gn -> ks.get(gn.name).stateMap = Arrays.stream(gn.label.split(" "))
+                .filter(l -> !l.startsWith("'"))
                 .collect(Collectors.toMap(l -> l.startsWith("!") ? l.substring(1) : l,
                                           l -> !l.startsWith("!"))));
 
