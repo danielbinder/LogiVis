@@ -59,7 +59,10 @@ public class Model extends ArrayList<ModelNode> {
     public Result toModelStringWithResult() {
         return new Result(
                 "S = {" + stream()
-                        .map(n -> n.name + (!n.label.isBlank() ? " [" + n.label + "]" : ""))
+                        .map(n -> n.name +
+                                (n.isEncodingStartPoint ? ">" : "") +
+                                (n.isEncodingEndPoint ? "<" : "") +
+                                (!n.label.isBlank() ? " [" + n.label + "]" : ""))
                         .collect(Collectors.joining(", ")) + "}\n" +
                 "I = {" + stream()
                         .filter(n -> n.isInitialNodeNode)
