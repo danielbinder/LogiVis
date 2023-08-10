@@ -51,8 +51,8 @@ public class Model extends ArrayList<ModelNode> {
         forEach(gn -> ks.get(gn.name).isEncodingEnd = gn.isEncodingEndPoint);
         forEach(gn -> gn.successors
                 .forEach((key, value) -> ks.get(gn.name).successors.add(ks.get(key.name))));
-        forEach(gn -> ks.get(gn.name).stateMap = Arrays.stream(gn.label.split(" "))
-                .map(l -> l.replaceAll("'.*?'", ""))
+        forEach(gn -> ks.get(gn.name).stateMap = Arrays.stream(gn.label.replaceAll("'.*?'", "").split(" "))
+                .filter(s -> !s.isBlank())
                 .collect(Collectors.toMap(l -> l.startsWith("!") ? l.substring(1) : l,
                                           l -> !l.startsWith("!"))));
 
