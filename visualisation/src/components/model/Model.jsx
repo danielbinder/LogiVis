@@ -10,6 +10,7 @@ import {ErrorBoundary} from "../ErrorBoundary";
 export default function Model({setFormulaType,
                                   setFormulaTab,
                                   setSolutionTab,
+                                  setFormulaAndSolutionTab,
                                   setEvalStatusMessage,
                                   modelStatusMessage, setModelStatusMessage,
                                   modelWarningMessage,
@@ -41,6 +42,7 @@ export default function Model({setFormulaType,
                             setFormulaType={setFormulaType}
                             setFormulaTab={setFormulaTab}
                             setSolutionTab={setSolutionTab}
+                            setFormulaAndSolutionTab={setFormulaAndSolutionTab}
                             setEvalStatusMessage={setEvalStatusMessage}
                             model={model}
                         />

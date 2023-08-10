@@ -3,9 +3,11 @@ import React, {useState} from 'react';
 export default function ModelEncoder({setFormulaType,
                                          setFormulaTab,
                                          setSolutionTab,
+                                         setFormulaAndSolutionTab,
                                          setEvalStatusMessage,
                                          model}) {
-    const [loading, setLoading] = useState(false)
+    const [loadingEncode, setLoadingEncode] = useState(false)
+    const [loadingTrace, setLoadingTrace] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         encodingType: 'compact'
@@ -14,6 +16,7 @@ export default function ModelEncoder({setFormulaType,
     const urls = new Map([
         ['naive', 'http://localhost:4000/kripke2formula/'],
         ['compact', 'http://localhost:4000/kripke2compactFormula/'],
+        ['compactTrace', 'http://localhost:4000/encodeAndSolveWithTrace/'],
         ['compactQBF', 'http://localhost:4000/kripke2compactQBFFormula/']
     ])
 
@@ -26,8 +29,8 @@ export default function ModelEncoder({setFormulaType,
         )
     }
 
-    function handleButtonClick() {
-        setLoading(true)
+    function handleEncodeClick() {
+        setLoadingEncode(true)
         fetch(urls.get(generationParameters.encodingType) +
             removeComments(model).replaceAll('\n', ' ') + '/' + generationParameters.steps)
             .then(response => response.json())
@@ -37,7 +40,17 @@ export default function ModelEncoder({setFormulaType,
             .then(data => generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
                 ? setFormulaType('boolean')
                 : setEvalStatusMessage(generateLimbooleLink(data['result'])))
-            .finally(() => setLoading(false))
+            .finally(() => setLoadingEncode(false))
+    }
+
+    function handleTraceClick() {
+        setLoadingTrace(true);
+        fetch(urls.get('compactTrace') +
+            removeComments(model).replaceAll('\n', ' ') + '/' + generationParameters.steps)
+            .then(response => response.json())
+            .then(setFormulaAndSolutionTab)
+            .then(() => setFormulaType('boolean'))
+            .finally(() => setLoadingTrace(false))
     }
 
     return (
@@ -93,10 +106,18 @@ export default function ModelEncoder({setFormulaType,
                     </div>
                 </div>
                 <div className='centerContainer'>
-                    <button className='button' onClick={handleButtonClick}>
-                        {loading && <div className='loading'></div>}
+                    <button className='button' onClick={handleEncodeClick}>
+                        {loadingEncode && <div className='loading'></div>}
                         Encode model
                     </button>
+                </div>
+                <div className='centerContainer'>
+                    {generationParameters.encodingType === 'compact' &&
+                        <button className='button' onClick={handleTraceClick}>
+                            {loadingTrace && <div className='loading'></div>}
+                            Encode + trace
+                        </button>
+                    }
                 </div>
             </fieldset>
         </div>

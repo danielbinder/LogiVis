@@ -33,6 +33,14 @@ export default function App() {
         return data
     }
 
+    const setFormulaAndSolutionTab = (data) => {
+        setFormula(data['result'].replaceAll(/[$]/g, '\n'))
+        setSolution(data['info'].replaceAll(/[$]/g, '\n'))
+        setEvalStatusMessage('')
+        setEvalWarningMessage(data['warning'].replaceAll(/[$]/g, '\n'))
+        setEvalErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
+    }
+
     const setModelTab = (data) => {
         setModel(data['result']
             .replaceAll(/[$]/g, '\n')
@@ -70,6 +78,7 @@ export default function App() {
                 setFormulaType={setFormulaType}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
+                setFormulaAndSolutionTab={setFormulaAndSolutionTab}
                 setEvalStatusMessage={setEvalStatusMessage}
                 modelStatusMessage={modelStatusMessage}
                 setModelStatusMessage={setModelStatusMessage}
