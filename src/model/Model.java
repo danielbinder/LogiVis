@@ -59,7 +59,7 @@ public class Model extends ArrayList<ModelNode> {
         return ks;
     }
 
-    public Result toModelStringWithResult() {
+    public Result toModelStringAsResult() {
         return new Result(toModelString());
     }
 

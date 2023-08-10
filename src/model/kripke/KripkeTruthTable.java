@@ -48,7 +48,7 @@ public class KripkeTruthTable {
         this(KripkeStructure.fromString(kripkeStructure));
     }
 
-    public Result toFormulaStringWithEncodingStartAndEndWithResult(int steps) {
+    public Result toFormulaStringWithEncodingStartAndEndAsResult(int steps) {
         return new Result(toFormulaStringWithEncodingStartAndEnd(steps), toString());
     }
 
@@ -74,7 +74,7 @@ public class KripkeTruthTable {
                 .collect(Collectors.joining(" &\n\n", "(", ")"));
     }
 
-    public Result toQBFStringWithResult(int steps) {
+    public Result toQBFStringAsResult(int steps) {
         return new Result(toQBFString(steps), toString());
     }
 

@@ -21,7 +21,7 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return BruteForceSolver.solveWithResult(formula)
+        return BruteForceSolver.solveAsResult(formula)
                 .computeJSON();
     }
 
@@ -30,10 +30,10 @@ public class Servlet {
         KripkeStructure ks = Model.of(kripke)
                 .toKripkeStructure();
         Result formulaResult = ks.toKripkeTruthTable()
-                .toFormulaStringWithEncodingStartAndEndWithResult(Integer.parseInt(steps));
+                .toFormulaStringWithEncodingStartAndEndAsResult(Integer.parseInt(steps));
         if(ks.stream().noneMatch(kn -> kn.isEncodingStart) || ks.stream().noneMatch(kn -> kn.isEncodingEnd))
             return formulaResult.info("").error("Define encoding start- and endpoint with state suffixes '>' and '<'!").computeJSON();
-        Result solverResult = BruteForceSolver.solveWithResult(formulaResult.result);
+        Result solverResult = BruteForceSolver.solveAsResult(formulaResult.result);
         if(solverResult.result.equals("unsatisfiable"))
             return formulaResult.info("unsatisfiable").computeJSON();
 
@@ -51,14 +51,14 @@ public class Servlet {
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return BruteForceSolver.solveAllWithResult(formula)
+        return BruteForceSolver.solveAllAsResult(formula)
                 .computeJSON();
     }
 
     @GET("/generate/:params")
     public String generate(String params) {
         return Model.of(KripkeGenerator.generate(params, 10))
-                .toModelStringWithResult()
+                .toModelStringAsResult()
                 .computeJSON();
     }
 
@@ -66,7 +66,7 @@ public class Servlet {
     public String kripke2formula(String kripke, String steps)   {
         return Model.of(kripke)
                 .toKripkeStructure()
-                .toFormulaStringWithResult(Integer.parseInt(steps))
+                .toFormulaStringAsResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 
@@ -75,7 +75,7 @@ public class Servlet {
         return Model.of(kripke)
                 .toKripkeStructure()
                 .toKripkeTruthTable()
-                .toFormulaStringWithEncodingStartAndEndWithResult(Integer.parseInt(steps))
+                .toFormulaStringWithEncodingStartAndEndAsResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 
@@ -84,13 +84,13 @@ public class Servlet {
         return Model.of(kripke)
                 .toKripkeStructure()
                 .toKripkeTruthTable()
-                .toQBFStringWithResult(Integer.parseInt(steps))
+                .toQBFStringAsResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 
     @GET("/simplify/:formula")
     public String simplify(String formula) {
-        return Simplification.ofWithResult(formula)
+        return Simplification.ofAsResult(formula)
                 .computeJSON();
     }
 }
