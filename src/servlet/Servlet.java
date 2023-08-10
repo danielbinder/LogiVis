@@ -57,7 +57,7 @@ public class Servlet {
         return Model.of(kripke)
                 .toKripkeStructure()
                 .toKripkeTruthTable()
-                .toFormulaStringWithResult(Integer.parseInt(steps))
+                .toFormulaStringWithEncodingStartAndEndWithResult(Integer.parseInt(steps))
                 .computeJSON();
     }
 

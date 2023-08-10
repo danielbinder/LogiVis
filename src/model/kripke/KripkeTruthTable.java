@@ -13,6 +13,8 @@ public class KripkeTruthTable {
     private final Map<Map<String, Boolean>, List<Map<String, Boolean>>> table = new HashMap<>();
     /** maxSuccessors = the amount of possible future Assignments */
     private final int maxSuccessors;
+    private final List<Map<String, Boolean>> encodingStartVars = new ArrayList<>();
+    private final List<Map<String, Boolean>> encodingEndVars = new ArrayList<>();
 
     public KripkeTruthTable(KripkeStructure ks) {
         literals = ks.get(0).stateMap.keySet().stream().toList();
@@ -33,14 +35,25 @@ public class KripkeTruthTable {
                     table.get(kn.stateMap).add(table.get(kn.stateMap).get(0));
             }
         }
+
+        ks.stream()
+                .filter(kn -> kn.isEncodingStart)
+                .forEach(kn -> encodingStartVars.add(kn.stateMap));
+        ks.stream()
+                .filter(kn -> kn.isEncodingEnd)
+                .forEach(kn -> encodingEndVars.add(kn.stateMap));
     }
 
     public KripkeTruthTable(String kripkeStructure) {
         this(KripkeStructure.fromString(kripkeStructure));
     }
 
-    public Result toFormulaStringWithResult(int steps) {
-        return new Result(toFormulaString(steps), toString());
+    public Result toFormulaStringWithEncodingStartAndEndWithResult(int steps) {
+        return new Result(toFormulaStringWithEncodingStartAndEnd(steps), toString());
+    }
+
+    public String toFormulaStringWithEncodingStartAndEnd(int steps) {
+        return toFormulaString(steps) + getEncodingStartAndEndString(steps);
     }
 
     public String toFormulaString(int steps) {
@@ -66,89 +79,40 @@ public class KripkeTruthTable {
     }
 
     public String toQBFString(int steps) {
-        if(steps < 1) return "()";
-        final StringBuilder sb = new StringBuilder();
+        return literals.stream()
+                        .map(literal -> IntStream.range(0, steps)
+                                .mapToObj(i -> "?" + literal + i)
+                                .collect(Collectors.joining(" ")))
+                        .collect(Collectors.joining(" ", "", "\n")) +
+                literals.stream()
+                        .map(literal -> "#" + literal + " #" + literal + "next")
+                        .collect(Collectors.joining(" ", "", "\n")) +
+                "(\n" +
+                IntStream.range(0, steps)
+                        .mapToObj(step -> literals.stream()
+                                .map(literal -> "(" + literal + " <-> " + literal + step + ") & (" + literal + "next <-> " + literal + (step + 1) + ")")
+                                .collect(Collectors.joining(" & ", "(", ")")))
+                        .collect(Collectors.joining(" |\n", "(", ")\n")) +
+                "->\n" +
+                toFormulaString(1).replaceAll("(!?[a-z]+([a-z]*[0-9]*)*)0", "$1")
+                        .replaceAll("(!?[a-z]+([a-z]*[0-9]*)*)1", "$1next") +
+                "\n)" +
+                getEncodingStartAndEndString(steps);
+    }
 
-        final List<Integer> initialRange = IntStream.range(0, 2).boxed().toList();
-        final Set<String> universalStateLiterals = new LinkedHashSet<>();
-        initialRange.forEach(step -> literals.forEach(literal -> {
-            universalStateLiterals.add(literal + step);
-        }));
-
-        final List<Integer> stepRange = IntStream.range(0, steps + 1).boxed().toList();
-        final Set<String> existentialStateLiterals = new LinkedHashSet<>();
-        stepRange.forEach(step -> literals.forEach(literal -> {
-                    if(step == 0) {
-                        existentialStateLiterals.add(literal);
-                    } else {
-                        existentialStateLiterals.add(literal + "n" + step);
-                    }
-                })
-        );
-
-        final StringBuilder quantifiedVariables = new StringBuilder();
-        // existentially quantify state variable aliases
-        existentialStateLiterals.forEach(literal -> quantifiedVariables.append("?").append(literal).append(" "));
-
-        quantifiedVariables.append("\n");
-
-        // universally quantify state variables
-        universalStateLiterals.forEach(literal -> quantifiedVariables.append("#").append(literal).append(" "));
-
-        quantifiedVariables.append("\n");
-        sb.append(quantifiedVariables);
-        sb.append("( ");
-
-        final StringBuilder aliases = new StringBuilder();
-        try {
-            final List<String> existentialStateLiteralsList = new ArrayList<>(existentialStateLiterals);
-            final List<String> existentialAliases = new ArrayList<>(existentialStateLiteralsList);
-            final List<String> tempList = new ArrayList<>();
-            if(steps > 1) {
-                // duplicate all sets of existential literals in between the first and last set
-                int startIdx = literals.size();
-                int endIdx = existentialStateLiteralsList.size() - literals.size();
-                while(startIdx < endIdx) {
-                    tempList.addAll(existentialStateLiteralsList.subList(startIdx, startIdx + literals.size()));
-                    startIdx += literals.size();
-                }
-
-                int insertionStart = 0;
-                int insertionEnd = tempList.size() / literals.size();
-                while(insertionStart < insertionEnd) {
-                    final List<String> subList = tempList.subList(0, literals.size());
-                    existentialAliases.addAll(existentialAliases.indexOf(tempList.get(0)), subList);
-                    tempList.removeAll(subList);
-                    insertionStart++;
-                }
-            }
-
-            int iterationCount = 0;
-            if(steps > 1) aliases.append("(");
-            while(iterationCount < steps) {
-                aliases.append("(");
-                universalStateLiterals.forEach(literal -> aliases.append("(")
-                        .append(literal)
-                        .append(" <-> ")
-                        .append(existentialAliases.remove(0))
-                        .append(")")
-                        .append(" & "));
-                aliases.setLength(aliases.length() - 3);
-                aliases.append(") | ");
-                iterationCount++;
-            }
-            aliases.setLength(aliases.length() - 3);
-            if(steps > 1) aliases.append(")");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return "()";
-        }
-
-        sb.append(aliases);
-        sb.append("\n  -> \n");
-        sb.append(this.toFormulaString(1));
-        sb.append("\n)");
-        return sb.toString();
+    private String getEncodingStartAndEndString(int steps) {
+        return (!encodingStartVars.isEmpty() ? "\n& " : "") +
+                encodingStartVars.stream()
+                        .map(state -> state.entrySet().stream()
+                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + "0")
+                                .collect(Collectors.joining(" & ", "(", ")")))
+                        .collect(Collectors.joining(" | ", "(", ")")) +
+                (!encodingEndVars.isEmpty() ? " & " : "") +
+                encodingEndVars.stream()
+                        .map(state -> state.entrySet().stream()
+                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
+                                .collect(Collectors.joining(" & ", "(", ")")))
+                        .collect(Collectors.joining(" | ", "(", ")"));
     }
 
     @Override
