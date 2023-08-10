@@ -45,6 +45,22 @@ public class Result {
         this(JSONof(result), info, warning, error);
     }
 
+    public Result result(String result) {
+        return new Result(result, info, warning, error);
+    }
+
+    public Result info(String info) {
+        return new Result(result, info, warning, error);
+    }
+
+    public Result warning(String warning) {
+        return new Result(result, info, warning, error);
+    }
+
+    public Result error(String error) {
+        return new Result(result, info, warning, error);
+    }
+
     public String computeJSON() {
         return "{\n" +
                 // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
