@@ -6,10 +6,10 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Result {
-    private final String result;
-    private final String info;
-    private final String warning;
-    private final String error;
+    public final String result;
+    public final String info;
+    public final String warning;
+    public final String error;
 
 
     public Result(String result, String info, String warning, String error) {
@@ -82,5 +82,22 @@ public class Result {
                 .sorted(Map.Entry.comparingByKey())     // Orders keys alphabetically
                 .map(e -> (e.getValue() ? "" : "!") + e.getKey())
                 .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Careful! Don't use for sending over REST!!!
+     * Use computeJSON() instead!
+     * @return string representation for debugging
+     * @deprecated This is only for debugging!
+     */
+    @Override
+    @Deprecated
+    public String toString() {
+        return "Result{" +
+                "result='" + result + "'\n" +
+                ", info='" + info + "'\n" +
+                ", warning='" + warning + "'\n" +
+                ", error='" + error + "'\n" +
+                '}';
     }
 }
