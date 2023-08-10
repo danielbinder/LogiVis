@@ -101,18 +101,22 @@ public class KripkeTruthTable {
     }
 
     private String getEncodingStartAndEndString(int steps) {
-        return (!encodingStartVars.isEmpty() ? "\n& " : "") +
-                encodingStartVars.stream()
-                        .map(state -> state.entrySet().stream()
-                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + "0")
-                                .collect(Collectors.joining(" & ", "(", ")")))
-                        .collect(Collectors.joining(" | ", "(", ")")) +
-                (!encodingEndVars.isEmpty() ? " & " : "") +
-                encodingEndVars.stream()
-                        .map(state -> state.entrySet().stream()
-                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
-                                .collect(Collectors.joining(" & ", "(", ")")))
-                        .collect(Collectors.joining(" | ", "(", ")"));
+        return (!encodingStartVars.isEmpty()
+                        ? "\n& " +
+                        encodingStartVars.stream()
+                                .map(state -> state.entrySet().stream()
+                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + "0")
+                                        .collect(Collectors.joining(" & ", "(", ")")))
+                                .collect(Collectors.joining(" | ", "(", ")"))
+                        : "") +
+                (!encodingEndVars.isEmpty()
+                        ? " & " +
+                        encodingEndVars.stream()
+                                .map(state -> state.entrySet().stream()
+                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
+                                        .collect(Collectors.joining(" & ", "(", ")")))
+                                .collect(Collectors.joining(" | ", "(", ")"))
+                        : "");
     }
 
     @Override

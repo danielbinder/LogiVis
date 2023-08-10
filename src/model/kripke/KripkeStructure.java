@@ -67,20 +67,24 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
                                 ")")
                         .collect(Collectors.joining(" &\n", "(", ")")))
                 .collect(Collectors.joining(" &\n\n", "(", ")")) +
-                (stream().anyMatch(kn -> kn.isEncodingStart) ? "\n& " : "") +
-                stream()
-                        .filter(kn -> kn.isEncodingStart)
-                        .map(kn -> kn.stateMap.entrySet().stream()
-                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + "0")
-                                .collect(Collectors.joining(" & ", "(", ")")))
-                        .collect(Collectors.joining(" | ", "(", ")")) +
-                (stream().anyMatch(kn -> kn.isEncodingEnd) ? " & " : "") +
-                stream()
-                        .filter(kn -> kn.isEncodingEnd)
-                        .map(kn -> kn.stateMap.entrySet().stream()
-                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
-                                .collect(Collectors.joining(" & ", "(", ")")))
-                        .collect(Collectors.joining(" | ", "(", ")"));
+                (stream().anyMatch(kn -> kn.isEncodingStart)
+                        ? "\n& " +
+                        stream()
+                                .filter(kn -> kn.isEncodingStart)
+                                .map(kn -> kn.stateMap.entrySet().stream()
+                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + "0")
+                                        .collect(Collectors.joining(" & ", "(", ")")))
+                                .collect(Collectors.joining(" | ", "(", ")"))
+                        : "") +
+                (stream().anyMatch(kn -> kn.isEncodingEnd)
+                        ? " & " +
+                        stream()
+                                .filter(kn -> kn.isEncodingEnd)
+                                .map(kn -> kn.stateMap.entrySet().stream()
+                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
+                                        .collect(Collectors.joining(" & ", "(", ")")))
+                                .collect(Collectors.joining(" | ", "(", ")"))
+                        : "");
     }
 
     @Override
