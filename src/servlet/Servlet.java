@@ -4,6 +4,7 @@ import model.Model;
 import model.kripke.KripkeGenerator;
 import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Simplification;
+import model.kripke.KripkeStructure;
 import servlet.rest.GET;
 import servlet.rest.REST;
 import temporal.model.KripkeStruct;
@@ -21,6 +22,23 @@ public class Servlet {
     @GET("/solve/:formula")
     public String solve(String formula) {
         return BruteForceSolver.solveWithResult(formula)
+                .computeJSON();
+    }
+
+    @GET("/encodeAndSolveWithTrace/:kripke/:steps")
+    public String encodeAndSolveWithTrace(String kripke, String steps) {
+        KripkeStructure ks = Model.of(kripke)
+                .toKripkeStructure();
+        Result formulaResult = ks.toKripkeTruthTable()
+                .toFormulaStringWithEncodingStartAndEndWithResult(Integer.parseInt(steps));
+        if(ks.stream().noneMatch(kn -> kn.isEncodingStart) || ks.stream().noneMatch(kn -> kn.isEncodingEnd))
+            return formulaResult.info("").error("Define encoding start- and endpoint with state suffixes '>' and '<'!").computeJSON();
+        Result solverResult = BruteForceSolver.solveWithResult(formulaResult.result);
+        if(solverResult.result.equals("unsatisfiable"))
+            return formulaResult.info("unsatisfiable").computeJSON();
+
+        return formulaResult
+                .info(KripkeStructure.resolveStateTraceMap(Integer.parseInt(steps), ks.getStateTraceMap(), solverResult.result))
                 .computeJSON();
     }
 
