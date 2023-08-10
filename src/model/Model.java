@@ -57,23 +57,26 @@ public class Model extends ArrayList<ModelNode> {
     }
 
     public Result toModelStringWithResult() {
-        return new Result(
-                "S = {" + stream()
-                        .map(n -> n.name +
-                                (n.isEncodingStartPoint ? ">" : "") +
-                                (n.isEncodingEndPoint ? "<" : "") +
-                                (!n.label.isBlank() ? " [" + n.label + "]" : ""))
-                        .collect(Collectors.joining(", ")) + "}\n" +
+        return new Result(toModelString());
+    }
+
+    public String toModelString() {
+        return "S = {" + stream()
+                .map(n -> n.name +
+                        (n.isEncodingStartPoint ? ">" : "") +
+                        (n.isEncodingEndPoint ? "<" : "") +
+                        (!n.label.isBlank() ? " [" + n.label + "]" : ""))
+                .collect(Collectors.joining(", ")) + "}\n" +
                 "I = {" + stream()
-                        .filter(n -> n.isInitialNodeNode)
-                        .map(n -> n.name)
-                        .collect(Collectors.joining(", ")) + "}\n" +
+                .filter(n -> n.isInitialNodeNode)
+                .map(n -> n.name)
+                .collect(Collectors.joining(", ")) + "}\n" +
                 "T = {" + stream()
-                        .map(n -> n.successors.entrySet().stream()
-                                .map(succ -> "(" + n.name + ", " + succ.getKey().name +
-                                        (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
-                                .collect(Collectors.joining(", ")))
-                        .collect(Collectors.joining(", ")) + "}\n");
+                .map(n -> n.successors.entrySet().stream()
+                        .map(succ -> "(" + n.name + ", " + succ.getKey().name +
+                                (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
+                        .collect(Collectors.joining(", ")))
+                .collect(Collectors.joining(", ")) + "}\n";
     }
 
     @Override
