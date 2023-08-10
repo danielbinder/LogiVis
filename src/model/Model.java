@@ -14,7 +14,8 @@ public class Model extends ArrayList<ModelNode> {
 
     private Model(KripkeStructure ks) {
         ks.forEach(kn -> add(new ModelNode(kn)));
-
+        ks.forEach(kn -> get(kn.name).isEncodingStartPoint = kn.isEncodingStart);
+        ks.forEach(kn -> get(kn.name).isEncodingEndPoint = kn.isEncodingEnd);
         ks.forEach(kn -> kn.successors
                 .forEach(succ -> get(kn.name).successors.put(get(succ.name), "")));
     }
@@ -46,6 +47,8 @@ public class Model extends ArrayList<ModelNode> {
         KripkeStructure ks = new KripkeStructure();
         forEach(gn -> ks.add(new KripkeNode(gn.name)));
         forEach(gn -> ks.get(gn.name).isInitialNodeNode = gn.isInitialNodeNode);
+        forEach(gn -> ks.get(gn.name).isEncodingStart = gn.isEncodingStartPoint);
+        forEach(gn -> ks.get(gn.name).isEncodingEnd = gn.isEncodingEndPoint);
         forEach(gn -> gn.successors
                 .forEach((key, value) -> ks.get(gn.name).successors.add(ks.get(key.name))));
         forEach(gn -> ks.get(gn.name).stateMap = Arrays.stream(gn.label.split(" "))

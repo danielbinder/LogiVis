@@ -11,12 +11,16 @@ public class KripkeNode {
     public Map<String, Boolean> stateMap;
     public boolean isInitialNodeNode;
     public final Set<KripkeNode> successors;
+    public boolean isEncodingStart;
+    public boolean isEncodingEnd;
 
     public KripkeNode(String name) {
         this.name = name;
         this.stateMap = new HashMap<>();
         this.isInitialNodeNode = false;
         this.successors = new HashSet<>();
+        this.isEncodingStart = false;
+        this.isEncodingEnd = false;
     }
 
     /**
