@@ -47,7 +47,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
         return LogicNode.of(toFormulaString(steps));
     }
 
-    public Result toFormulaStringWithResult(int steps) {
+    public Result toFormulaStringAsResult(int steps) {
         return new Result(toFormulaString(steps));
     }
 

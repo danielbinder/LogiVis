@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class Simplification {
-    public static Result ofWithResult(String formula) {
+    public static Result ofAsResult(String formula) {
         return new Result(of(formula).toString());
     }
 
-    public static Result ofWithResult(LogicNode formula) {
+    public static Result ofAsResult(LogicNode formula) {
         return new Result(of(formula).toString());
     }
 

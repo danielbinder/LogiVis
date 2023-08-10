@@ -167,7 +167,7 @@ public class SolverTest {
     }
 
     private String getAllAssignmentsWithResult(String formula) {
-        var result = BruteForceSolver.solveAllWithResult(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula))).computeJSON();
+        var result = BruteForceSolver.solveAllAsResult(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula))).computeJSON();
         System.out.println(result);
         return result;
     }
