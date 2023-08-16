@@ -87,23 +87,6 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
                         : "");
     }
 
-    public Map<String, List<String>> getStateTraceMap() {
-        return stream().collect(Collectors.toMap(kn -> kn.name,
-                                                 kn -> kn.stateMap.entrySet().stream()
-                                                         .map(e -> (e.getValue() ? "" : "!") + e.getKey())
-                                                         .toList()));
-    }
-
-    public static String resolveStateTraceMap(int maxVarIndex, Map<String, List<String>> stateTraceMap, String states) {
-        return IntStream.range(0, maxVarIndex + 1)
-                .mapToObj(i -> stateTraceMap.entrySet().stream()
-                        .filter(e -> e.getValue().stream().allMatch(v -> states.contains(v + i) && !states.contains("!" + v + i)))
-                        .findAny()
-                        .map(Map.Entry::getKey)
-                        .orElseThrow(NoSuchElementException::new))
-                .collect(Collectors.joining(" -> "));
-    }
-
     @Override
     public String toString() {
         return stream()
