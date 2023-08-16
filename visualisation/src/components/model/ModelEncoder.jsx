@@ -3,11 +3,9 @@ import React, {useState} from 'react';
 export default function ModelEncoder({setFormulaType,
                                          setFormulaTab,
                                          setSolutionTab,
-                                         setFormulaAndSolutionTab,
                                          setEvalStatusMessage,
                                          model}) {
     const [loadingEncode, setLoadingEncode] = useState(false)
-    const [loadingTrace, setLoadingTrace] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
         encodingType: 'compact'
@@ -41,16 +39,6 @@ export default function ModelEncoder({setFormulaType,
                 ? setFormulaType('boolean')
                 : setEvalStatusMessage(generateLimbooleLink(data['result'])))
             .finally(() => setLoadingEncode(false))
-    }
-
-    function handleTraceClick() {
-        setLoadingTrace(true);
-        fetch(urls.get('compactTrace') +
-            removeComments(model).replaceAll('\n', ' ') + '/' + generationParameters.steps)
-            .then(response => response.json())
-            .then(setFormulaAndSolutionTab)
-            .then(() => setFormulaType('boolean'))
-            .finally(() => setLoadingTrace(false))
     }
 
     return (
@@ -110,14 +98,6 @@ export default function ModelEncoder({setFormulaType,
                         {loadingEncode && <div className='loading'></div>}
                         Encode model
                     </button>
-                </div>
-                <div className='centerContainer'>
-                    {generationParameters.encodingType === 'compact' &&
-                        <button className='button' onClick={handleTraceClick}>
-                            {loadingTrace && <div className='loading'></div>}
-                            Encode + trace
-                        </button>
-                    }
                 </div>
             </fieldset>
         </div>

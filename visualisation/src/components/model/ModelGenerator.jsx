@@ -36,94 +36,92 @@ export default function ModelGenerator({setModelTab}) {
     }
 
     return (
-        <div className='smallColumn'>
-            <div className='rows'>
-                <fieldset className='smallFieldset'>
-                    <legend>&nbsp;Generate a model&nbsp;</legend>
-                    <div>
-                        <input
-                            className='input'
-                            type='number'
-                            min='1'
-                            id='nodes'
-                            name='nodes'
-                            placeholder='Nodes'
-                            value={generationParameters.nodes}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='nodes'>Nodes</label>
-                    </div>
-                    <div>
-                        <input
-                            className='input'
-                            type='number'
-                            min='1'
-                            id='variables'
-                            name='variables'
-                            placeholder='Variables'
-                            value={generationParameters.variables}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='variables'>Variables</label>
-                    </div>
-                    <div>
-                        <input
-                            className='input'
-                            type='number'
-                            min='0'
-                            id='minSuccessors'
-                            name='minSuccessors'
-                            placeholder='Min. Successors'
-                            value={generationParameters.minSuccessors}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='minSuccessors'>Min. Successors</label>
-                    </div>
-                    <div>
-                        <input
-                            className='input'
-                            type='number'
-                            min='0'
-                            id='maxSuccessors'
-                            name='maxSuccessors'
-                            placeholder='Max. Successors'
-                            value={generationParameters.maxSuccessors}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='maxSuccessors'>Max. Successors</label>
-                    </div>
-                    <div>
-                        <input
-                            className='input'
-                            type='number'
-                            min='0'
-                            id='initialNodes'
-                            name='initialNodes'
-                            placeholder='Initial Nodes'
-                            value={generationParameters.initialNodes}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='initialNodes'>Initial Nodes</label>
-                    </div>
-                    <div>
-                        <input
-                            className='input'
-                            type='checkbox'
-                            id='allReachable'
-                            name='allReachable'
-                            checked={generationParameters.allReachable}
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='allReachable'>All reachable</label>
-                    </div>
-                    <div className='centerContainer'>
-                        <button className='button' onClick={handleButtonClick}>
-                            {loading && <div className='loading'></div>}
-                            Generate Model
-                        </button>
-                    </div>
-                </fieldset>
-            </div>
+        <div className='rows'>
+            <fieldset className='smallFieldset'>
+                <legend>&nbsp;Generate a model&nbsp;</legend>
+                <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='1'
+                        id='nodes'
+                        name='nodes'
+                        placeholder='Nodes'
+                        value={generationParameters.nodes}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='nodes'>Nodes</label>
+                </div>
+                <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='1'
+                        id='variables'
+                        name='variables'
+                        placeholder='Variables'
+                        value={generationParameters.variables}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='variables'>Variables</label>
+                </div>
+                <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='0'
+                        id='minSuccessors'
+                        name='minSuccessors'
+                        placeholder='Min. Successors'
+                        value={generationParameters.minSuccessors}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='minSuccessors'>Min. Successors</label>
+                </div>
+                <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='0'
+                        id='maxSuccessors'
+                        name='maxSuccessors'
+                        placeholder='Max. Successors'
+                        value={generationParameters.maxSuccessors}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='maxSuccessors'>Max. Successors</label>
+                </div>
+                <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='0'
+                        id='initialNodes'
+                        name='initialNodes'
+                        placeholder='Initial Nodes'
+                        value={generationParameters.initialNodes}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='initialNodes'>Initial Nodes</label>
+                </div>
+                <div>
+                    <input
+                        className='input'
+                        type='checkbox'
+                        id='allReachable'
+                        name='allReachable'
+                        checked={generationParameters.allReachable}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='allReachable'>All reachable</label>
+                </div>
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleButtonClick}>
+                        {loading && <div className='loading'></div>}
+                        Generate Model
+                    </button>
+                </div>
+            </fieldset>
         </div>
     )
 }

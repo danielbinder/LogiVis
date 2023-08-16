@@ -6,11 +6,11 @@ import ModelTypeSelector from './ModelTypeSelector';
 import AlgorithmTester from './AlgorithmTester';
 import Graph from "./Graph";
 import {ErrorBoundary} from "../ErrorBoundary";
+import ModelTracer from "./ModelTracer";
 
 export default function Model({setFormulaType,
                                   setFormulaTab,
                                   setSolutionTab,
-                                  setFormulaAndSolutionTab,
                                   setEvalStatusMessage,
                                   modelStatusMessage, setModelStatusMessage,
                                   modelWarningMessage,
@@ -42,14 +42,19 @@ export default function Model({setFormulaType,
                             setFormulaType={setFormulaType}
                             setFormulaTab={setFormulaTab}
                             setSolutionTab={setSolutionTab}
-                            setFormulaAndSolutionTab={setFormulaAndSolutionTab}
                             setEvalStatusMessage={setEvalStatusMessage}
                             model={model}
                         />
                     </div>
-                    <ModelGenerator
-                        setModelTab={setModelTab}
-                    />
+                    <div className='smallColumn'>
+                        <ModelGenerator
+                            setModelTab={setModelTab}
+                        />
+                        <ModelTracer
+                            setSolutionTab={setSolutionTab}
+                            model={model}
+                        />
+                    </div>
                 </div>
         </div>
             <div className='column'>
