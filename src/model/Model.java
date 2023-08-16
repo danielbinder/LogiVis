@@ -59,6 +59,14 @@ public class Model extends ArrayList<ModelNode> {
         return ks;
     }
 
+    public Result traceAsResult() {
+        return new ModelTracer(this).trace();
+    }
+
+    public Result shortestTraceAsResult() {
+        return new ModelTracer(this).shortestTrace();
+    }
+
     public Result toModelStringAsResult() {
         return new Result(toModelString());
     }
