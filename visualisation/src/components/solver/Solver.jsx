@@ -12,7 +12,7 @@ export default function Solver({formulaType, setFormulaType,
                                    solutionInfo, setSolutionInfo,
                                    setFormulaTab,
                                    setSolutionTab,
-                                   model}) {
+                                   getModel}) {
 
     function handleChange({target}) {
         setFormula(target.value)
@@ -40,7 +40,7 @@ export default function Solver({formulaType, setFormulaType,
                 setSolutionInfo={setSolutionInfo}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
-                model={model}
+                getModel={getModel}
             />
             <p className='green'>{evalStatusMessage}</p>
             <p className='orange'>{evalWarningMessage}</p>

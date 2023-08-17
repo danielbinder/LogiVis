@@ -40,9 +40,9 @@ public class Servlet {
 
     @GET("/solveCTL/:formula/:model")
     public String solveCTL(String formula, String model) {
-        String formattedModel = model.replace("_", ";");
-        KripkeStruct kripkeStructure = new KripkeStruct(formattedModel);
-        return new CTLSolver(kripkeStructure).getSatisfyingStatesAsResult(formula).computeJSON();
+        return new CTLSolver(Model.of(model)
+                                     .toKripkeStructure()
+                                     .toOtherKripke()).getSatisfyingStatesAsResult(formula).computeJSON();
     }
 
     @GET("/solveAll/:formula")

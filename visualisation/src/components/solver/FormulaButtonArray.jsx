@@ -7,7 +7,7 @@ export default function FormulaButtonArray({formulaType,
                                                setSolutionInfo,
                                                setFormulaTab,
                                                setSolutionTab,
-                                               model}) {
+                                               getModel}) {
     const [simplifyFormulaLoading, setSimplifyFormulaLoading] = useState(false)
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
     const [allModelsLoading, setAllModelsLoading] = useState(false)
@@ -39,7 +39,7 @@ export default function FormulaButtonArray({formulaType,
 
     function handleCheckModel() {
         setCheckModelLoading(true)
-        fetch('http://localhost:4000/solveCTL/' + getFormula() + '/' + formatModel(model))
+        fetch('http://localhost:4000/solveCTL/' + getFormula() + '/' + getModel())
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckModelLoading(false))
@@ -70,5 +70,3 @@ export default function FormulaButtonArray({formulaType,
         </div>
     )
 }
-
-const formatModel = (raw_model) => raw_model.replace(/\n/g, '').replace(/;/g, '_')

@@ -66,7 +66,7 @@ export default function App() {
                 setSolutionInfo={setSolutionInfo}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
-                model={model}
+                getModel={getModel}
             />
             <Model
                 setFormulaType={setFormulaType}
