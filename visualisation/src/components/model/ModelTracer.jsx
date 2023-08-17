@@ -1,14 +1,13 @@
 import React, {useState} from 'react'
 
 export default function ModelTracer({setSolutionTab,
-                                        model}) {
+                                        getModel}) {
     const [traceLoading, setTraceLoading] = useState(false)
     const [shortestLoading, setShortestLoading] = useState(false)
 
     function handleTraceClick() {
         setTraceLoading(true)
-        fetch('http://localhost:4000/trace/' +
-            removeComments(model).replaceAll('\n', ' '))
+        fetch('http://localhost:4000/trace/' + getModel())
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setTraceLoading(false))
@@ -16,8 +15,7 @@ export default function ModelTracer({setSolutionTab,
 
     function handleShortestClick() {
         setShortestLoading(true)
-        fetch('http://localhost:4000/shortestTrace/' +
-            removeComments(model).replaceAll('\n', ' '))
+        fetch('http://localhost:4000/shortestTrace/' + getModel())
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setShortestLoading(false))
@@ -42,5 +40,3 @@ export default function ModelTracer({setSolutionTab,
             </fieldset>
         </div>)
 }
-
-const removeComments = (s) => s.replaceAll(/#.*?(\n|$)/g, '\n')

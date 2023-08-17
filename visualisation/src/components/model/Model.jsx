@@ -15,7 +15,8 @@ export default function Model({setFormulaType,
                                   modelStatusMessage, setModelStatusMessage,
                                   modelWarningMessage,
                                   modelErrorMessage,
-                                  model, setModel,
+                                  model,     // do NOT send over REST - use getModel() instead!
+                                  getModel, setModel,
                                   setModelTab}) {
     const [modelType, setModelType] = useState('kripke')
 
@@ -43,7 +44,7 @@ export default function Model({setFormulaType,
                             setFormulaTab={setFormulaTab}
                             setSolutionTab={setSolutionTab}
                             setEvalStatusMessage={setEvalStatusMessage}
-                            model={model}
+                            getModel={getModel}
                         />
                     </div>
                     <div className='smallColumn'>
@@ -52,7 +53,7 @@ export default function Model({setFormulaType,
                         />
                         <ModelTracer
                             setSolutionTab={setSolutionTab}
-                            model={model}
+                            getModel={getModel}
                         />
                     </div>
                 </div>

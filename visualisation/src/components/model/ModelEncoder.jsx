@@ -4,7 +4,7 @@ export default function ModelEncoder({setFormulaType,
                                          setFormulaTab,
                                          setSolutionTab,
                                          setEvalStatusMessage,
-                                         model}) {
+                                         getModel}) {
     const [loadingEncode, setLoadingEncode] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
@@ -30,7 +30,7 @@ export default function ModelEncoder({setFormulaType,
     function handleEncodeClick() {
         setLoadingEncode(true)
         fetch(urls.get(generationParameters.encodingType) +
-            removeComments(model).replaceAll('\n', ' ') + '/' + generationParameters.steps)
+            getModel() + '/' + generationParameters.steps)
             .then(response => response.json())
             .then(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
                 ? setFormulaTab
@@ -103,8 +103,6 @@ export default function ModelEncoder({setFormulaType,
         </div>
     )
 }
-
-const removeComments = (s) => s.replaceAll(/#.*?(\n|$)/g, '\n')
 
 const generateLimbooleLink = (data) =>
     <a href={'https://maximaximal.github.io/limboole/#2' + data.replaceAll(/[$]/g, '\n')}

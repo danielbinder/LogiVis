@@ -46,6 +46,8 @@ export default function App() {
 
     const getFormula = () => formula.replaceAll('\n', '')
 
+    const getModel = () => model.replaceAll(/(#.*?(\n|$))|\n/g, ' ')
+
     return (
         <div>
             <Solver
@@ -76,6 +78,7 @@ export default function App() {
                 modelWarningMessage={modelWarningMessage}
                 modelErrorMessage={modelErrorMessage}
                 model={model}
+                getModel={getModel}
                 setModel={setModel}
                 setModelTab={setModelTab}
             />
