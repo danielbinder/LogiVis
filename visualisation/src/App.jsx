@@ -1,85 +1,66 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Solver from './components/solver/Solver'
-import Model from './components/model/Model';
+import Model from './components/model/Model'
+import {useSetRecoilState} from 'recoil';
+import {
+    evalErrorMessageState, evalStatusMessageState, evalWarningMessageState,
+    formulaState, modelErrorMessageState, modelState, modelStatusMessageState, modelWarningMessageState,
+    solutionInfoState, solutionState
+} from './components/atoms';
+import {cleanResultData} from './components/constants';
 
 export default function App() {
-    const [formulaType, setFormulaType] = useState('boolean')
-    const [formula, setFormula] = useState('')
-    const [solution, setSolution] = useState('')    // when using setSolution(), also set evalStatusMessage
-    const [solutionInfo, setSolutionInfo] = useState('')
-    const [model, setModel] = useState('')
+    const setFormula = useSetRecoilState(formulaState)
+    const setSolution = useSetRecoilState(solutionState)
+    const setSolutionInfo = useSetRecoilState(solutionInfoState)
+    const setModel = useSetRecoilState(modelState)
     // status messages
-    const [evalStatusMessage, setEvalStatusMessage] = useState('')
-    const [evalWarningMessage, setEvalWarningMessage] = useState('')
-    const [evalErrorMessage, setEvalErrorMessage] = useState('')
-    const [modelStatusMessage, setModelStatusMessage] = useState('')
-    const [modelWarningMessage, setModelWarningmessage] = useState('')
-    const [modelErrorMessage, setModelErrorMessage] = useState('');
+    const setEvalStatusMessage = useSetRecoilState(evalStatusMessageState)
+    const setEvalWarningMessage = useSetRecoilState(evalWarningMessageState)
+    const setEvalErrorMessage = useSetRecoilState(evalErrorMessageState)
+    const setModelStatusMessage = useSetRecoilState(modelStatusMessageState)
+    const setModelWarningMessage = useSetRecoilState(modelWarningMessageState)
+    const setModelErrorMessage = useSetRecoilState(modelErrorMessageState)
 
     const setFormulaTab = (data) => {
-        setFormula(data['result'].replaceAll(/[$]/g, '\n'))
-        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
+        setFormula(cleanResultData(data['result']))
+        setSolutionInfo(cleanResultData(data['info']))
         setEvalStatusMessage('')
-        setEvalWarningMessage(data['warning'].replaceAll(/[$]/g, '\n'))
-        setEvalErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
+        setEvalWarningMessage(cleanResultData(data['warning']))
+        setEvalErrorMessage(cleanResultData(data['error']))
+
+        return data
     }
 
     const setSolutionTab = (data) => {
-        setSolution(data['result'].replaceAll(/[$]/g, '\n'))
-        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
+        setSolution(cleanResultData(data['result']))
+        setSolutionInfo(cleanResultData(data['info']))
         setEvalStatusMessage('')
-        setEvalWarningMessage(data['warning'].replaceAll(/[$]/g, '\n'))
-        setEvalErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
+        setEvalWarningMessage(cleanResultData(data['warning']))
+        setEvalErrorMessage(cleanResultData(data['error']))
+
         return data
     }
 
     const setModelTab = (data) => {
-        setModel(data['result']
-            .replaceAll(/[$]/g, '\n')
-            .replaceAll(/_/g, ';')
-            .replaceAll(/[+]/g, '\n'))
-        setSolutionInfo(data['info'].replaceAll(/[$]/g, '\n'))
+        setModel(cleanResultData(data['result']))
+        setSolutionInfo(cleanResultData(data['info']))
         setModelStatusMessage('')
-        setModelWarningmessage(data['warning'].replaceAll(/[$]/g, '\n'))
-        setModelErrorMessage(data['error'].replaceAll(/[$]/g, '\n'))
+        setModelWarningMessage(cleanResultData(data['warning']))
+        setModelErrorMessage(cleanResultData(data['error']))
+
+        return data
     }
-
-    const getFormula = () => formula.replaceAll('\n', '')
-
-    const getModel = () => model.replaceAll(/(#.*?(\n|$))|\n/g, ' ')
 
     return (
         <div>
             <Solver
-                formulaType={formulaType}
-                formula={formula}
-                getFormula={getFormula}
-                setFormulaType={setFormulaType}
-                setFormula={setFormula}
-                evalStatusMessage={evalStatusMessage}
-                setEvalStatusMessage={setEvalStatusMessage}
-                evalWarningMessage={evalWarningMessage}
-                evalErrorMessage={evalErrorMessage}
-                solution={solution}
-                setSolution={setSolution}
-                solutionInfo={solutionInfo}
-                setSolutionInfo={setSolutionInfo}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
-                getModel={getModel}
             />
             <Model
-                setFormulaType={setFormulaType}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
-                setEvalStatusMessage={setEvalStatusMessage}
-                modelStatusMessage={modelStatusMessage}
-                setModelStatusMessage={setModelStatusMessage}
-                modelWarningMessage={modelWarningMessage}
-                modelErrorMessage={modelErrorMessage}
-                model={model}
-                getModel={getModel}
-                setModel={setModel}
                 setModelTab={setModelTab}
             />
         </div>

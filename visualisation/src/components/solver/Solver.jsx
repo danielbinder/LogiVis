@@ -1,18 +1,22 @@
 import React from 'react';
 import FormulaTypeSelection from './FormulaTypeSelection';
 import FormulaButtonArray from './FormulaButtonArray';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {
+    evalErrorMessageState,
+    evalStatusMessageState,
+    evalWarningMessageState,
+    formulaState, solutionInfoState,
+    solutionState
+} from '../atoms';
 
-export default function Solver({formulaType, setFormulaType,
-                                   formula,     // do NOT send over REST - use getFormula() instead!
-                                   getFormula, setFormula,
-                                   evalStatusMessage, setEvalStatusMessage,
-                                   evalWarningMessage,
-                                   evalErrorMessage,
-                                   solution, setSolution,
-                                   solutionInfo, setSolutionInfo,
-                                   setFormulaTab,
-                                   setSolutionTab,
-                                   getModel}) {
+export default function Solver({setFormulaTab, setSolutionTab}) {
+    const [evalStatusMessage, setEvalStatusMessage] = useRecoilState(evalStatusMessageState)
+    const evalWarningMessage = useRecoilValue(evalWarningMessageState)
+    const evalErrorMessage = useRecoilValue(evalErrorMessageState)
+    const [formula, setFormula] = useRecoilState(formulaState)
+    const solution = useRecoilValue(solutionState)
+    const solutionInfo = useRecoilValue(solutionInfoState)
 
     function handleChange({target}) {
         setFormula(target.value)
@@ -21,7 +25,7 @@ export default function Solver({formulaType, setFormulaType,
     return (
         <div className='column'>
             <h3 className='center'>Evaluate a formula</h3>
-            <FormulaTypeSelection formulaType={formulaType} setFormulaType={setFormulaType}/>
+            <FormulaTypeSelection/>
             <textarea
                 className='textArea'
                 value={formula}
@@ -33,14 +37,8 @@ export default function Solver({formulaType, setFormulaType,
                         .then(() => setEvalStatusMessage('Copied Formula to Clipboard'))}
             />
             <FormulaButtonArray
-                formulaType={formulaType}
-                getFormula={getFormula}
-                setEvalStatusMessage={setEvalStatusMessage}
-                setSolution={setSolution}
-                setSolutionInfo={setSolutionInfo}
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
-                getModel={getModel}
             />
             <p className='green'>{evalStatusMessage}</p>
             <p className='orange'>{evalWarningMessage}</p>

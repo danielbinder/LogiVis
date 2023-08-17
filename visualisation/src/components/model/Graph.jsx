@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Graphviz from 'graphviz-react';
+import {useRecoilState, useSetRecoilState} from 'recoil';
+import {modelState, modelStatusMessageState} from '../atoms';
+import {modelPlaceholder, compactModelPlaceholder} from '../constants';
 
-export default function Graph({setModelStatusMessage,
-                                  modelPlaceholder, compactModelPlaceholder,
-                                  model, setModel}) {
+export default function Graph() {
+    const setModelStatusMessage = useSetRecoilState(modelStatusMessageState)
+    const [model, setModel] = useRecoilState(modelState)
     const [graph, setGraph] = useState('')
 
     // whenever 'model' changes, the graph attempts to update

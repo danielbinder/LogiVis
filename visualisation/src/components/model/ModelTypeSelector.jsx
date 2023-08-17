@@ -1,6 +1,10 @@
 import React from 'react';
+import {useRecoilState} from 'recoil';
+import {modelTypeState} from '../atoms';
 
-export default function ModelTypeSelector({modelType, setModelType}) {
+export default function ModelTypeSelector() {
+    const [modelType, setModelType] = useRecoilState(modelTypeState)
+
     return (
         <div className='rows'>
             <fieldset className='smallFieldset'>

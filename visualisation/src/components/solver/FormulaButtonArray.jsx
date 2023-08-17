@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
+import {useRecoilValue} from 'recoil';
+import {formulaSelector, modelSelector} from '../selectors';
+import {formulaTypeState} from '../atoms';
 
-export default function FormulaButtonArray({formulaType,
-                                               getFormula,
-                                               setEvalStatusMessage,
-                                               setSolution,
-                                               setSolutionInfo,
-                                               setFormulaTab,
-                                               setSolutionTab,
-                                               getModel}) {
+export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
+    const formulaType = useRecoilValue(formulaTypeState)
+    const getFormula = useRecoilValue(formulaSelector)
+    const getModel = useRecoilValue(modelSelector)
+
     const [simplifyFormulaLoading, setSimplifyFormulaLoading] = useState(false)
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
     const [allModelsLoading, setAllModelsLoading] = useState(false)
@@ -15,7 +15,7 @@ export default function FormulaButtonArray({formulaType,
 
     function handleSimplify() {
         setSimplifyFormulaLoading(true)
-        fetch('http://localhost:4000/simplify/' + getFormula())
+        fetch('http://localhost:4000/simplify/' + getFormula)
             .then(response => response.json())
             .then(setFormulaTab)
             .finally(() => setSimplifyFormulaLoading(false))
@@ -23,7 +23,7 @@ export default function FormulaButtonArray({formulaType,
 
     function handleCheckFormula() {
         setCheckFormulaLoading(true)
-        fetch('http://localhost:4000/solve/' +  getFormula())
+        fetch('http://localhost:4000/solve/' +  getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckFormulaLoading(false))
@@ -31,7 +31,7 @@ export default function FormulaButtonArray({formulaType,
 
     function handleAllModels() {
         setAllModelsLoading(true)
-        fetch('http://localhost:4000/solveAll/' + getFormula())
+        fetch('http://localhost:4000/solveAll/' + getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setAllModelsLoading(false))
@@ -39,7 +39,7 @@ export default function FormulaButtonArray({formulaType,
 
     function handleCheckModel() {
         setCheckModelLoading(true)
-        fetch('http://localhost:4000/solveCTL/' + getFormula() + '/' + getModel())
+        fetch('http://localhost:4000/solveCTL/' + getFormula + '/' + getModel)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckModelLoading(false))

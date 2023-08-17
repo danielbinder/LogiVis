@@ -1,10 +1,14 @@
 import React, {useState} from 'react';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {evalStatusMessageState, formulaTypeState} from '../atoms';
+import {modelSelector} from '../selectors';
+import {cleanResultData, serverURL} from '../constants';
 
-export default function ModelEncoder({setFormulaType,
-                                         setFormulaTab,
-                                         setSolutionTab,
-                                         setEvalStatusMessage,
-                                         getModel}) {
+export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
+    const getModel = useRecoilValue(modelSelector)
+    const setFormulaType = useSetRecoilState(formulaTypeState)
+    const setEvalStatusMessage = useSetRecoilState(evalStatusMessageState)
+
     const [loadingEncode, setLoadingEncode] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 3,
@@ -12,10 +16,10 @@ export default function ModelEncoder({setFormulaType,
     })
 
     const urls = new Map([
-        ['naive', 'http://localhost:4000/kripke2formula/'],
-        ['compact', 'http://localhost:4000/kripke2compactFormula/'],
-        ['compactTrace', 'http://localhost:4000/encodeAndSolveWithTrace/'],
-        ['compactQBF', 'http://localhost:4000/kripke2compactQBFFormula/']
+        ['naive', serverURL + '/kripke2formula/'],
+        ['compact', serverURL + '/kripke2compactFormula/'],
+        ['compactTrace', serverURL + '/encodeAndSolveWithTrace/'],
+        ['compactQBF', serverURL + '/kripke2compactQBFFormula/']
     ])
 
     function handleChange({target: {name, value, type, checked}}) {
@@ -30,14 +34,17 @@ export default function ModelEncoder({setFormulaType,
     function handleEncodeClick() {
         setLoadingEncode(true)
         fetch(urls.get(generationParameters.encodingType) +
-            getModel() + '/' + generationParameters.steps)
+            getModel + '/' + generationParameters.steps)
             .then(response => response.json())
-            .then(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
-                ? setFormulaTab
-                : setSolutionTab)
-            .then(data => generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact'
-                ? setFormulaType('boolean')
-                : setEvalStatusMessage(generateLimbooleLink(data['result'])))
+            .then((data) => {
+                if(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact') {
+                    setFormulaTab(data)
+                    setFormulaType('boolean')
+                } else {
+                    setSolutionTab(data)
+                    setEvalStatusMessage(generateLimbooleLink(data['result']))
+                }
+            })
             .finally(() => setLoadingEncode(false))
     }
 
@@ -105,7 +112,7 @@ export default function ModelEncoder({setFormulaType,
 }
 
 const generateLimbooleLink = (data) =>
-    <a href={'https://maximaximal.github.io/limboole/#2' + data.replaceAll(/[$]/g, '\n')}
+    <a href={'https://maximaximal.github.io/limboole/#2' + cleanResultData(data)}
        target='_blank'>
         Check in Limboole
     </a>

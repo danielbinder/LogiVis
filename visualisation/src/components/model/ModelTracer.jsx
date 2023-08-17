@@ -1,13 +1,17 @@
 import React, {useState} from 'react'
+import {useRecoilValue} from 'recoil';
+import {modelSelector} from '../selectors';
+import {serverURL} from '../constants';
 
-export default function ModelTracer({setSolutionTab,
-                                        getModel}) {
+export default function ModelTracer({setSolutionTab}) {
+    const getModel = useRecoilValue(modelSelector)
+
     const [traceLoading, setTraceLoading] = useState(false)
     const [shortestLoading, setShortestLoading] = useState(false)
 
     function handleTraceClick() {
         setTraceLoading(true)
-        fetch('http://localhost:4000/trace/' + getModel())
+        fetch(serverURL + '/trace/' + getModel)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setTraceLoading(false))
@@ -15,7 +19,7 @@ export default function ModelTracer({setSolutionTab,
 
     function handleShortestClick() {
         setShortestLoading(true)
-        fetch('http://localhost:4000/shortestTrace/' + getModel())
+        fetch(serverURL + '/shortestTrace/' + getModel)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setShortestLoading(false))

@@ -1,6 +1,10 @@
 import React from 'react';
+import {useRecoilState} from "recoil";
+import {formulaTypeState} from '../atoms';
 
-export default function FormulaTypeSelection({formulaType, setFormulaType }) {
+export default function FormulaTypeSelection() {
+        const [formulaType, setFormulaType] = useRecoilState(formulaTypeState)
+
     return (
         <fieldset className='fieldset'>
             <legend>&nbsp;Choose a formula type&nbsp;</legend>

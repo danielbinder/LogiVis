@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {serverURL} from '../constants';
 
 export default function ModelGenerator({setModelTab}) {
     const [loading, setLoading] = useState(false)
@@ -23,7 +24,7 @@ export default function ModelGenerator({setModelTab}) {
 
     function handleButtonClick() {
         setLoading(true)
-        fetch('http://localhost:4000/generate/' +
+        fetch(serverURL + '/generate/' +
             generationParameters.nodes + '_' +
             generationParameters.initialNodes + '_' +
             generationParameters.variables + '_' +
@@ -31,7 +32,7 @@ export default function ModelGenerator({setModelTab}) {
             generationParameters.maxSuccessors + '_' +
             generationParameters.allReachable)
             .then(response => response.json())
-            .then(setModelTab)
+            .then(data => {setModelTab(data); return data})
             .finally(() => setLoading(false))
     }
 
