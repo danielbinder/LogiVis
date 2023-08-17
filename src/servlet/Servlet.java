@@ -6,7 +6,6 @@ import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Simplification;
 import servlet.rest.GET;
 import servlet.rest.REST;
-import temporal.model.KripkeStruct;
 import temporal.solver.CTLSolver;
 
 public class Servlet {
