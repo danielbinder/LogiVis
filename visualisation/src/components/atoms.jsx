@@ -1,64 +1,78 @@
 import {atom} from 'recoil'
+import {syncEffect} from 'recoil-sync'
+import {string} from '@recoiljs/refine';
 
 export const formulaTypeState = atom({
     key: 'formulaType',
-    default: 'boolean'
+    default: 'boolean',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const formulaState = atom({
     key: 'formula',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 // when using setSolution(), also set evalStatusMessage
 export const solutionState = atom({
     key: 'solution',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const solutionInfoState = atom({
     key: 'solutionInfo',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const modelTypeState = atom({
     key: 'modelType',
-    default: 'kripke'
+    default: 'kripke',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const modelState = atom({
     key: 'model',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 // status messages
 
 export const evalStatusMessageState = atom({
     key: 'evalStatusMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const evalWarningMessageState = atom({
     key: 'evalWarningMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const evalErrorMessageState = atom({
     key: 'evalErrorMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const modelStatusMessageState = atom({
     key: 'modelStatusMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const modelWarningMessageState = atom({
     key: 'modelWarningMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
 
 export const modelErrorMessageState = atom({
     key: 'modelErrorMessage',
-    default: ''
+    default: '',
+    effects: [syncEffect({refine: string()})]
 })
