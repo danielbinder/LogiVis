@@ -21,13 +21,18 @@ public class KripkeGenerator implements Generator {
         String[] params = paramString.split("_");
         int nodes = Integer.parseInt(params[0]);
         int initialNodes = Integer.parseInt(params[1]);
-        assert(1 <= initialNodes && initialNodes <= nodes);
+        if(initialNodes < 0) error("The minimum amount of initial nodes needs to be at least 0!");
+        if(initialNodes > nodes) error("The amount of initial nodes can't be larger than the amount of nodes!");
         int variables = Integer.parseInt(params[2]);
-        assert(Math.pow(2, variables) > nodes);     // ensure enough unique variable assignments
+        if(Math.pow(2, variables) < nodes)
+            error(variables + " variables can only have " + (int) Math.pow(2, variables) + " assignments, but there are " + nodes + " nodes!");
         int minSuccessors = Integer.parseInt(params[3]);
-        assert(0 <= minSuccessors && minSuccessors <= nodes - 1);
+        if(minSuccessors < 0) error("The minimum amount of successors needs to be at least 0!");
+        if(minSuccessors > nodes) error("The amount of min successors can't be larger than the amount of nodes!");
         int maxSuccessors = Integer.parseInt(params[4]);
-        assert(0 <= maxSuccessors && maxSuccessors <= nodes - 1 && minSuccessors <= maxSuccessors);
+        if(maxSuccessors < 0) error("The maximum amount of successors needs to be at least 0!");
+        if(maxSuccessors > nodes) error("The amount of max successors can't be larger than the amount of nodes!");
+        if(minSuccessors > maxSuccessors) error("The amount of min successors can't be larger than the amount of max successors!");
         boolean allStatesReachable = Boolean.parseBoolean(params[5]);
 
         while(regenerate && regenerated < maxRegeneration) {
@@ -45,31 +50,31 @@ public class KripkeGenerator implements Generator {
             }
 
             if(allStatesReachable) {
-                Map<KripkeNode, Boolean> reachabilityMap = new HashMap<>();
-                for(KripkeNode initial : ks.stream()
-                        .filter(kn -> kn.isInitialNodeNode)
-                        .toList())
-                    walk(initial, reachabilityMap);
+                List<KripkeNode> reachable = new ArrayList<>();
+                ks.stream().filter(kn -> kn.isInitialNodeNode).forEach(kn -> walk(kn, reachable));
 
-                if(nodes == reachabilityMap.keySet().size()) regenerate = false;
+                if(nodes == reachable.size()) regenerate = false;
                 else regenerated++;
             } else break;
         }
+
+        if(regenerate)
+            System.out.println("Tried " + maxRegeneration + " times, but reachability was not achieved for all states!");
 
         return ks;
     }
 
     /**
      * Walks the KripkeStructure recursively to check if every node is reachable
-     * by adding every visited node to the reachabilityMap
+     * by adding every visited node to the reachabilityList
      * @param current node
-     * @param reachabilityMap of walked nodes
+     * @param reachabilityList of walked nodes
      */
-    private static void walk(KripkeNode current, Map<KripkeNode, Boolean> reachabilityMap) {
-        if(reachabilityMap.containsKey(current)) return;
+    private static void walk(KripkeNode current, List<KripkeNode> reachabilityList) {
+        if(reachabilityList.contains(current)) return;
 
-        reachabilityMap.put(current, true);
-        for(KripkeNode kn : current.successors) walk(kn, reachabilityMap);
+        reachabilityList.add(current);
+        for(KripkeNode kn : current.successors) walk(kn, reachabilityList);
     }
 
     private static List<Integer> pickRandom(int bound, int amount) {
@@ -109,5 +114,9 @@ public class KripkeGenerator implements Generator {
         return stateMaps.stream()
                 .filter(sm -> pickedIndices.contains(stateMaps.indexOf(sm)))
                 .toList();
+    }
+
+    private static void error(String message) {
+        throw new IllegalArgumentException(message);
     }
 }
