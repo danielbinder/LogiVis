@@ -14,7 +14,22 @@ public class BooleanParser implements Parser {
     private int i;
 
     public LogicNode parse(String input) {
-        return parse(Lexer.tokenizeBooleanFormula(input));
+        List<BooleanToken> tokens = Lexer.tokenizeBooleanFormula(input);
+
+        try {
+            return parse(tokens);
+        } catch(IllegalArgumentException e) {
+            String line = input.split("\n")[current.line - 1];
+            int col = current.col;
+            if(line.length() > 40) {
+                line = line.substring(Math.max(0, col - 40), Math.min(line.length(), col + 40));
+                col = col - 40 < 0 ? col : 40;
+            }
+
+            System.out.println(line);
+            System.out.println(" ".repeat(col - 1) + "^");
+            throw e;
+        }
     }
 
     public LogicNode parse(List<BooleanToken> booleanTokens) {
@@ -114,7 +129,7 @@ public class BooleanParser implements Parser {
                 result = formula();
                 assert(isType(BooleanTokenType.RPAREN));
             }
-            default -> throw new IllegalArgumentException("Illegal TokenType " + current.type);
+            default -> throw new IllegalArgumentException("Illegal Token " + current + " at [" + current.line + "|" + current.col + "]");
         }
 
         advance();
