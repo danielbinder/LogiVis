@@ -1,8 +1,10 @@
 package model.token;
 
+import marker.Token;
+
 import java.util.Objects;
 
-public class ModelToken {
+public class ModelToken implements Token {
     public final ModelTokenType type;
     public final String value;
     public final int line;
@@ -59,5 +61,15 @@ public class ModelToken {
                         type == ModelTokenType.NAME
                         ? ":" + value
                         : "");
+    }
+
+    @Override
+    public int getLine() {
+        return line;
+    }
+
+    @Override
+    public int getCol() {
+        return col;
     }
 }

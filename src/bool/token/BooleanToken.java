@@ -7,20 +7,24 @@ import java.util.Objects;
 public class BooleanToken implements Token {
     public final BooleanTokenType type;
     public final String value;
+    public final int line;
+    public final int col;
 
-    public BooleanToken(BooleanTokenType type, String value) {
+    public BooleanToken(BooleanTokenType type, String value, int line, int col) {
         this.type = type;
         this.value = value;
+        this.line = line;
+        this.col = col;
     }
 
-    public BooleanToken(BooleanTokenType type) {
-        this(type, "");
+    public BooleanToken(BooleanTokenType type, int line, int col) {
+        this(type, "", line, col);
     }
 
-    public static BooleanToken fromString(String s) {
+    public static BooleanToken fromString(String s, int line, int col) {
         BooleanTokenType type = BooleanTokenType.fromString(s);
 
-        return new BooleanToken(type, type == BooleanTokenType.ACTION || type == BooleanTokenType.CONSTANT ? s : "");
+        return new BooleanToken(type, type == BooleanTokenType.ACTION || type == BooleanTokenType.CONSTANT ? s : "", line, col);
     }
 
     @Override
@@ -44,5 +48,15 @@ public class BooleanToken implements Token {
     @Override
     public String toString() {
         return type.toString() + (type == BooleanTokenType.ACTION ? ":" + value : "");
+    }
+
+    @Override
+    public int getLine() {
+        return line;
+    }
+
+    @Override
+    public int getCol() {
+        return col;
     }
 }

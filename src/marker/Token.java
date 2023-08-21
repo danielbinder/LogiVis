@@ -1,3 +1,6 @@
 package marker;
 
-public interface Token {}
+public interface Token {
+    int getLine();
+    int getCol();
+}

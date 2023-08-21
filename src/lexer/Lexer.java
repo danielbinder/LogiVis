@@ -1,6 +1,7 @@
 package lexer;
 
 import bool.token.BooleanToken;
+import marker.Token;
 import model.token.ModelToken;
 
 import java.util.ArrayList;
@@ -9,11 +10,24 @@ import java.util.NoSuchElementException;
 
 public class Lexer {
     public static List<BooleanToken> tokenizeBooleanFormula(final String input) {
+        int line = 1;
+        int col = 0;
+        int charsRead = 0;
+        int charsReadTemp = 0;
         final List<BooleanToken> booleanTokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
 
         for(int i = 0; i < input.length(); i++) {
-            if(Character.isWhitespace(input.charAt(i))) continue;
+            col++;
+            charsReadTemp++;
+            if(Character.isWhitespace(input.charAt(i))) {
+                if(input.charAt(i) == '\n') {
+                    line++;
+                    col = 0;
+                }
+
+                continue;
+            }
 
             current.append(input.charAt(i));
 
@@ -23,10 +37,14 @@ public class Lexer {
                     Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
-                booleanTokens.add(BooleanToken.fromString(current.toString()));       // this is where the magic happens
+                booleanTokens.add(BooleanToken.fromString(current.toString(), line, col));       // this is where the magic happens
                 current = new StringBuilder();
+                charsRead += charsReadTemp;
+                charsReadTemp = 0;
             } catch(NoSuchElementException ignored) {}
         }
+
+        checkError(charsRead, input, booleanTokens);
 
         return booleanTokens;
     }
@@ -35,11 +53,14 @@ public class Lexer {
         boolean openString = false;
         int line = 1;
         int col = 0;
+        int charsRead = 0;
+        int charsReadTemp = 0;
         final List<ModelToken> modelTokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
 
         for(int i = 0; i < input.length(); i++) {
             col++;
+            charsReadTemp++;
             if(Character.isWhitespace(input.charAt(i))) {
                 if(input.charAt(i) == '\n') {
                     line++;
@@ -65,9 +86,43 @@ public class Lexer {
                 if(input.charAt(i) == '-' && i + 1 < input.length() && input.charAt(i + 1) == '>') continue;
                 modelTokens.add(ModelToken.fromString(current.toString(), line, col));       // this is where the magic happens
                 current = new StringBuilder();
+                charsRead += charsReadTemp;
+                charsReadTemp = 0;
             } catch(NoSuchElementException ignored) {}
         }
 
+        checkError(charsRead, input, modelTokens);
+
         return modelTokens;
+    }
+
+    private static void checkError(int charsRead, String input, List<? extends Token> tokens) {
+        if(charsRead == 0) {
+            String lineStr = input.split("\n")[0];
+            System.out.println(lineStr.substring(0, Math.min(lineStr.length(), 80)));
+            System.out.println("^");
+            throw new IllegalArgumentException("Illegal character or sequence starting with '" +
+                                                       lineStr.charAt(0) + "' at [0|0]");
+        }
+
+        if(charsRead < input.length() - 1) {
+            Token last = tokens.get(tokens.size() - 1);
+            String lineStr = input.split("\n")[last.getLine() - 1];
+            int col = last.getCol();
+            if(lineStr.length() > 40) {
+                lineStr = lineStr.substring(Math.max(0, col - 40), Math.min(lineStr.length(), col + 40));
+                col = col - 40 < 0 ? col : 40;
+            }
+
+            if(tokens.get(tokens.size() - 1) == last) {
+                System.out.println(lineStr);
+                int whiteSpaces = 0;
+                while(Character.isWhitespace(lineStr.charAt(col + whiteSpaces))) whiteSpaces++;
+                System.out.println(" ".repeat(col + whiteSpaces) + "^");
+                throw new IllegalArgumentException("Illegal character or sequence starting with '" +
+                                                           lineStr.charAt(col + whiteSpaces) +
+                                                           "' at [" + last.getLine() + "|" + (col + whiteSpaces) + "]");
+            }
+        }
     }
 }
