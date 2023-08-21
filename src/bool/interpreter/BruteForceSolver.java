@@ -6,52 +6,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BruteForceSolver {
     private final LogicNode formula;
     private final Map<String, Boolean> currentAssignment = new HashMap<>();
     private final List<String> assignments = new ArrayList<>();     // all possible variable assignments as binary string
     private int assignmentIndex = 0;
+    public final List<String> solutionInfo = new ArrayList<>();
+    public boolean unsatisfiable = false;
+    public boolean valid = false;
 
-    private BruteForceSolver(LogicNode formula) {
+    public BruteForceSolver(LogicNode formula) {
         this.formula = formula;
     }
 
-    private BruteForceSolver(String formula) {
+    public BruteForceSolver(String formula) {
         this(LogicNode.of(formula));
     }
 
-    /* I N T E R F A C E */
-
-    public static Map<String, Boolean> solve(String formula) {
-        return new BruteForceSolver(formula).solve();
-    }
-
-    public static Map<String, Boolean> solve(LogicNode formula) {
-        return new BruteForceSolver(formula).solve();
-    }
-
-    public static List<Map<String, Boolean>> solveAll(String formula) {
-        return new BruteForceSolver(formula).solveAll();
-    }
-
-    public static List<Map<String, Boolean>> solveAll(LogicNode formula) {
-        return new BruteForceSolver(formula).solveAll();
-    }
-
-    /* H E L P E R S */
-
-    private Map<String, Boolean> solve() {
+    public Map<String, Boolean> solve() {
         initAssignmentMap(formula);
         initAssignmentList();
         assignNext();
 
         while(!checkCurrentAssignment(formula) && assignmentIndex < assignments.size()) assignNext();
 
-        return checkCurrentAssignment(formula) ? new HashMap<>(currentAssignment) : null;
+        if(checkCurrentAssignment(formula)) return new HashMap<>(currentAssignment);
+        else unsatisfiable = true;
+
+        return Map.of();
     }
 
-    private List<Map<String, Boolean>> solveAll() {
+    public List<Map<String, Boolean>> solveAll() {
         List<Map<String, Boolean>> satisfiableAssignments = new ArrayList<>();
         initAssignmentMap(formula);
         initAssignmentList();
@@ -62,7 +49,7 @@ public class BruteForceSolver {
             if(checkCurrentAssignment(formula)) satisfiableAssignments.add(new HashMap<>(currentAssignment));
         }
 
-        if(satisfiableAssignments.size() == assignments.size()) return List.of(Map.of("valid", true));
+        if(satisfiableAssignments.size() == assignments.size()) valid = true;
 
         return satisfiableAssignments;
     }
@@ -107,9 +94,13 @@ public class BruteForceSolver {
         char[] assignment = assignments.get(assignmentIndex++).toCharArray();
 
         for(String varName : currentAssignment.keySet()) currentAssignment.put(varName, assignment[charIndex++] == '1');
+        solutionInfo.add("Testing assignment " + currentAssignment.entrySet().stream()
+                .map(e -> (e.getValue() ? "" : "!") + e.getKey())
+                .collect(Collectors.joining(" ")));
     }
 
     private boolean checkCurrentAssignment(LogicNode formula) {
+        solutionInfo.add("Checking " + formula.toString());
         return switch(formula) {
             case ActionNode n -> currentAssignment.get(n.name());
             case ConstantNode n -> n.bool();

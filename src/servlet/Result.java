@@ -36,21 +36,26 @@ public class Result {
         this(resultSupplier, s -> s, s -> infoSupplier.get());
     }
 
-    public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction) {
-        this(baseSupplier, resultFunction, infoFunction, Map.of());
+    public <T> Result(Supplier<T> baseSupplier, Function<T, List<Map<String, Boolean>>> resultFunction, Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
+        this(baseSupplier,
+             base -> {
+                List<Map<String, Boolean>> result = resultFunction.apply(base);
+                return alternatives.keySet().stream()
+                         .filter(p -> p.test(base))
+                         .map(alternatives::get)
+                         .findFirst()
+                         .orElse(JSONof(result));
+             },
+             infoFunction);
     }
 
-    public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
+    public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream stdOut = System.out;
         System.setOut(new PrintStream(outputStream));
         try {
             T base = baseSupplier.get();
-            result = alternatives.keySet().stream()
-                    .filter(p -> p.test(base))
-                    .map(alternatives::get)
-                    .findFirst()
-                    .orElse(resultFunction.apply(base));
+            result = resultFunction.apply(base);
             info = infoFunction.apply(base);
             warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
         } catch(Exception e) {
@@ -62,10 +67,6 @@ public class Result {
 
     public Result(Map<String, Boolean> result, String info) {
         this(JSONof(result), info, "", "");
-    }
-
-    public Result(Supplier<List<Map<String, Boolean>>> resultSupplier, Map<Predicate<List<Map<String, Boolean>>>, String> alternatives) {
-        this(resultSupplier, Result::JSONof, (m) -> "", alternatives);
     }
 
     public String computeJSON() {

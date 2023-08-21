@@ -11,7 +11,6 @@ import temporal.solver.CTLSolver;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Servlet {
     private static final int SERVLET_PORT = 4000;
@@ -24,16 +23,20 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return new Result(() -> List.of(BruteForceSolver.solve(formula)),
-                          Map.of(Objects::isNull, "unsatisfiable"))
+        return new Result(() -> new BruteForceSolver(formula),
+                          solver -> List.of(solver.solve()),
+                          solver -> String.join("\n", solver.solutionInfo),
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
                 .computeJSON();
     }
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return new Result(() -> BruteForceSolver.solveAll(formula),
-                          Map.of(List::isEmpty, "unsatisfiable",
-                                 assignments -> assignments.get(0).containsKey("valid"), "valid"))
+        return new Result(() -> new BruteForceSolver(formula),
+                          BruteForceSolver::solveAll,
+                          solver -> String.join("\n", solver.solutionInfo),
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable",
+                                 solver -> solver.valid, "valid"))
                 .computeJSON();
     }
 
