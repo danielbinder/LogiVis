@@ -1,7 +1,5 @@
 package model.kripke;
 
-import servlet.Result;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -48,10 +46,6 @@ public class KripkeTruthTable {
         this(KripkeStructure.fromString(kripkeStructure));
     }
 
-    public Result toFormulaStringWithEncodingStartAndEndAsResult(int steps) {
-        return new Result(toFormulaStringWithEncodingStartAndEnd(steps), toString());
-    }
-
     public String toFormulaStringWithEncodingStartAndEnd(int steps) {
         return toFormulaString(steps) + getEncodingStartAndEndString(steps);
     }
@@ -72,10 +66,6 @@ public class KripkeTruthTable {
                                 .collect(Collectors.joining(" & ", "(", ")")))
                         .collect(Collectors.joining(" |\n", "(", ")")))
                 .collect(Collectors.joining(" &\n\n", "(", ")"));
-    }
-
-    public Result toQBFStringAsResult(int steps) {
-        return new Result(toQBFString(steps), toString());
     }
 
     public String toQBFString(int steps) {

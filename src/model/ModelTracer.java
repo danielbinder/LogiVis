@@ -1,7 +1,5 @@
 package model;
 
-import servlet.Result;
-
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -22,16 +20,16 @@ public class ModelTracer {
                 .reduce(0, Integer::sum);
     }
 
-    public Result trace() {
-        if(startNodes.isEmpty()) return new Result("", "", "", "No start node defined for trace!");
-        if(goalNodes.isEmpty()) return new Result("", "", "", "No goal node defined for trace!");
+    public String trace() {
+        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!");
+        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!");
 
         visited.clear();
-        return new Result(startNodes.stream()
-                                  .map(this::trace)
-                                  .filter(s -> !s.isBlank())
-                                  .findAny()
-                                  .orElse("No trace found!"));
+        return startNodes.stream()
+                .map(this::trace)
+                .filter(s -> !s.isBlank())
+                .findAny()
+                .orElse("No trace found!");
     }
 
     private String trace(ModelNode node) {
@@ -53,11 +51,11 @@ public class ModelTracer {
      * Uses depth-first search with iterative deepening.
      * Depth-first search returns the shortest node
      * Iterative deepening makes sure the search is not stuck in an endless loop
-     * @return shortest node as Result
+     * @return shortest node chain
      */
-    public Result shortestTrace() {
-        if(startNodes.isEmpty()) return new Result("", "", "", "No start node defined for trace!");
-        if(goalNodes.isEmpty()) return new Result("", "", "", "No goal node defined for trace!");
+    public String shortestTrace() {
+        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!");
+        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!");
 
         visited.clear();
         for(int i = 0; visited.size() < reachableNodes; i++) {
@@ -69,10 +67,10 @@ public class ModelTracer {
                     .min(Comparator.comparingLong(s -> s.chars().filter(c -> c == '>').count()))
                     .orElse("");
 
-            if(!result.isBlank()) return new Result(result);
+            if(!result.isBlank()) return result;
         }
 
-        return new Result("No trace found!");
+        return "No trace found!";
     }
 
     private String shortestTrace(ModelNode node, int depth, int maxDepth) {

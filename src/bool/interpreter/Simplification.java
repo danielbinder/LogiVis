@@ -1,20 +1,11 @@
 package bool.interpreter;
 
 import bool.parser.logicnode.*;
-import servlet.Result;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class Simplification {
-    public static Result ofAsResult(String formula) {
-        return new Result(of(formula).toString());
-    }
-
-    public static Result ofAsResult(LogicNode formula) {
-        return new Result(of(formula).toString());
-    }
-
     public static LogicNode of(String formula) {
         return of(LogicNode.of(formula));
     }

@@ -1,7 +1,6 @@
 package bool.interpreter;
 
 import bool.parser.logicnode.*;
-import servlet.Result;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,28 +23,12 @@ public class BruteForceSolver {
 
     /* I N T E R F A C E */
 
-    public static Result solveAsResult(String formula) {
-        return new BruteForceSolver(formula).solveAsResult();
-    }
-
     public static Map<String, Boolean> solve(String formula) {
         return new BruteForceSolver(formula).solve();
     }
 
-    public static Result solveAsResult(LogicNode formula) {
-        return new BruteForceSolver(formula).solveAsResult();
-    }
-
     public static Map<String, Boolean> solve(LogicNode formula) {
         return new BruteForceSolver(formula).solve();
-    }
-
-    public static Result solveAllAsResult(String formula) {
-        return new BruteForceSolver(formula).solveAllAsResult();
-    }
-
-    public static Result solveAllAsResult(LogicNode formula) {
-        return new BruteForceSolver(formula).solveAllAsResult();
     }
 
     public static List<Map<String, Boolean>> solveAll(String formula) {
@@ -58,13 +41,6 @@ public class BruteForceSolver {
 
     /* H E L P E R S */
 
-    private Result solveAsResult() {
-        Map<String, Boolean> satisfiableAssignment = solve();
-
-        if(satisfiableAssignment == null) return new Result("unsatisfiable");
-        return new Result(satisfiableAssignment);
-    }
-
     private Map<String, Boolean> solve() {
         initAssignmentMap(formula);
         initAssignmentList();
@@ -73,14 +49,6 @@ public class BruteForceSolver {
         while(!checkCurrentAssignment(formula) && assignmentIndex < assignments.size()) assignNext();
 
         return checkCurrentAssignment(formula) ? new HashMap<>(currentAssignment) : null;
-    }
-
-    private Result solveAllAsResult() {
-        List<Map<String, Boolean>> satisfiableAssignments = solveAll();
-
-        if(satisfiableAssignments.isEmpty()) return new Result("unsatisfiable");
-        if(satisfiableAssignments.size() == assignments.size()) return new Result("valid");
-        return new Result(satisfiableAssignments);
     }
 
     private List<Map<String, Boolean>> solveAll() {
@@ -93,6 +61,8 @@ public class BruteForceSolver {
 
             if(checkCurrentAssignment(formula)) satisfiableAssignments.add(new HashMap<>(currentAssignment));
         }
+
+        if(satisfiableAssignments.size() == assignments.size()) return List.of(Map.of("valid", true));
 
         return satisfiableAssignments;
     }

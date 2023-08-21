@@ -1,7 +1,6 @@
 package model.kripke;
 
 import bool.parser.logicnode.LogicNode;
-import servlet.Result;
 import temporal.model.KripkeStruct;
 import temporal.model.State;
 import temporal.model.Transition;
@@ -75,10 +74,6 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
 
     public LogicNode toFormula(int steps) {
         return LogicNode.of(toFormulaString(steps));
-    }
-
-    public Result toFormulaStringAsResult(int steps) {
-        return new Result(toFormulaString(steps));
     }
 
     public String toFormulaString(int steps) {

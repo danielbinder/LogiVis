@@ -1,15 +1,20 @@
 package servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Result {
-    public final String result;
-    public final String info;
-    public final String warning;
-    public final String error;
+    public String result = "";
+    public String info = "";
+    public String warning = "";
+    public String error = "";
 
 
     public Result(String result, String info, String warning, String error) {
@@ -19,46 +24,47 @@ public class Result {
         this.error = error;
     }
 
-    public Result(String result) {
-        this(result, "", "", "");
-    }
-
     public Result(String result, String info) {
         this(result, info, "", "");
     }
 
-    public Result(Map<String, Boolean> result) {
-        this(result, "", "", "");
+    public Result(Supplier<String> resultSupplier) {
+        this(resultSupplier, () -> "");
     }
 
-    public Result(Map<String, Boolean> result, String info) { this(result, info, "", ""); }
-
-    public Result(Map<String, Boolean> result, String info, String warning, String error) {
-        this(JSONof(result), info, warning, error);
+    public Result(Supplier<String> resultSupplier, Supplier<String> infoSupplier) {
+        this(resultSupplier, s -> s, s -> infoSupplier.get());
     }
 
-    public Result(List<Map<String, Boolean>> result) {
-        this(result, "", "", "");
+    public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction) {
+        this(baseSupplier, resultFunction, infoFunction, Map.of());
     }
 
-    public Result(List<Map<String, Boolean>> result, String info, String warning, String error) {
-        this(JSONof(result), info, warning, error);
+    public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream stdOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+        try {
+            T base = baseSupplier.get();
+            result = alternatives.keySet().stream()
+                    .filter(p -> p.test(base))
+                    .map(alternatives::get)
+                    .findFirst()
+                    .orElse(resultFunction.apply(base));
+            info = infoFunction.apply(base);
+        } catch(Exception e) {
+            warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
+            error = e.getMessage();
+        }
+        System.setOut(stdOut);
     }
 
-    public Result result(String result) {
-        return new Result(result, info, warning, error);
+    public Result(Map<String, Boolean> result, String info) {
+        this(JSONof(result), info, "", "");
     }
 
-    public Result info(String info) {
-        return new Result(result, info, warning, error);
-    }
-
-    public Result warning(String warning) {
-        return new Result(result, info, warning, error);
-    }
-
-    public Result error(String error) {
-        return new Result(result, info, warning, error);
+    public Result(Supplier<List<Map<String, Boolean>>> resultSupplier, Map<Predicate<List<Map<String, Boolean>>>, String> alternatives) {
+        this(resultSupplier, Result::JSONof, (m) -> "", alternatives);
     }
 
     public String computeJSON() {
@@ -66,8 +72,8 @@ public class Result {
                 // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
                 "\t\"result\": \"" + result.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
                 "\t\"info\": \"" + info.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"warning\": \"" + warning + "\",\n" +
-                "\t\"error\": \"" + error + "\"\n" +
+                "\t\"warning\": \"" + warning.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"error\": \"" + error.replaceAll("\n", Matcher.quoteReplacement("$")) + "\"" +
                 "}";
     }
 

@@ -2,7 +2,6 @@ package model;
 
 import model.kripke.KripkeNode;
 import model.kripke.KripkeStructure;
-import servlet.Result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,16 +58,12 @@ public class Model extends ArrayList<ModelNode> {
         return ks;
     }
 
-    public Result traceAsResult() {
+    public String trace() {
         return new ModelTracer(this).trace();
     }
 
-    public Result shortestTraceAsResult() {
+    public String shortestTrace() {
         return new ModelTracer(this).shortestTrace();
-    }
-
-    public Result toModelStringAsResult() {
-        return new Result(toModelString());
     }
 
     public String toModelString() {

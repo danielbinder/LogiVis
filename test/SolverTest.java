@@ -2,7 +2,6 @@ import bool.interpreter.BruteForceSolver;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 import bool.parser.BooleanParser;
-import servlet.Result;
 
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +77,7 @@ public class SolverTest {
     @Test
     public void testValid() {
         String formula = "a | !a";
-        var expected = new Result("valid").computeJSON();
-        assertEquals(expected, getAllAssignmentsWithResult(formula));
+        assertEquals(List.of(Map.of("valid", true)), BruteForceSolver.solve(formula));
     }
 
     @Test
@@ -164,11 +162,5 @@ public class SolverTest {
         var allAssignments = BruteForceSolver.solveAll(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula)));
         System.out.println(allAssignments);
         return allAssignments;
-    }
-
-    private String getAllAssignmentsWithResult(String formula) {
-        var result = BruteForceSolver.solveAllAsResult(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(formula))).computeJSON();
-        System.out.println(result);
-        return result;
     }
 }
