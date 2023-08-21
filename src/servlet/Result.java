@@ -52,6 +52,7 @@ public class Result {
                     .findFirst()
                     .orElse(resultFunction.apply(base));
             info = infoFunction.apply(base);
+            warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
         } catch(Exception e) {
             warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
             error = e.getMessage();
