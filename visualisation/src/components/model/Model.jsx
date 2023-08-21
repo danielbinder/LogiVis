@@ -49,9 +49,9 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 </div>
         </div>
             <div className='column'>
-                <p className='green'>{modelStatusMessage}</p>
-                <p className='orange'>{modelWarningMessage}</p>
                 <p className='red'>{modelErrorMessage}</p>
+                <p className='orange'>{modelWarningMessage}</p>
+                <p className='green'>{modelStatusMessage}</p>
                 <div className='model'>
                     <textarea
                         className='textArea'

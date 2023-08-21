@@ -29,13 +29,17 @@
 .orange {
     color: #d1740a;
     width: 99%;
-    text-align: center;
+    text-align: left;
+    white-space: pre-wrap;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .red {
     color: #d10a0a;
     width: 99%;
-    text-align: center;
+    text-align: left;
+    white-space: pre-wrap;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .textArea {

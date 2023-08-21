@@ -40,9 +40,9 @@ export default function Solver({setFormulaTab, setSolutionTab}) {
                 setFormulaTab={setFormulaTab}
                 setSolutionTab={setSolutionTab}
             />
-            <p className='green'>{evalStatusMessage}</p>
-            <p className='orange'>{evalWarningMessage}</p>
             <p className='red'>{evalErrorMessage}</p>
+            <p className='orange'>{evalWarningMessage}</p>
+            <p className='green'>{evalStatusMessage}</p>
             <textarea
                 readOnly={true}
                 className='textArea'
