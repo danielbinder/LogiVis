@@ -1,15 +1,14 @@
 package model;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModelTracer {
     private final List<ModelNode> startNodes;
     private final List<ModelNode> goalNodes;
     private final Set<ModelNode> visited = new HashSet<>();
     private final int reachableNodes;
+    public final List<String> solutionInfo = new ArrayList<>();
 
     public ModelTracer(Model model) {
         startNodes = model.stream().filter(n -> n.isEncodingStartPoint).toList();
@@ -33,17 +32,26 @@ public class ModelTracer {
     }
 
     private String trace(ModelNode node) {
-        if(visited.contains(node)) return "";
+        if(visited.contains(node)) {
+            solutionInfo.add(node.name + " already in Set<VisitedNodes>");
+            return "";
+        }
 
         visited.add(node);
-        if(goalNodes.contains(node)) return node.name;
+        if(goalNodes.contains(node)) {
+            solutionInfo.add("Found goal node " + node.name + " -> tracing back");
+            return node.name;
+        }
 
+        solutionInfo.add("Expanding children of " + node.name +
+                                 ": " + node.successors.keySet().stream().map(succ -> succ.name).collect(Collectors.joining(", ")));
         String futureTrace = node.successors.keySet().stream()
                 .map(this::trace)
                 .filter(s -> !s.isBlank())
                 .findAny()
                 .orElse("");
 
+        if(!futureTrace.isBlank()) solutionInfo.add("Current trace: " + node.name + " -> " + futureTrace);
         return futureTrace.isBlank() ? "" : node.name + " -> " + futureTrace;
     }
 
@@ -59,6 +67,7 @@ public class ModelTracer {
 
         visited.clear();
         for(int i = 0; visited.size() < reachableNodes; i++) {
+            solutionInfo.add("Tracing with depth limit " + i);
             int finalI = i;
             String result = startNodes.stream()
                     .map(n -> shortestTrace(n, 0, finalI))
@@ -74,11 +83,19 @@ public class ModelTracer {
     }
 
     private String shortestTrace(ModelNode node, int depth, int maxDepth) {
-        if(depth > maxDepth) return "";
+        if(depth > maxDepth) {
+            solutionInfo.add("Depth limit of " + maxDepth + " reached at node " + node.name);
+            return "";
+        }
 
         visited.add(node);
-        if(goalNodes.contains(node)) return node.name;
+        if(goalNodes.contains(node)) {
+            solutionInfo.add("Found goal node " + node.name + " -> tracing back");
+            return node.name;
+        }
 
+        solutionInfo.add("Expanding children of " + node.name +
+                                 ": " + node.successors.keySet().stream().map(succ -> succ.name).collect(Collectors.joining(", ")));
         String futureTrace = node.successors.keySet()
                 .stream()
                 .map(n -> shortestTrace(n, depth + 1, maxDepth))
@@ -87,6 +104,7 @@ public class ModelTracer {
                 .min(Comparator.comparingLong(s -> s.chars().filter(c -> c == '>').count()))
                 .orElse("");
 
+        if(!futureTrace.isBlank()) solutionInfo.add("Current trace: " + node.name + " -> " + futureTrace);
         return futureTrace.isBlank() ? "" : node.name + " -> " + futureTrace;
     }
 

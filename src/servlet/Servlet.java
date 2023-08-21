@@ -1,6 +1,7 @@
 package servlet;
 
 import model.Model;
+import model.ModelTracer;
 import model.kripke.KripkeGenerator;
 import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Simplification;
@@ -42,13 +43,17 @@ public class Servlet {
 
     @GET("/trace/:kripke")
     public String trace(String kripke) {
-        return new Result(() -> Model.of(kripke).trace())
+        return new Result(() -> Model.of(kripke).toModelTracer(),
+                          ModelTracer::trace,
+                          tracer -> String.join("\n", tracer.solutionInfo))
                 .computeJSON();
     }
 
     @GET("/shortestTrace/:kripke")
     public String shortestTrace(String kripke) {
-        return new Result(() -> Model.of(kripke).shortestTrace())
+        return new Result(() -> Model.of(kripke).toModelTracer(),
+                          ModelTracer::shortestTrace,
+                          tracer -> String.join("\n", tracer.solutionInfo))
                 .computeJSON();
     }
 

@@ -58,12 +58,8 @@ public class Model extends ArrayList<ModelNode> {
         return ks;
     }
 
-    public String trace() {
-        return new ModelTracer(this).trace();
-    }
-
-    public String shortestTrace() {
-        return new ModelTracer(this).shortestTrace();
+    public ModelTracer toModelTracer() {
+        return new ModelTracer(this);
     }
 
     public String toModelString() {
