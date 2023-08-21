@@ -18,12 +18,20 @@ public class ModelParser implements Parser {
     private final Map<String, Map<String, String>> delayedTransitions = new HashMap<>();
 
     public Model parse(String input) {
+        List<ModelToken> tokens = Lexer.tokenizeModel(input);
+
         try {
-            return parse(Lexer.tokenizeModel(input));
+            return parse(tokens);
         } catch(IllegalArgumentException e) {
-            System.out.println(input.split("\n")[current.line - 1]);
-            System.out.println(" ".repeat(current.col - 1) + "^");
-            System.out.println(e.getMessage());
+            String line = input.split("\n")[current.line - 1];
+            int col = current.col;
+            if(line.length() > 40) {
+                line = line.substring(Math.max(0, col - 40), Math.min(line.length(), col + 40));
+                col = col - 40 < 0 ? col : 40;
+            }
+
+            System.out.println(line);
+            System.out.println(" ".repeat(col - 1) + "^");
             throw e;
         }
     }
@@ -57,7 +65,10 @@ public class ModelParser implements Parser {
                 default -> throw new IllegalArgumentException("Illegal Part type " + current);
             }
         }
-        if(i < modelTokens.size()) throw new IllegalArgumentException("Part of the input was not parsed! Stopped at " + current);
+
+        // Misses the following case: [validInput] + '}'
+        if(i < modelTokens.size() || !isType(RBRACE)) throw new IllegalArgumentException(
+                "Illegal Token " + current.type + " at [" + current.line + "|" + current.col + "]");
     }
 
     private void states() {
@@ -178,7 +189,7 @@ public class ModelParser implements Parser {
             cTransition();
         }
 
-        if(i < modelTokens.size() - 1) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
+        if(i < modelTokens.size()) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
 
         // resolve delayed transitions since all nodes exist now
         delayedTransitions
@@ -253,13 +264,13 @@ public class ModelParser implements Parser {
         if(isType(LBRACKET)) {
             advance();
 
-            while(!isType(RBRACKET)) {
+            while(isType(NAME, STRING)) {
                 labelString.append(current.value);
                 advance();
 
                 if(!isType(RBRACKET)) labelString.append(" ");
             }
-            advance();
+            check(RBRACKET);
         }
 
         return labelString.toString();
