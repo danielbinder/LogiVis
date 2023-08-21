@@ -46,17 +46,17 @@ const traditionalModel2Graph = (model) => {
         .replaceAll(/S\s*?=\s*?[{]/g, '')
         .replace('}', '')
         .split(',')
-    const initial = model.match(/I\s*?=\s*?[{].*?[}]/g)?.[0]
+    const initial = (/I\s*?=\s*?[{]\s*?[}]/g).test(model) ? [] : model.match(/I\s*?=\s*?[{].*?[}]/g)?.[0]
         .replaceAll(/I\s*?=\s*?[{]/g, '')
         .replace('}', '')
         .split(',')
         ?? []
-    const transitions = model.match(/T\s*?=\s*?[{].*?[}]/g)?.[0]
+    const transitions = (/T\s*?=\s*?[{]\s*?[}]/g).test(model) ? [] : model.match(/T\s*?=\s*?[{].*?[}]/g)?.[0]
         .replaceAll(/T\s*?=\s*?[{]/g, '')
         .replace('}', '')
         .match(/\(.+?\)(\s*?\[.*?])?/g)
         ?? []
-    const final = removeWhiteSpaces(model).match(/F=[{].*?[}]/g)?.[0]
+    const final = (/F=[{]\s*?[}]/g).test(removeWhiteSpaces(model)) ? [] : removeWhiteSpaces(model).match(/F=[{].*?[}]/g)?.[0]
         .replace('F={', '')
         .replace('}', '')
         .split(',')
