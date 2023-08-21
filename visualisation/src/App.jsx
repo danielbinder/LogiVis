@@ -23,8 +23,8 @@ export default function App() {
     const setModelErrorMessage = useSetRecoilState(modelErrorMessageState)
 
     const setFormulaTab = (data) => {
-        setFormula(cleanResultData(data['result']))
-        setSolutionInfo(cleanResultData(data['info']))
+        data['result'] && setFormula(cleanResultData(data['result']))
+        data['info'] && setSolutionInfo(cleanResultData(data['info']))
         setEvalStatusMessage('')
         setEvalWarningMessage(cleanResultData(data['warning']))
         setEvalErrorMessage(cleanResultData(data['error']))
@@ -33,8 +33,8 @@ export default function App() {
     }
 
     const setSolutionTab = (data) => {
-        setSolution(cleanResultData(data['result']))
-        setSolutionInfo(cleanResultData(data['info']))
+        data['result'] && setSolution(cleanResultData(data['result']))
+        data['info'] && setSolutionInfo(cleanResultData(data['info']))
         setEvalStatusMessage('')
         setEvalWarningMessage(cleanResultData(data['warning']))
         setEvalErrorMessage(cleanResultData(data['error']))
@@ -43,8 +43,8 @@ export default function App() {
     }
 
     const setModelTab = (data) => {
-        setModel(cleanResultData(data['result']))
-        setSolutionInfo(cleanResultData(data['info']))
+        data['result'] && setModel(cleanResultData(data['result']))
+        data['info'] && setSolutionInfo(cleanResultData(data['info']))
         setModelStatusMessage('')
         setModelWarningMessage(cleanResultData(data['warning']))
         setModelErrorMessage(cleanResultData(data['error']))
