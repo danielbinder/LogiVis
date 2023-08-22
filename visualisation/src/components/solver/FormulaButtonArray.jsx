@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {formulaSelector, modelSelector} from '../selectors';
 import {formulaTypeState} from '../atoms';
+import {serverURL} from '../constants';
 
 export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
     const formulaType = useRecoilValue(formulaTypeState)
@@ -12,10 +13,12 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
     const [allModelsLoading, setAllModelsLoading] = useState(false)
     const [checkModelLoading, setCheckModelLoading] = useState(false)
+    const [parenthesiseLoading, setParenthesiseLoading] = useState(false)
+    const [parenthesiseAllLoading, setParenthesiseAllLoading] = useState(false)
 
     function handleSimplify() {
         setSimplifyFormulaLoading(true)
-        fetch('http://localhost:4000/simplify/' + getFormula)
+        fetch(serverURL + '/simplify/' + getFormula)
             .then(response => response.json())
             .then(setFormulaTab)
             .finally(() => setSimplifyFormulaLoading(false))
@@ -23,7 +26,7 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
 
     function handleCheckFormula() {
         setCheckFormulaLoading(true)
-        fetch('http://localhost:4000/solve/' +  getFormula)
+        fetch(serverURL + '/solve/' +  getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckFormulaLoading(false))
@@ -31,15 +34,31 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
 
     function handleAllModels() {
         setAllModelsLoading(true)
-        fetch('http://localhost:4000/solveAll/' + getFormula)
+        fetch(serverURL + '/solveAll/' + getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setAllModelsLoading(false))
     }
 
+    function handleParenthesise() {
+        setParenthesiseLoading(true)
+        fetch(serverURL + '/parenthesise/' + getFormula)
+            .then(response => response.json())
+            .then(setFormulaTab)
+            .finally(() => setParenthesiseLoading(false))
+    }
+
+    function handleParenthesiseAll() {
+        setParenthesiseAllLoading(true)
+        fetch(serverURL + '/parenthesiseAll/' + getFormula)
+            .then(response => response.json())
+            .then(setFormulaTab)
+            .finally(() => setParenthesiseAllLoading(false))
+    }
+
     function handleCheckModel() {
         setCheckModelLoading(true)
-        fetch('http://localhost:4000/solveCTL/' + getFormula + '/' + getModel)
+        fetch(serverURL + '/solveCTL/' + getFormula + '/' + getModel)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckModelLoading(false))
@@ -50,17 +69,27 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
             {formulaType === 'boolean'  &&
                 <button className='button' onClick={handleSimplify}>
                     {simplifyFormulaLoading && <div className='loading'></div>}
-                    Simplify formula
+                    Simplify
                 </button>}
             {formulaType === 'boolean' &&
                 <button className='button' onClick={handleCheckFormula}>
                     {checkFormulaLoading && <div className='loading'></div>}
-                    Check formula
+                    Check
                 </button>}
             {formulaType === 'boolean' &&
                 <button className='button' onClick={handleAllModels}>
                     {allModelsLoading && <div className='loading'></div>}
-                    All models
+                    Check All
+                </button>}
+            {formulaType === 'boolean' &&
+                <button className='button' onClick={handleParenthesise}>
+                    {parenthesiseLoading && <div className='loading'></div>}
+                    Parenthesise
+                </button>}
+            {formulaType === 'boolean' &&
+                <button className='button' onClick={handleParenthesiseAll}>
+                    {parenthesiseAllLoading && <div className='loading'></div>}
+                    Parenthesise All
                 </button>}
             {formulaType === 'ctl' &&
                 <button className='button' onClick={handleCheckModel}>
