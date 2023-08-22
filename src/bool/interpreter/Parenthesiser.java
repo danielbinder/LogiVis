@@ -19,7 +19,7 @@ public class Parenthesiser {
                             addNecessaryParenthesis(n.right(), childHasLowerPrecedence(n, n.right()));
                     case ImplicationNode n -> addNecessaryParenthesis(n.left(), childHasLowerPrecedence(n, n.left())) + " -> " +
                             addNecessaryParenthesis(n.right(), childHasLowerPrecedence(n, n.right()));
-                    case DoubleImplicationNode n -> addNecessaryParenthesis(n.left(), childHasLowerPrecedence(n, n.left())) + " & " +
+                    case DoubleImplicationNode n -> addNecessaryParenthesis(n.left(), childHasLowerPrecedence(n, n.left())) + " <-> " +
                             addNecessaryParenthesis(n.right(), childHasLowerPrecedence(n, n.right()));
                 } +
                 (parenthesise ? ")" : "");
