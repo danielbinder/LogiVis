@@ -14,6 +14,7 @@ import temporal.solver.CTLSolver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class Servlet {
     private static final int SERVLET_PORT = 4000;
@@ -26,7 +27,7 @@ public class Servlet {
 
     @GET("/solve/:formula")
     public String solve(String formula) {
-        return new Result(() -> new BruteForceSolver(formula),
+        return new Result(() -> new BruteForceSolver(preprocess(formula)),
                           solver -> List.of(solver.solve()),
                           solver -> String.join("\n", solver.solutionInfo),
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
@@ -35,7 +36,7 @@ public class Servlet {
 
     @GET("/solveAll/:formula")
     public String solveAll(String formula) {
-        return new Result(() -> new BruteForceSolver(formula),
+        return new Result(() -> new BruteForceSolver(preprocess(formula)),
                           BruteForceSolver::solveAll,
                           solver -> String.join("\n", solver.solutionInfo),
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable",
@@ -45,19 +46,19 @@ public class Servlet {
 
     @GET("/parenthesise/:formula")
     public String parenthesise(String formula) {
-        return new Result(() -> Parenthesiser.addNecessaryParenthesis(LogicNode.of(formula)))
+        return new Result(() -> Parenthesiser.addNecessaryParenthesis(LogicNode.of(preprocess(formula))))
                 .computeJSON();
     }
 
     @GET("/parenthesiseAll/:formula")
     public String parenthesiseAll(String formula) {
-        return new Result(() -> LogicNode.of(formula).toString())
+        return new Result(() -> LogicNode.of(preprocess(formula)).toString())
                 .computeJSON();
     }
 
     @GET("/trace/:kripke")
     public String trace(String kripke) {
-        return new Result(() -> Model.of(kripke).toModelTracer(),
+        return new Result(() -> Model.of(preprocess(kripke)).toModelTracer(),
                           ModelTracer::trace,
                           tracer -> String.join("\n", tracer.solutionInfo))
                 .computeJSON();
@@ -65,7 +66,7 @@ public class Servlet {
 
     @GET("/shortestTrace/:kripke")
     public String shortestTrace(String kripke) {
-        return new Result(() -> Model.of(kripke).toModelTracer(),
+        return new Result(() -> Model.of(preprocess(kripke)).toModelTracer(),
                           ModelTracer::shortestTrace,
                           tracer -> String.join("\n", tracer.solutionInfo))
                 .computeJSON();
@@ -73,9 +74,9 @@ public class Servlet {
 
     @GET("/solveCTL/:formula/:model")
     public String solveCTL(String formula, String model) {
-        return new CTLSolver(Model.of(model)
+        return new CTLSolver(Model.of(preprocess(model))
                                      .toKripkeStructure()
-                                     .toOtherKripke()).getSatisfyingStatesAsResult(formula).computeJSON();
+                                     .toOtherKripke()).getSatisfyingStatesAsResult(preprocess(formula)).computeJSON();
     }
 
     @GET("/generate/:params")
@@ -87,7 +88,7 @@ public class Servlet {
 
     @GET("/kripke2formula/:kripke/:steps")
     public String kripke2formula(String kripke, String steps)   {
-        return new Result(() -> Model.of(kripke)
+        return new Result(() -> Model.of(preprocess(kripke))
                 .toKripkeStructure()
                 .toFormulaString(Integer.parseInt(steps)))
                 .computeJSON();
@@ -95,7 +96,7 @@ public class Servlet {
 
     @GET("/kripke2compactFormula/:kripke/:steps")
     public String kripke2CompactFormula(String kripke, String steps) {
-        return new Result(() -> Model.of(kripke)
+        return new Result(() -> Model.of(preprocess(kripke))
                                  .toKripkeStructure()
                                  .toKripkeTruthTable(),
                          ktt -> ktt.toFormulaStringWithEncodingStartAndEnd(Integer.parseInt(steps)),
@@ -105,7 +106,7 @@ public class Servlet {
 
     @GET("/kripke2compactQBFFormula/:kripke/:steps")
     public String kripke2QBFFormula(String kripke, String steps) {
-        return new Result(() -> Model.of(kripke)
+        return new Result(() -> Model.of(preprocess(kripke))
                                  .toKripkeStructure()
                                  .toKripkeTruthTable(),
                          ktt -> ktt.toQBFString(Integer.parseInt(steps)),
@@ -115,7 +116,11 @@ public class Servlet {
 
     @GET("/simplify/:formula")
     public String simplify(String formula) {
-        return new Result(() -> Simplification.of(formula).toString())
+        return new Result(() -> Simplification.of(preprocess(formula)).toString())
                 .computeJSON();
+    }
+
+    private String preprocess(String raw) {
+        return raw.replaceAll(Matcher.quoteReplacement("$"), "\n");
     }
 }
