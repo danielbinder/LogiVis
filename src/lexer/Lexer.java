@@ -44,6 +44,7 @@ public class Lexer {
             } catch(NoSuchElementException ignored) {}
         }
 
+        charsRead += charsReadTemp;
         checkError(charsRead, input, booleanTokens);
 
         return booleanTokens;
@@ -91,6 +92,7 @@ public class Lexer {
             } catch(NoSuchElementException ignored) {}
         }
 
+        charsRead += charsReadTemp;
         checkError(charsRead, input, modelTokens);
 
         return modelTokens;

@@ -61,8 +61,10 @@ public class Result {
         } catch(Exception e) {
             warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
             error = e.getMessage();
+//            e.printStackTrace(stdOut);        // For local debugging only!
+        } finally {
+            System.setOut(stdOut);
         }
-        System.setOut(stdOut);
     }
 
     public Result(Map<String, Boolean> result, String info) {
