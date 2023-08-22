@@ -1,5 +1,7 @@
 package servlet;
 
+import bool.interpreter.Parenthesiser;
+import bool.parser.logicnode.LogicNode;
 import model.Model;
 import model.ModelTracer;
 import model.kripke.KripkeGenerator;
@@ -38,6 +40,18 @@ public class Servlet {
                           solver -> String.join("\n", solver.solutionInfo),
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable",
                                  solver -> solver.valid, "valid"))
+                .computeJSON();
+    }
+
+    @GET("/parenthesise/:formula")
+    public String parenthesise(String formula) {
+        return new Result(() -> Parenthesiser.addNecessaryParenthesis(LogicNode.of(formula)))
+                .computeJSON();
+    }
+
+    @GET("/parenthesiseAll/:formula")
+    public String parenthesiseAll(String formula) {
+        return new Result(() -> LogicNode.of(formula).toString())
                 .computeJSON();
     }
 
