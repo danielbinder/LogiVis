@@ -23,8 +23,7 @@ export const solutionState = atom({
 
 export const solutionInfoState = atom({
     key: 'solutionInfo',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const modelTypeState = atom({
