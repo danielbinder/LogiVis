@@ -81,6 +81,20 @@
     width: 150px;
 }
 
+.doubleButtonLeft {
+    margin-top: 10px;
+    margin-right: 0;
+    margin-left: 15px;
+    width: 125px;
+}
+
+.doubleButtonRight {
+    margin-top: 10px;
+    margin-right: 15px;
+    margin-left: 0;
+    width: 50px;
+}
+
 .select {
     margin-top: 10px;
     margin-right: 15px;
