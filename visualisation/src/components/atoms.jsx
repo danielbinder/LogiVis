@@ -42,36 +42,30 @@ export const modelState = atom({
 
 export const evalStatusMessageState = atom({
     key: 'evalStatusMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const evalWarningMessageState = atom({
     key: 'evalWarningMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const evalErrorMessageState = atom({
     key: 'evalErrorMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const modelStatusMessageState = atom({
     key: 'modelStatusMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const modelWarningMessageState = atom({
     key: 'modelWarningMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
 
 export const modelErrorMessageState = atom({
     key: 'modelErrorMessage',
-    default: '',
-    effects: [syncEffect({refine: string()})]
+    default: ''
 })
