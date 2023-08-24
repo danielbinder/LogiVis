@@ -118,7 +118,7 @@ const compactModel2Graph = (model) => {
 
 const getStateName = (s) => removeStateDescriptors(withoutLabel(s))
 
-const removeWhiteSpaces = (s) => s.replaceAll(/\s+/g,'')
+const removeWhiteSpaces = (s) => s.replace(/\s+/g,'')
 
 const removeComments = (s) => {
     const lines = s.split('\n')
