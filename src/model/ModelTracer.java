@@ -20,8 +20,8 @@ public class ModelTracer {
     }
 
     public String trace() {
-        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!");
-        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!");
+        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!\nDefine one by adding '>' after the desired start state name in the model!");
+        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!\nDefine one by adding '<' after the desired end state name in the model!");
 
         visited.clear();
         return startNodes.stream()
@@ -62,8 +62,8 @@ public class ModelTracer {
      * @return shortest node chain
      */
     public String shortestTrace() {
-        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!");
-        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!");
+        if(startNodes.isEmpty()) throw new IllegalArgumentException("No start node defined for trace!\nDefine one by adding '>' after the desired start state name in the model!");
+        if(goalNodes.isEmpty()) throw new IllegalArgumentException("No goal node defined for trace!\nDefine one by adding '<' after the desired end state name in the model!");
 
         visited.clear();
         for(int i = 0; visited.size() < reachableNodes; i++) {
