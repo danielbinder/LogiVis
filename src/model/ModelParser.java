@@ -16,6 +16,8 @@ public class ModelParser implements Parser {
     private int i;
     // Map<Node1, Map<Node2, Label>>
     private final Map<String, Map<String, String>> delayedTransitions = new HashMap<>();
+    private final List<String> delayedInitialStates = new ArrayList<>();
+    private final List<String> delayedFinalStates = new ArrayList<>();
 
     public Model parse(String input) {
         List<ModelToken> tokens = Lexer.tokenizeModel(input);
@@ -50,6 +52,11 @@ public class ModelParser implements Parser {
     private void model() {
         if(isType(PART_TYPE)) traditional();
         else compact();
+
+        // resolve delayed transitions since all nodes exist now
+        delayedTransitions
+                .forEach((startState, endStates) -> endStates
+                        .forEach((endState, label) -> model.get(startState).successors.put(model.get(endState), label)));
     }
 
     /** T R A D I T I O N A L */
@@ -65,6 +72,9 @@ public class ModelParser implements Parser {
                 default -> throw new IllegalArgumentException("Illegal Part type " + current);
             }
         }
+
+        delayedInitialStates.forEach(s -> model.get(s).isInitialNodeNode = true);
+        delayedFinalStates.forEach(s -> model.get(s).isFinalNode = true);
 
         // Misses the following case: [validInput] + '}'
         if(i < modelTokens.size() || !isType(RBRACE)) throw new IllegalArgumentException(
@@ -123,8 +133,7 @@ public class ModelParser implements Parser {
         check(LBRACE);
 
         while(isType(NAME)) {
-            String stateName= current.value;
-            model.get(stateName).isInitialNodeNode = true;
+            delayedInitialStates.add(current.value);
             advance();
 
             label();        // read over initial labels, since they are only for display purposes
@@ -151,7 +160,8 @@ public class ModelParser implements Parser {
             advance();
             check(RPAREN);
 
-            model.get(startState).successors.put(model.get(endState), label());
+            if(!delayedTransitions.containsKey(startState)) delayedTransitions.put(startState, new HashMap<>());
+            delayedTransitions.get(startState).put(endState, label());
 
             if(isType(COMMA)) advance();
         }
@@ -165,8 +175,7 @@ public class ModelParser implements Parser {
         check(LBRACE);
 
         while(isType(NAME)) {
-            String stateName= current.value;
-            model.get(stateName).isFinalNode = true;
+            delayedFinalStates.add(current.value);
             advance();
 
             if(isType(COMMA)) advance();
@@ -190,11 +199,6 @@ public class ModelParser implements Parser {
         }
 
         if(i < modelTokens.size()) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
-
-        // resolve delayed transitions since all nodes exist now
-        delayedTransitions
-                .forEach((startState, endStates) -> endStates
-                        .forEach((endState, label) -> model.get(startState).successors.put(model.get(endState), label)));
     }
 
     private void cTransition() {
