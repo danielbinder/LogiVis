@@ -124,7 +124,7 @@ const removeComments = (s) => {
     const lines = s.split('\n')
     let result = ''
 
-    for (const line of lines) {
+    for(const line of lines) {
         const commentIndex = line.indexOf('#')
         result += commentIndex === -1 ? line : line.substring(0, commentIndex) + '\n'
     }
@@ -134,7 +134,7 @@ const removeComments = (s) => {
 
 const getLabel = (s) => {
     const startIndex = s.indexOf('[');
-    if (startIndex !== -1) return s.substring(startIndex + 1, s.indexOf(']', startIndex))
+    if(startIndex !== -1) return s.substring(startIndex + 1, s.indexOf(']', startIndex))
 
     return ''
 }
