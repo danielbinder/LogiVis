@@ -63,22 +63,35 @@ public class Model extends ArrayList<ModelNode> {
     }
 
     public String toModelString() {
-        return "S = {" + stream()
-                .map(n -> n.name +
-                        (n.isEncodingStartPoint ? ">" : "") +
-                        (n.isEncodingEndPoint ? "<" : "") +
-                        (!n.label.isBlank() ? " [" + n.label + "]" : ""))
-                .collect(Collectors.joining(", ")) + "}\n" +
-                "I = {" + stream()
-                .filter(n -> n.isInitialNodeNode)
-                .map(n -> n.name)
-                .collect(Collectors.joining(", ")) + "}\n" +
-                "T = {" + stream()
-                .map(n -> n.successors.entrySet().stream()
-                        .map(succ -> "(" + n.name + ", " + succ.getKey().name +
-                                (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
-                        .collect(Collectors.joining(", ")))
-                .collect(Collectors.joining(", ")) + "}\n";
+        return (!isEmpty()
+                        ? "S = {" + stream()
+                            .map(n -> n.name +
+                                    (n.isEncodingStartPoint ? ">" : "") +
+                                    (n.isEncodingEndPoint ? "<" : "") +
+                                    (!n.label.isBlank() ? " [" + n.label + "]" : ""))
+                            .collect(Collectors.joining(", ")) + "}\n"
+                        : "") +
+                (stream().anyMatch(n -> n.isInitialNodeNode)
+                        ? ("I = {" + stream()
+                            .filter(n -> n.isInitialNodeNode)
+                            .map(n -> n.name)
+                            .collect(Collectors.joining(", ")) + "}\n")
+                        : "") +
+                (stream().anyMatch(n -> !n.successors.isEmpty())
+                        ? "T = {" + stream()
+                            .filter(n -> !n.successors.isEmpty())
+                            .map(n -> n.successors.entrySet().stream()
+                                    .map(succ -> "(" + n.name + ", " + succ.getKey().name +
+                                            (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
+                                    .collect(Collectors.joining(", ")))
+                            .collect(Collectors.joining(", ")) + "}\n"
+                        : "") +
+                (stream().anyMatch(n -> n.isFinalNode)
+                        ? ("F = {" + stream()
+                        .filter(n -> n.isFinalNode)
+                        .map(n -> n.name)
+                        .collect(Collectors.joining(", ")) + "}\n")
+                        : "");
     }
 
     @Override
