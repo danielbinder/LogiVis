@@ -105,7 +105,7 @@ public class KripkeGenerator implements Generator {
 
             Map<String, Boolean> stateMap = new HashMap<>();
             int v = 0;
-            for(Character c : binaryString.toString().toCharArray()) stateMap.put(((char) ('a' + v++)) + "", c == '1');
+            for(Character c : binaryString.toString().toCharArray()) stateMap.put(String.valueOf((char) ('a' + v++)), c == '1');
 
             stateMaps.add(stateMap);
         }
