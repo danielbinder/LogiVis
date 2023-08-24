@@ -42,39 +42,40 @@ const model2Graph = (model) => {
 }
 
 const traditionalModel2Graph = (model) => {
-    const states = model.match(/S\s*?=\s*?[{].*?[}]/g)[0]
-        .replaceAll(/S\s*?=\s*?[{]/g, '')
-        .replace('}', '')
+    const states = model.match(/S\s*=\s*[{].*?[}]/g)[0]
+        .replace(/(S\s*=\s*[{])|}/g, '')
         .split(',')
-    const initial = (/I\s*?=\s*?[{]\s*?[}]/g).test(model) ? [] : model.match(/I\s*?=\s*?[{].*?[}]/g)?.[0]
-        .replaceAll(/I\s*?=\s*?[{]/g, '')
-        .replace('}', '')
+    const initial = (/I\s*=\s*[{]\s*[}]/g).test(model) ? [] : model.match(/I\s*=\s*[{].*?[}]/g)?.[0]
+        .replace(/(I\s*=\s*[{])|}/g, '')
         .split(',')
         ?? []
-    const transitions = (/T\s*?=\s*?[{]\s*?[}]/g).test(model) ? [] : model.match(/T\s*?=\s*?[{].*?[}]/g)?.[0]
-        .replaceAll(/T\s*?=\s*?[{]/g, '')
-        .replace('}', '')
-        .match(/\(.+?\)(\s*?\[.*?])?/g)
+    const transitions = (/T\s*=\s*[{]\s*[}]/g).test(model) ? [] : model.match(/T\s*=\s*[{].*?[}]/g)?.[0]
+        .replace(/(T\s*=\s*[{])|}/g, '')
+        .match(/\(.+?\)(\s*\[.*?])?/g)
         ?? []
-    const final = (/F=[{]\s*?[}]/g).test(removeWhiteSpaces(model)) ? [] : removeWhiteSpaces(model).match(/F=[{].*?[}]/g)?.[0]
+    const final = (/F=[{]\s*[}]/g).test(removeWhiteSpaces(model)) ? [] : removeWhiteSpaces(model).match(/F=[{].*?[}]/g)?.[0]
         .replace('F={', '')
         .replace('}', '')
         .split(',')
         ?? []
 
     return states
-        .map(s =>
-            `${removeStateDescriptors(withoutLabel(s))} ` +
-            `[label="${getLabel(s)}" fontcolor="#c7c7c7" ` +
-            (withoutLabel(s).includes('>') && withoutLabel(s).includes('<')
+        .map(s => {
+            const withoutLbl = withoutLabel(s)
+            const label = getLabel(s)
+
+            return `${removeStateDescriptors(withoutLbl)} ` +
+            `[label="${label ? label : removeStateDescriptors(s)}" fontcolor="#c7c7c7" ` +
+            (withoutLbl.includes('>') && withoutLbl.includes('<')
                 ? `style=filled fillcolor="#1a7a5a" `
-                : withoutLabel(s).includes('>')
+                : withoutLbl.includes('>')
                     ? `style=filled fillcolor="#1a4a7a" `
-                    : withoutLabel(s).includes('<')
+                    : withoutLbl.includes('<')
                         ? `style=filled fillcolor="#1a7a2a" `
                         : ``) +
             `${final.includes(removeStateDescriptors(withoutLabel(removeWhiteSpaces(s)))) ? 'shape=doublecircle' : 'shape=circle'} ` +
-            `color="#c7c7c7"];\n`).join('') +
+            `color="#c7c7c7"];\n`
+        }).join('') +
         initial.map(s => `none${initial.indexOf(s)} [shape=none label=""];\n`).join('') +
         initial.map(s => `none${initial.indexOf(s)} -> ${withoutLabel(s)} ` +
             `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getLabel(s)}"];\n`).join('') +
@@ -89,82 +90,98 @@ const compactModel2Graph = (model) => {
     const transitions = model.split(',')
 
     return transitions.map(t => {
-        if(t.includes('->')) {
-            return t.split('->').map(createGraphNodeFromCState).join('')
-        } else if(t.includes('-')) {
-            return t.split('-').map(createGraphNodeFromCState).join('')
-        } else {
-            return createGraphNodeFromCState(t)
-        }
+        if(t.includes('->')) return t.split('->').map(createGraphNodeFromCState).join('')
+        else if(t.includes('-')) return t.split('-').map(createGraphNodeFromCState).join('')
+        else return createGraphNodeFromCState(t)
     }).join('') +
         transitions.map(t => {
-            if(t.includes('->')) {
-                return createInitialAndFinalNode(transitions.indexOf(t), t.split('->')[0], 'l') +
-                createInitialAndFinalNode(transitions.indexOf(t), t.split('->')[1], 'r')
-            } else if(t.includes('-')) {
-                return createInitialAndFinalNode(transitions.indexOf(t), t.split('-')[0], 'l') +
-                createInitialAndFinalNode(transitions.indexOf(t), t.split('-')[1], 'r')
-            } else {
-                return createInitialAndFinalNode(transitions.indexOf(t), t, 'c')
-            }
+            const index = transitions.indexOf(t)
+
+            if(t.includes('->'))
+                return createInitialAndFinalNode(index, t.split('->')[0], 'l') +
+                createInitialAndFinalNode(index, t.split('->')[1], 'r')
+            else if(t.includes('-'))
+                return createInitialAndFinalNode(index, t.split('-')[0], 'l') +
+                createInitialAndFinalNode(index, t.split('-')[1], 'r')
+            else return createInitialAndFinalNode(index, t, 'c')
         }).join('') +
         transitions.map(t => {
-            if(t.includes('->')) {
+            if(t.includes('->'))
                 return `${getStateName(t.split('->')[0])} -> ${getStateName(t.split('->')[1])} ` +
                     `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}"];\n`
-            } else if(t.includes('-')) {
+            else if(t.includes('-'))
                 return `${getStateName(t.split('-')[0])} -> ${getStateName(t.split('-')[1])} ` +
                     `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}" dir="both"];\n`
-            }
-
-            return ''
+            else return ''
         }).join('')
 }
 
 const getStateName = (s) => removeStateDescriptors(withoutLabel(s))
 
-const removeWhiteSpaces = (s) => s.replaceAll(/\s/g,'')
+const removeWhiteSpaces = (s) => s.replaceAll(/\s+/g,'')
 
-const removeComments = (s) => s.replaceAll(/#.*?(\n|$)/g, '\n')
+const removeComments = (s) => {
+    const lines = s.split('\n')
+    let result = ''
 
-const getLabel = (s) => s.includes('[')
-    ? s.match(/\[.*?]/g)[0].replace('[', '').replace(']', '')
-    : ''
+    for (const line of lines) {
+        const commentIndex = line.indexOf('#')
+        result += commentIndex === -1 ? line : line.substring(0, commentIndex) + '\n'
+    }
 
-const getCStateLabel = (s) => (/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[/g).test(s)
-    ? s.match(/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[.*?]/g)[0].replaceAll(/[a-z]+([a-z]*[0-9]*)*[_*><\s]*?\[/g, '').replace(']', '')
-    : ''
+    return result
+}
 
-const getCTransitionLabel = (s) => (/->?\s*?\[/g).test(s)
-    ? s.match(/->?\s*?\[.*?]/g)[0].replaceAll(/->?\s*?\[/g, '').replace(']', '')
-    : ''
+const getLabel = (s) => {
+    const startIndex = s.indexOf('[');
+    if (startIndex !== -1) return s.substring(startIndex + 1, s.indexOf(']', startIndex))
+
+    return ''
+}
+
+const getCStateLabel = (s) => {
+    const match = s.match(/[a-z][a-z0-9]*[_*><\s]*\[.*?]/)
+    return match ? match[0].replace(/[a-z][a-z0-9]*[_*><\s]*\[/g, '').replace(']', '') : ''
+}
+
+const getCTransitionLabel = (s) => {
+    const match = s.match(/->?\s*\[.*?]/)
+    return match ? match[0].replace(/->?\s*\[|]/g, '') : ''
+}
 
 const withoutLabel = (s) => s.includes('[')
-    ? removeWhiteSpaces(s.replaceAll(/\[.*?]/g, ''))
+    ? removeWhiteSpaces(s.replace(/\[.*?]/g, ''))
     : removeWhiteSpaces(s)
 
-const removeStateDescriptors = (s) => s.replace('_', '').replace('*', '').replace('>', '').replace('<', '')
+const removeStateDescriptors = (s) => s.replace(/[_*><]/g, '')
 
-const createGraphNodeFromCState = (s) =>
-    `${getStateName(s)} ` +
-    `[${getCStateLabel(s) ? `label="${getCStateLabel(s)}"` : ''} fontcolor="#c7c7c7" ` +
-    (withoutLabel(s).includes('>') && withoutLabel(s).includes('<')
+const createGraphNodeFromCState = (s) => {
+    const cStateLabel = getCStateLabel(s)
+    const withoutLbl = withoutLabel(s)
+
+    return `${getStateName(s)} ` +
+    `[${cStateLabel ? `label="${cStateLabel}"` : ''} fontcolor="#c7c7c7" ` +
+    (withoutLbl.includes('>') && withoutLbl.includes('<')
         ? `style=filled fillcolor="#1a7a5a" `
-        : withoutLabel(s).includes('>')
+        : withoutLbl.includes('>')
             ? `style=filled fillcolor="#1a4a7a" `
-            : withoutLabel(s).includes('<')
+            : withoutLbl.includes('<')
                 ? `style=filled fillcolor="#1a7a2a" `
                 : ``) +
-    `${withoutLabel(s).includes('*') ? 'shape=doublecircle' : 'shape=circle'} ` +
+    `${withoutLbl.includes('*') ? 'shape=doublecircle' : 'shape=circle'} ` +
     `color="#c7c7c7"];\n`
+}
 
 const createInitialAndFinalNode = (index, s, uniqueAddition) => {
-    return (withoutLabel(s).includes('_')
+    const stateName = getStateName(s)
+    const withoutLbl = withoutLabel(s)
+
+    return (withoutLbl.includes('_')
         ? `none${index + uniqueAddition} [shape=none label=""];\n` +
-            `none${index + uniqueAddition} -> ${getStateName(s)} ` +
+            `none${index + uniqueAddition} -> ${stateName} ` +
             `[color="#c7c7c7"];\n`
         : '') +
-        (withoutLabel(s).includes('*')
-            ? `${getStateName(s)} [shape=doublecircle];\n`
+        (withoutLbl.includes('*')
+            ? `${stateName} [shape=doublecircle];\n`
             : '')
 }
