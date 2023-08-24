@@ -13,10 +13,7 @@ public class KripkeGenerator implements Generator {
      */
     public static KripkeStructure generate(String paramString, int maxRegeneration) {
         Random rand = new Random();
-        KripkeStructure ks = null;
-
-        boolean regenerate = true;
-        int regenerated = 0;
+        KripkeStructure ks;
 
         String[] params = paramString.split("_");
         int nodes = Integer.parseInt(params[0]);
@@ -36,50 +33,51 @@ public class KripkeGenerator implements Generator {
         boolean allStatesReachable = Boolean.parseBoolean(params[5]);
         if(maxSuccessors < 1 && initialNodes < nodes) error("It is impossible to make all nodes reachable with this configuration!\nEither maxSuccessors need to be > 0 or initialNodes >= nodes!");
 
-        while(regenerate && regenerated < maxRegeneration) {
-            ks = new KripkeStructure();
-            for(int i = 0; i < nodes; i++) ks.add(new KripkeNode("n" + i));
 
-            for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
-            ks.addStateMaps(generateRandomStateMaps(variables, nodes));
+        ks = new KripkeStructure();
+        for(int i = 0; i < nodes; i++) ks.add(new KripkeNode("n" + i));
 
-            for(KripkeNode n : ks) {
-                int successors = rand.nextInt(minSuccessors, maxSuccessors + 1);
+        for(int i : pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
+        ks.addStateMaps(generateRandomStateMaps(variables, nodes));
+
+        if(allStatesReachable && nodes > 1) {
+            List<KripkeNode> reachable = new ArrayList<>(ks.stream()
+                                                                 .filter(kn -> kn.isInitialNodeNode)
+                                                                 .toList());
+            List<KripkeNode> unreachable = new ArrayList<>(ks.stream()
+                                                                   .filter(kn -> !kn.isInitialNodeNode)
+                                                                   .toList());
+
+            if(initialNodes == 0) {
+                KripkeNode randomUnreachable = unreachable.get(pickRandom(unreachable.size(), 1).get(0));
+
+                reachable.add(randomUnreachable);
+                unreachable.remove(randomUnreachable);
+            }
+
+            while(!unreachable.isEmpty()) {
+                KripkeNode firstUnreachable = unreachable.remove(0);
+                reachable.get(pickRandom(reachable.size(), 1).get(0))
+                        .successors.add(firstUnreachable);
+                reachable.add(firstUnreachable);
+            }
+        }
+
+        for(KripkeNode n : ks) {
+            if(maxSuccessors - n.successors.size() > 0) {
+                int successors = rand.nextInt(Math.max(0, minSuccessors - n.successors.size()),
+                                              Math.max(0, maxSuccessors + 1 - n.successors.size()));
                 List<Integer> chosenSuccessors = pickRandom(nodes, successors);
 
                 for(int succ : chosenSuccessors) n.successors.add(ks.get(succ));
             }
-
-            if(allStatesReachable) {
-                List<KripkeNode> reachable = new ArrayList<>();
-                ks.stream().filter(kn -> kn.isInitialNodeNode).forEach(kn -> walk(kn, reachable));
-
-                if(nodes == reachable.size()) regenerate = false;
-                else regenerated++;
-            } else break;
         }
-
-        if(regenerate)
-            System.out.println("Tried " + maxRegeneration + " times, but reachability was not achieved for all states!");
 
         return ks;
     }
 
-    /**
-     * Walks the KripkeStructure recursively to check if every node is reachable
-     * by adding every visited node to the reachabilityList
-     * @param current node
-     * @param reachabilityList of walked nodes
-     */
-    private static void walk(KripkeNode current, List<KripkeNode> reachabilityList) {
-        if(reachabilityList.contains(current)) return;
-
-        reachabilityList.add(current);
-        for(KripkeNode kn : current.successors) walk(kn, reachabilityList);
-    }
-
     private static List<Integer> pickRandom(int bound, int amount) {
-        assert bound >= amount;
+        if(amount > bound) error("Can't pick " + amount + " out of " + bound);
         List<Integer> picks = new ArrayList<>();
 
         while(amount > 0) {
