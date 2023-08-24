@@ -34,6 +34,7 @@ public class KripkeGenerator implements Generator {
         if(maxSuccessors > nodes) error("The amount of max successors can't be larger than the amount of nodes!");
         if(minSuccessors > maxSuccessors) error("The amount of min successors can't be larger than the amount of max successors!");
         boolean allStatesReachable = Boolean.parseBoolean(params[5]);
+        if(maxSuccessors < 1 && initialNodes < nodes) error("It is impossible to make all nodes reachable with this configuration!\nEither maxSuccessors need to be > 0 or initialNodes >= nodes!");
 
         while(regenerate && regenerated < maxRegeneration) {
             ks = new KripkeStructure();
