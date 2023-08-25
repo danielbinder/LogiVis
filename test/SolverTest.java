@@ -43,7 +43,7 @@ public class SolverTest {
     @Test
     public void testUnsatisfiable() {
         String formula = "a & !a";
-        assertNull(getAssignment(formula));
+        assertEquals(Map.of(), getAssignment(formula));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SolverTest {
     @Test
     public void testValid() {
         String formula = "a | !a";
-        assertEquals(List.of(Map.of("valid", true)), new BruteForceSolver(formula).solve());
+        assertEquals(List.of(Map.of("a", false), Map.of("a", true)), new BruteForceSolver(formula).solveAll());
     }
 
     @Test
