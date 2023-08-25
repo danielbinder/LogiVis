@@ -71,10 +71,16 @@ public class Lexer {
                 if(!openString) continue;
             }
 
+            // Read over comments
             if(input.charAt(i) == '#') {
-                while(i + 1 < input.length() && input.charAt(i + 1) != '\n') i++;
+                while(i + 1 < input.length() && input.charAt(i + 1) != '\n') {
+                    charsReadTemp++;
+                    i++;
+                }
                 continue;
             }
+
+            // Take anything inside String
             if(input.charAt(i) == '\'') openString = !openString;
             current.append(input.charAt(i));
 
@@ -116,6 +122,7 @@ public class Lexer {
                 col = col - 40 < 0 ? col : 40;
             }
 
+            //  && col < lineStr.length() should NOT be necessary here - if it is, there's an error beforehand!
             if(tokens.get(tokens.size() - 1) == last) {
                 System.out.println(lineStr);
                 int whiteSpaces = 0;
