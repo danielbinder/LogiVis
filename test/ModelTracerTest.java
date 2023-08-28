@@ -1,5 +1,5 @@
-import model.Model;
-import model.ModelTracer;
+import model.parser.Model;
+import model.interpreter.ModelTracer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

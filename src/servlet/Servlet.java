@@ -2,8 +2,8 @@ package servlet;
 
 import bool.interpreter.Parenthesiser;
 import bool.parser.logicnode.LogicNode;
-import model.Model;
-import model.ModelTracer;
+import model.parser.Model;
+import model.interpreter.ModelTracer;
 import model.kripke.KripkeGenerator;
 import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Simplification;

@@ -1,6 +1,6 @@
-import model.ModelNode;
+import model.parser.ModelNode;
 import org.junit.jupiter.api.Test;
-import model.Model;
+import model.parser.Model;
 
 import static org.junit.jupiter.api.Assertions.*;
 

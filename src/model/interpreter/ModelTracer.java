@@ -1,4 +1,7 @@
-package model;
+package model.interpreter;
+
+import model.parser.Model;
+import model.parser.ModelNode;
 
 import java.util.*;
 import java.util.stream.Collectors;

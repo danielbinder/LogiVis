@@ -1,4 +1,4 @@
-package model;
+package model.parser;
 
 import model.kripke.KripkeNode;
 

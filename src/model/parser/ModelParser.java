@@ -1,4 +1,4 @@
-package model;
+package model.parser;
 
 import lexer.Lexer;
 import marker.Parser;

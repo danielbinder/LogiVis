@@ -1,5 +1,6 @@
-package model;
+package model.parser;
 
+import model.interpreter.ModelTracer;
 import model.kripke.KripkeNode;
 import model.kripke.KripkeStructure;
 
