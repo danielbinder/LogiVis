@@ -59,6 +59,6 @@ public class BooleanParserTest {
     }
 
     private LogicNode runInput(String input) {
-        return new BooleanParser().parse(Lexer.tokenizeBooleanFormula(input));
+        return LogicNode.of(input);
     }
 }
