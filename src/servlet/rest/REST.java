@@ -23,6 +23,7 @@ public class REST {
                              (req, res) -> {
                                  res.type("application/json");
                                  res.header("Access-Control-Allow-Origin", "*");     // prevents CORS errors
+                                 // ALL PARAMETERS IN YOUR METHOD NEED TO BE IN ALPHABETICAL ORDER!
                                  return m.invoke(target, new TreeMap<>(req.params()).values().toArray());
                              }));
     }
