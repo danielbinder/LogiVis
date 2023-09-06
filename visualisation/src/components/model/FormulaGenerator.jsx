@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
+import {serverURL} from "../constants";
 
-export default function FormulaGenerator() {
+export default function FormulaGenerator({setFormulaTab}) {
     const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         variables: 3,
@@ -17,17 +18,13 @@ export default function FormulaGenerator() {
     }
 
     function handleButtonClick() {
-        // setLoading(true)
-        // fetch('someURL')
-        //     .then(response => {
-        //         if(!response.ok) {
-        //             setLoading(false)
-        //         }
-        //
-        //         return response
-        //     })
-        //     .then()     // your code here
-        //     .then(() => setLoading(false))
+        setLoading(true)
+        fetch(serverURL + '/generateFormula/' +
+            generationParameters.variables + "/"
+            + generationParameters.operators)
+            .then(response => response.json())
+            .then(data => {setFormulaTab(data); return data})
+            .finally(() => setLoading(false))
     }
 
     return (

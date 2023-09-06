@@ -24,7 +24,7 @@ export default function ModelGenerator({setModelTab}) {
 
     function handleButtonClick() {
         setLoading(true)
-        fetch(serverURL + '/generate/' +
+        fetch(serverURL + '/generateKripke/' +
             generationParameters.nodes + '_' +
             generationParameters.initialNodes + '_' +
             generationParameters.variables + '_' +
