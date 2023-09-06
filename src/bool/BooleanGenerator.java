@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class BooleanGenerator implements Generator {
-    private static final List<String> operationSymbols = List.of(" & ", " | ", " -> ", " <-> ");
+    private static final List<String> operationSymbols = List.of(" & ", " & ", " | ", " | ", " -> ", " <-> ");
 
     public static String generate(String variables, String operators) {
         int vars = Integer.parseInt(variables);
