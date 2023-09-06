@@ -1,5 +1,6 @@
 package servlet;
 
+import bool.BooleanGenerator;
 import bool.interpreter.Parenthesiser;
 import bool.parser.logicnode.LogicNode;
 import model.parser.Model;
@@ -79,10 +80,16 @@ public class Servlet {
                                      .toOtherKripke()).getSatisfyingStatesAsResult(preprocess(formula)).computeJSON();
     }
 
-    @GET("/generate/:params")
+    @GET("/generateKripke/:params")
     public String generate(String params) {
         return new Result(() -> Model.of(KripkeGenerator.generate(params))
                 .toModelString())
+                .computeJSON();
+    }
+
+    @GET("/generateFormula/:variables/:operators")
+    public String generateFormula(String operators, String variables) {
+        return new Result(() -> BooleanGenerator.generate(variables, operators))
                 .computeJSON();
     }
 
