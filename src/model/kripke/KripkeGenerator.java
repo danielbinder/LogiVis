@@ -47,7 +47,7 @@ public class KripkeGenerator implements Generator {
                                                                    .toList());
 
             if(initialNodes == 0) {
-                KripkeNode randomUnreachable = unreachable.get(Generator.pickRandom(unreachable.size(), 1).get(0));
+                KripkeNode randomUnreachable = unreachable.get(Generator.pickRandom(unreachable.size()));
 
                 reachable.add(randomUnreachable);
                 unreachable.remove(randomUnreachable);
@@ -55,7 +55,7 @@ public class KripkeGenerator implements Generator {
 
             while(!unreachable.isEmpty()) {
                 KripkeNode firstUnreachable = unreachable.remove(0);
-                reachable.get(Generator.pickRandom(reachable.size(), 1).get(0))
+                reachable.get(Generator.pickRandom(reachable.size()))
                         .successors.add(firstUnreachable);
                 reachable.add(firstUnreachable);
             }
