@@ -18,7 +18,7 @@ public class KripkeGeneratorTest {
                                                                            variables + "_" +
                                                                            minSuccessors + "_" +
                                                                            maxSuccessors + "_" +
-                                                                           allStatesReachable, 10);
+                                                                           allStatesReachable);
 
             System.out.println(ks);
         }

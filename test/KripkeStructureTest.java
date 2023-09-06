@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class KripkeStructureTest {
     @Test
     public void testToFormula() {
-        KripkeStructure ks = KripkeGenerator.generate("4_2_3_1_3_true", 10);
+        KripkeStructure ks = KripkeGenerator.generate("4_2_3_1_3_true");
         System.out.println(ks);
         System.out.println(ks.toFormulaString(3));
         System.out.println(ks.toFormula(3));
@@ -15,7 +15,7 @@ public class KripkeStructureTest {
 
     @Test
     public void testToAndFromString() {
-        KripkeStructure ks = KripkeGenerator.generate("4_2_3_1_3_true", 10);
+        KripkeStructure ks = KripkeGenerator.generate("4_2_3_1_3_true");
         String kripkeString = ks.toString();
         assertEquals(kripkeString, KripkeStructure.fromString(kripkeString).toString());
     }
