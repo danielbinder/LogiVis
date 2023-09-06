@@ -13,6 +13,10 @@ public interface Generator {
         throw new IllegalArgumentException(message);
     }
 
+    static int pickRandom(int bound) {
+        return rand.nextInt(bound) & Integer.MAX_VALUE;
+    }
+
     static List<Integer> pickRandom(int bound, int amount) {
         if(amount > bound) error("Can't pick " + amount + " out of " + bound);
         List<Integer> picks = new ArrayList<>();
@@ -25,6 +29,14 @@ public interface Generator {
                 amount--;
             }
         }
+
+        return picks;
+    }
+
+    static List<Integer> pickRandomRepeatable(int bound, int amount) {
+        List<Integer> picks = new ArrayList<>();
+
+        while(amount-- > 0) picks.add(rand.nextInt(bound) & Integer.MAX_VALUE);
 
         return picks;
     }
