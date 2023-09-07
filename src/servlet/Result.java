@@ -11,6 +11,9 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Result {
+    //In DEV mode, stacktraces are printed to the console. Don't use in production!
+    public static boolean DEV = false;
+
     public String result = "";
     public String info = "";
     public String warning = "";
@@ -61,7 +64,7 @@ public class Result {
         } catch(Exception e) {
             warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
             error = e.getMessage();
-//            e.printStackTrace(stdOut);        // For local debugging only!
+            if(DEV) e.printStackTrace(stdOut);        // For local debugging only!
         } finally {
             System.setOut(stdOut);
         }

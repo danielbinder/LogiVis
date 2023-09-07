@@ -22,6 +22,8 @@ public class Servlet {
     private static final int APP_PORT = 3000;
 
     public static void main(String[] args) {
+        if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
+
         REST.start(SERVLET_PORT);
         System.out.println("Server started; go to: http://localhost:" + APP_PORT);
     }
