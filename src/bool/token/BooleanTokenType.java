@@ -24,7 +24,9 @@ public enum BooleanTokenType {
     IMMEDIATE(Pattern.compile("X")),
     FINALLY(Pattern.compile("F")),
     GLOBALLY(Pattern.compile("G")),
-    UNTIL(Pattern.compile("U"))
+    UNTIL(Pattern.compile("U")),
+
+    EOF(Pattern.compile("EOF"))
     ;
 
     public final Pattern pattern;

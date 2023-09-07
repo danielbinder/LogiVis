@@ -47,6 +47,8 @@ public class Lexer {
         charsRead += charsReadTemp;
         checkError(charsRead, input, booleanTokens);
 
+        booleanTokens.add(BooleanToken.fromString("EOF", line, col));
+
         return booleanTokens;
     }
 
@@ -100,6 +102,8 @@ public class Lexer {
 
         charsRead += charsReadTemp;
         checkError(charsRead, input, modelTokens);
+
+        modelTokens.add(ModelToken.fromString("EOF", line, col));
 
         return modelTokens;
     }

@@ -12,7 +12,8 @@ public class LexerTest {
     public void testGeneric() {
         assertEquals(List.of(new BooleanToken(BooleanTokenType.ACTION, "a", 0, 0),
                              new BooleanToken(BooleanTokenType.IMPLICATION, 0, 2),
-                             new BooleanToken(BooleanTokenType.ACTION, "b", 0, 4)),
+                             new BooleanToken(BooleanTokenType.ACTION, "b", 0, 4),
+                             new BooleanToken(BooleanTokenType.EOF, 0, 4)),
                      Lexer.tokenizeBooleanFormula("a -> b"));
     }
 }

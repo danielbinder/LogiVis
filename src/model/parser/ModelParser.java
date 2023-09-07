@@ -77,7 +77,7 @@ public class ModelParser implements Parser {
         delayedFinalStates.forEach(s -> model.get(s).isFinalNode = true);
 
         // Misses the following case: [validInput] + '}'
-        if(i < modelTokens.size() || !isType(RBRACE)) throw new IllegalArgumentException(
+        if(i < modelTokens.size() || !isType(EOF)) throw new IllegalArgumentException(
                 "Illegal Token " + current.type + " at [" + current.line + "|" + current.col + "]");
     }
 

@@ -26,7 +26,9 @@ public enum ModelTokenType {
     LBRACKET(Pattern.compile("\\[")),
     RBRACKET(Pattern.compile("]")),
     LBRACE(Pattern.compile("\\{")),
-    RBRACE(Pattern.compile("}"))
+    RBRACE(Pattern.compile("}")),
+
+    EOF(Pattern.compile("EOF"))
     ;
 
     public final Pattern pattern;
