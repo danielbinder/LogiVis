@@ -1,6 +1,5 @@
 package bool;
 
-import bool.parser.logicnode.*;
 import marker.Generator;
 
 import java.util.List;
@@ -57,8 +56,7 @@ public class BooleanGenerator implements Generator {
             }
 
             // if(not last || additional variables available)
-            if(!varName.equals(variableNames.get(variableNames.size() - 1)) || additionalOps > 0) {
-                additionalOps--;
+            if(!varName.equals(variableNames.get(variableNames.size() - 1))) {
                 formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
                 endsWithOp = true;
             }
@@ -70,26 +68,24 @@ public class BooleanGenerator implements Generator {
 
         int currVarName = 0;
         while(additionalOps > 0) {
+            additionalOps--;
+            formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
+
             formula.append(switch(Generator.pickRandom(9)) {
                 // To even make !-chance 50% and (-chance 50%:
                 case 0, 6, 7, 8 -> "";
-                case 1 -> {
-                    additionalOps--;
-                    yield "!";
-                }
+                case 1 -> additionalOps-- > 0 ? "!" : "";
                 case 2 -> {
                     openParens++;
                     yield "(";
                 }
                 case 3 -> {
                     openParens++;
-                    additionalOps--;
-                    yield "!(";
+                    yield additionalOps-- > 0 ? "!(" : "(";
                 }
                 case 4 -> {
                     openParens++;
-                    additionalOps--;
-                    yield "(!";
+                    yield additionalOps-- > 0 ? "(!" : "(";
                 }
                 case 5 -> {
                     openParens++;
@@ -107,13 +103,6 @@ public class BooleanGenerator implements Generator {
             if(openParens > 0 && Generator.pickRandom(2) == 0) {
                 openParens--;
                 formula.append(")");
-            }
-
-            // if(not last)
-            if(additionalOps > 0) {
-                additionalOps--;
-                formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
-                endsWithOp = true;
             }
         }
 
