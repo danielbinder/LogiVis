@@ -55,7 +55,7 @@ public class BooleanGenerator implements Generator {
                 formula.append(")");
             }
 
-            // if(not last || additional variables available)
+            // if(not last)
             if(!varName.equals(variableNames.get(variableNames.size() - 1))) {
                 formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
                 endsWithOp = true;
@@ -114,7 +114,7 @@ public class BooleanGenerator implements Generator {
 
     private static List<String> generateVariableNames(int amount) {
         return IntStream.range(0, amount)
-                .mapToObj(i -> ((char) ('a' + (i % 25))) + (amount > 26 ? String.valueOf(amount / 26) : ""))
+                .mapToObj(i -> ((char) ('a' + (i % 26))) + String.valueOf(i >= 26 ? i / 26 : ""))
                 .toList();
     }
 }
