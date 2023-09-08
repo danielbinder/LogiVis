@@ -3,6 +3,7 @@ package servlet;
 import bool.BooleanGenerator;
 import bool.interpreter.Parenthesiser;
 import bool.parser.logicnode.LogicNode;
+import marker.RestEndpoint;
 import model.parser.Model;
 import model.interpreter.ModelTracer;
 import model.kripke.KripkeGenerator;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-public class Servlet {
+public class Servlet implements RestEndpoint {
     private static final int SERVLET_PORT = 4000;
     private static final int APP_PORT = 3000;
 
