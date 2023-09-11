@@ -39,7 +39,8 @@ public class Result {
         this(resultSupplier, s -> s, s -> infoSupplier.get());
     }
 
-    public <T> Result(Supplier<T> baseSupplier, Function<T, List<Map<String, Boolean>>> resultFunction, Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
+    public <T> Result(Supplier<T> baseSupplier, Function<T, List<Map<String, Boolean>>> resultFunction,
+                      Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
         this(baseSupplier,
              base -> {
                 List<Map<String, Boolean>> result = resultFunction.apply(base);
