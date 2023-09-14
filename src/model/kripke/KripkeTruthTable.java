@@ -70,7 +70,7 @@ public class KripkeTruthTable {
 
     public String toQBFString(int steps) {
         return literals.stream()
-                        .map(literal -> IntStream.range(0, steps)
+                        .map(literal -> IntStream.range(0, steps + 1)
                                 .mapToObj(i -> "?" + literal + i)
                                 .collect(Collectors.joining(" ")))
                         .collect(Collectors.joining(" ", "", "\n")) +
