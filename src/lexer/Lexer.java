@@ -31,10 +31,9 @@ public class Lexer {
 
             current.append(input.charAt(i));
 
-            if(Character.isAlphabetic(input.charAt(i)) &&
+            if((Character.isAlphabetic(input.charAt(i)) || Character.isDigit(input.charAt(i))) &&
                     i + 1 < input.length() &&
-                    (Character.isAlphabetic(input.charAt(i + 1)) ||
-                    Character.isDigit(input.charAt(i + 1)))) continue;
+                    (Character.isAlphabetic(input.charAt(i + 1)) || Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
                 booleanTokens.add(BooleanToken.fromString(current.toString(), line, col));       // this is where the magic happens
@@ -86,10 +85,9 @@ public class Lexer {
             if(input.charAt(i) == '\'') openString = !openString;
             current.append(input.charAt(i));
 
-            if(Character.isAlphabetic(input.charAt(i)) &&
+            if((Character.isAlphabetic(input.charAt(i)) || Character.isDigit(input.charAt(i))) &&
                     i + 1 < input.length() &&
-                    (Character.isAlphabetic(input.charAt(i + 1)) ||
-                            Character.isDigit(input.charAt(i + 1)))) continue;
+                    (Character.isAlphabetic(input.charAt(i + 1)) || Character.isDigit(input.charAt(i + 1)))) continue;
 
             try {
                 if(input.charAt(i) == '-' && i + 1 < input.length() && input.charAt(i + 1) == '>') continue;

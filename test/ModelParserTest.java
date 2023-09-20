@@ -36,6 +36,17 @@ public class ModelParserTest {
     }
 
     @Test
+    public void testComplexSingleState() {
+        Model m = new Model();
+        m.add(new ModelNode("s0s1"));
+
+        assertEqualModels(m, Model.of("""
+                                              S = {s0s1}"""));
+        assertEqualModels(m, Model.of("""
+                                              s0s1"""));
+    }
+
+    @Test
     public void testSingleTransition() {
         Model m = new Model();
         ModelNode a = new ModelNode("a");
