@@ -14,12 +14,12 @@ public class ModelParserTest {
         a.successors.put(b, "");
         m.addAll(a, b);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                          S={a [x], b}
                          I = {a}
                          T= {(a, a) ['to self'], (a, b)}"""));
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                 a_ [x] -> ['to self'] a,
                 a -> b"""));
     }
@@ -29,9 +29,9 @@ public class ModelParserTest {
         Model m = new Model();
         m.add(new ModelNode("a"));
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          S = {a}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          a"""));
     }
 
@@ -40,9 +40,9 @@ public class ModelParserTest {
         Model m = new Model();
         m.add(new ModelNode("s0s1"));
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                               S = {s0s1}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                               s0s1"""));
     }
 
@@ -53,10 +53,10 @@ public class ModelParserTest {
         a.successors.put(a, "");
         m.add(a);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          S = {a}
                                          T = {(a, a)}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          a -> a"""));
     }
 
@@ -67,9 +67,9 @@ public class ModelParserTest {
         a.label = "'eyo'";
         m.add(a);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          S = {a ['eyo']}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          a ['eyo']"""));
     }
 
@@ -80,9 +80,9 @@ public class ModelParserTest {
         a.label = "x";
         m.add(a);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          S = {a [x]}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          a [x]"""));
     }
 
@@ -93,10 +93,10 @@ public class ModelParserTest {
         a.successors.put(a, "'eyo'");
         m.add(a);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          S = {a}
                                          T = {(a, a) ['eyo']}"""));
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                          a -> ['eyo'] a"""));
     }
 
@@ -109,14 +109,14 @@ public class ModelParserTest {
         a.successors.put(b, "");
         m.addAll(a, b);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                          S={a [x], b} # this is a comment
                          I = {a}
                          # this is also a comment
                          T= {(a, a) ['to self'], (a, b)}
                          # another comment at the end"""));
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                 a_ [x] -> ['to self'] a, # this is a comment
                 # this is also a comment
                 a -> b
@@ -154,11 +154,11 @@ public class ModelParserTest {
         a.successors.put(b, "");
         m.addAll(a, b);
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                                               S = {a [x], b [!x]}
                                               T = {(a, b)}"""));
 
-        assertEqualModels(m, Model.of("a [x] -> b [!x]"));
+        assertEquals(m, Model.of("a [x] -> b [!x]"));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class ModelParserTest {
         m.addAll(s1, s2, s3, s4);
 
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                   # Model = (S, I, T, F) # Type 'this' to use this model or 'compact' for compact
                   S = {s1> [!p !q], s2 [!p q],
                        s3 [p !q], s4< [p q 'deadlock']}            # Set of states
@@ -189,7 +189,7 @@ public class ModelParserTest {
                   F = {}                         # Set of final states (you can omit empty sets)
                   # For boolean encoding use '>' as suffix for start-, and '<' for goal states"""));
 
-        assertEqualModels(m, Model.of("""
+        assertEquals(m, Model.of("""
                   # Type 'compact' to use this model
                   # Initial states are denoted by '_' as suffix, final states by '*'
                   # For boolean encoding use '>' as suffix for start-, and '<' for goal states
@@ -199,8 +199,31 @@ public class ModelParserTest {
                   s1_> [!p !q] - s2 [!p q], s1 - s3 [p !q],s3 -> ['unsafe transition'] s4< [p q 'deadlock'], s4 -> s1"""));
     }
 
-    // H E L P E R S
-    private void assertEqualModels(Model expected, Model actual) {
-        assertEquals(expected.toString(), actual.toString());
+    @Test
+    public void testEOF() {
+        Model m = new Model();
+        ModelNode s0 = new ModelNode("s0", true, false, "");
+        ModelNode s1 = new ModelNode("s1", false, false, "");
+        ModelNode sink = new ModelNode("sink", false, false, "");
+        ModelNode s2s3 = new ModelNode("s2s3", false, false, "");
+        ModelNode s2s4 = new ModelNode("s2s4", false, true, "");
+        ModelNode s2 = new ModelNode("s2", false, false, "");
+        s0.successors.put(s1, "a");
+        s0.successors.put(sink, "b");
+        s1.successors.put(sink, "a");
+        s1.successors.put(s2s3, "b");
+        sink.successors.put(sink, "a b");
+        s2s3.successors.put(s2s3, "b");
+        s2s3.successors.put(s2s4, "a");
+        s2s4.successors.put(s2s3, "b");
+        s2s4.successors.put(s2, "a");
+        s2.successors.put(s2, "a");
+        s2.successors.put(s2s3, "b");
+        m.addAll(s0, s1, s2, sink, s2s3, s2s4);
+
+        assertEquals(m, Model.of("""
+                                              s0_ -> [a] s1, s0 -> [b] sink, s1 -> [a] sink, sink -> [a b] sink,
+                                              s1 -> [b] s2s3, s2s3 -> [b] s2s3, s2s3 -> [a] s2s4*, s2s4 -> [b] s2s3,
+                                              s2s4 -> [a] s2, s2 -> [a] s2, s2 -> [b] s2s3"""));
     }
 }

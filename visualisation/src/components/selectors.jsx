@@ -8,5 +8,10 @@ export const formulaSelector = selector({
 
 export const modelSelector = selector({
     key: 'modelSelector',
-    get: ({get}) => get(modelState).replaceAll(/(#.*?(\n|$))|\n/g, '$')
+    get: ({get}) => get(modelState).split(';')[0].replaceAll(/(#.*?(\n|$))|\n/g, '$')
+})
+
+export const secondModelSelector = selector({
+    key: 'secondModelSelector',
+    get: ({get}) => get(modelState).split(';')[1]?.replaceAll(/(#.*?(\n|$))|\n/g, '$')
 })

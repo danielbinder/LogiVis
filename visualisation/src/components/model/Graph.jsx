@@ -20,13 +20,15 @@ export default function Graph() {
         }
 
         try {
-            setGraph(model2Graph(model))
+            setGraph(model.split(';')
+                .map(model2Graph)
+                .join('$'))
         } catch (e) {}
     }, [model])
 
     return (
         <div>
-            {graph && <Graphviz className='graph' dot={graph}/>}
+            {graph && graph.split('$').map(g => <Graphviz className='graph' dot={g}/>)}
         </div>)
 }
 

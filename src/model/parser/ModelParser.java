@@ -73,7 +73,7 @@ public class ModelParser implements Parser {
             }
         }
 
-        delayedInitialStates.forEach(s -> model.get(s).isInitialNodeNode = true);
+        delayedInitialStates.forEach(s -> model.get(s).isInitialNode = true);
         delayedFinalStates.forEach(s -> model.get(s).isFinalNode = true);
 
         // Misses the following case: [validInput] + '}'
@@ -217,7 +217,7 @@ public class ModelParser implements Parser {
             if(!delayedTransitions.containsKey(node1)) delayedTransitions.put(node1, new HashMap<>());
             delayedTransitions.get(node1).put(node2, label);
             if(!delayedTransitions.containsKey(node2)) delayedTransitions.put(node2, new HashMap<>());
-            delayedTransitions.get(node2).put(node1, "");
+            delayedTransitions.get(node2).put(node1, label);
         }
 
         if(isType(LBRACKET)) throw new IllegalArgumentException(
@@ -234,7 +234,7 @@ public class ModelParser implements Parser {
         while(isType(UNDERSCORE, STAR, ENCODING_START, ENCODING_END)) {
             switch(current.type) {
                 case UNDERSCORE -> {
-                    node.isInitialNodeNode = true;
+                    node.isInitialNode = true;
                     advance();
                 }
                 case STAR -> {

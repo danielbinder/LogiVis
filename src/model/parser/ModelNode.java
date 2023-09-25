@@ -1,15 +1,15 @@
 package model.parser;
 
+import model.finite.State;
 import model.kripke.KripkeNode;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModelNode {
+
     public String name;
-    public boolean isInitialNodeNode;
+    public boolean isInitialNode;
     public boolean isFinalNode;
     public String label = "";
     public boolean isEncodingStartPoint;
@@ -19,7 +19,7 @@ public class ModelNode {
 
     public ModelNode(String name) {
         this.name = name;
-        isInitialNodeNode = false;
+        isInitialNode = false;
         isFinalNode = false;
         isEncodingStartPoint = false;
         isEncodingEndPoint = false;
@@ -27,7 +27,7 @@ public class ModelNode {
 
     public ModelNode(String name, boolean isInitialNodeNode, boolean isFinalNode, String label) {
         this(name);
-        this.isInitialNodeNode = isInitialNodeNode;
+        this.isInitialNode = isInitialNodeNode;
         this.isFinalNode = isFinalNode;
         this.label = label;
         isEncodingStartPoint = false;
@@ -43,6 +43,17 @@ public class ModelNode {
                      .collect(Collectors.joining(" ")));
     }
 
+    public State toState() {
+        State bn = new State();
+        bn.name = name;
+        bn.isInitialState = isInitialNode;
+        bn.isFinalState = isFinalNode;
+        bn.isEncodingStart = isEncodingStartPoint;
+        bn.isEncodingEnd = isEncodingEndPoint;
+
+        return bn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -50,7 +61,7 @@ public class ModelNode {
 
         ModelNode modelNode = (ModelNode) o;
 
-        if(isInitialNodeNode != modelNode.isInitialNodeNode) return false;
+        if(isInitialNode != modelNode.isInitialNode) return false;
         if(isFinalNode != modelNode.isFinalNode) return false;
         if(isEncodingStartPoint != modelNode.isEncodingStartPoint) return false;
         if(isEncodingEndPoint != modelNode.isEncodingEndPoint) return false;
@@ -62,7 +73,7 @@ public class ModelNode {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (isInitialNodeNode ? 1 : 0);
+        result = 31 * result + (isInitialNode ? 1 : 0);
         result = 31 * result + (isFinalNode ? 1 : 0);
         result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (isEncodingStartPoint ? 1 : 0);
@@ -73,12 +84,12 @@ public class ModelNode {
     @Override
     public String toString() {
         return name +
-                (isInitialNodeNode ? "_" : "") +
+                (isInitialNode ? "_" : "") +
                 (isFinalNode ? "*" : "") +
                 (isEncodingStartPoint ? ">" : "") +
                 (isEncodingEndPoint ? "<" :  "") +
                 (label.isBlank() ? "" : " [" + label + "]") +
-                (successors.size() == 0 ? "" : " -> ") +
+                (successors.isEmpty() ? "" : " -> ") +
                 successors.entrySet().stream()
                         .map(e -> e.getKey().name + (e.getValue().isBlank() ? "" : " [" + e.getValue() + "]"))
                         .collect(Collectors.joining(", "));

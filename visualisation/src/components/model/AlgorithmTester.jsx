@@ -1,15 +1,38 @@
 import React, {useState} from 'react';
+import {algorithmURL} from '../constants';
+import {useRecoilValue} from 'recoil';
+import {modelSelector, secondModelSelector} from '../selectors';
 
-export default function AlgorithmTester() {
+export default function AlgorithmTester({setSolutionTab, setModelTab}) {
     const [applyLoading, setApplyLoading] = useState(false)
     const [testLoading, setTestLoading] = useState(false)
     const [algorithm, setAlgorithm] = useState('')
+    const getModel = useRecoilValue(modelSelector)
+    const getSecondModel = useRecoilValue(secondModelSelector)
 
-    function handleButtonClick() {
-        // setLoading(true)
-        // fetch('someURL')
-        //     .then()     // your code here
-        //     .finally(() => setLoading(false))
+    function handleApplyClick() {
+        setApplyLoading(true)
+        fetch(algorithmURL + `/${algorithm}/${getModel}${requiresSecondModel() ? '/' + getSecondModel : ''}`)
+            .then(response => response.json())
+            .then((data) => algorithm === 'isDeterministic' || algorithm === 'isComplete'
+                ? setSolutionTab(data)
+                : setModelTab(data))
+            .finally(() => setApplyLoading(false))
+    }
+
+    function handleTestClick() {
+        setTestLoading(true)
+        fetch(algorithmURL + `/test${algorithm.charAt(0).toUpperCase() + algorithm.slice(1)}/${getModel}
+        ${requiresSecondModel() ? '/' + getSecondModel : ''}`)
+            .then(response => response.json())
+            .then((data) => algorithm === 'isDeterministic' || algorithm === 'isComplete'
+                ? setSolutionTab(data)
+                : setModelTab(data))
+            .finally(() => setTestLoading(false))
+    }
+
+    function requiresSecondModel() {
+        return algorithm === 'toProductAutomaton'
     }
 
     return (
@@ -30,19 +53,19 @@ export default function AlgorithmTester() {
                         <option value='toProductAutomaton'>toProductAutomaton</option>
                         <option value='toPowerAutomaton'>toPowerAutomaton</option>
                         <option value='toComplementAutomaton'>toComplementAutomaton</option>
+                        <option value='toSinkAutomaton'>toSinkAutomaton</option>
                         <option value='toOracleAutomaton'>toOracleAutomaton</option>
-                        <option value='toOptimizedOracleAutomaton'>toOptimizedOracleAutomaton</option>
-                        <option value='toIOAutomaton'>toIOAutomaton</option>
+                        <option value='toOptimisedOracleAutomaton'>toOptimisedOracleAutomaton</option>
                     </select>
                 </div>
                 <div className='centerContainer'>
-                    <button className='button' onClick={handleButtonClick}>
+                    <button className='button' onClick={handleApplyClick}>
                         {applyLoading && <div className='loading'></div>}
                         Apply algorithm
                     </button>
                 </div>
                 <div className='centerContainer'>
-                    <button className='button' onClick={handleButtonClick}>
+                    <button className='button' onClick={handleTestClick}>
                         {testLoading && <div className='loading'></div>}
                         Test your algorithm
                     </button>

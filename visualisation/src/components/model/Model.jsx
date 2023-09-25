@@ -29,7 +29,10 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 <div className='parameters'>
                     <div className='smallColumn'>
                         <ModelTypeSelector/>
-                        <AlgorithmTester/>
+                        <AlgorithmTester
+                            setSolutionTab={setSolutionTab}
+                            setModelTab={setModelTab}
+                        />
                     </div>
                     <div className='smallColumn'>
                         <FormulaGenerator

@@ -1,12 +1,11 @@
 package model.parser;
 
+import model.finite.FiniteAutomaton;
 import model.interpreter.ModelTracer;
 import model.kripke.KripkeNode;
 import model.kripke.KripkeStructure;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Model extends ArrayList<ModelNode> {
@@ -46,7 +45,7 @@ public class Model extends ArrayList<ModelNode> {
     public KripkeStructure toKripkeStructure() {
         KripkeStructure ks = new KripkeStructure();
         forEach(gn -> ks.add(new KripkeNode(gn.name)));
-        forEach(gn -> ks.get(gn.name).isInitialNodeNode = gn.isInitialNodeNode);
+        forEach(gn -> ks.get(gn.name).isInitialNodeNode = gn.isInitialNode);
         forEach(gn -> ks.get(gn.name).isEncodingStart = gn.isEncodingStartPoint);
         forEach(gn -> ks.get(gn.name).isEncodingEnd = gn.isEncodingEndPoint);
         forEach(gn -> gn.successors
@@ -57,6 +56,17 @@ public class Model extends ArrayList<ModelNode> {
                                           l -> !l.startsWith("!"))));
 
         return ks;
+    }
+
+    public FiniteAutomaton toFiniteAutomaton() {
+        FiniteAutomaton automaton = new FiniteAutomaton();
+        forEach(node -> automaton.add(node.toState()));
+
+        forEach(node -> node.successors
+                .forEach((succ, label) -> Arrays.stream(label.replaceAll("'.*?'", "").split(" "))
+                        .forEach(prop -> automaton.get(node.name).addSuccessor(prop, automaton.get(succ.name)))));
+
+        return automaton;
     }
 
     public ModelTracer toModelTracer() {
@@ -72,9 +82,9 @@ public class Model extends ArrayList<ModelNode> {
                                     (!n.label.isBlank() ? " [" + n.label + "]" : ""))
                             .collect(Collectors.joining(", ")) + "}\n"
                         : "") +
-                (stream().anyMatch(n -> n.isInitialNodeNode)
+                (stream().anyMatch(n -> n.isInitialNode)
                         ? ("I = {" + stream()
-                            .filter(n -> n.isInitialNodeNode)
+                            .filter(n -> n.isInitialNode)
                             .map(n -> n.name)
                             .collect(Collectors.joining(", ")) + "}\n")
                         : "") +
@@ -82,8 +92,8 @@ public class Model extends ArrayList<ModelNode> {
                         ? "T = {" + stream()
                             .filter(n -> !n.successors.isEmpty())
                             .map(n -> n.successors.entrySet().stream()
-                                    .map(succ -> "(" + n.name + ", " + succ.getKey().name +
-                                            (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : "") + ")")
+                                    .map(succ -> "(" + n.name + ", " + succ.getKey().name + ")" +
+                                            (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : ""))
                                     .collect(Collectors.joining(", ")))
                             .collect(Collectors.joining(", ")) + "}\n"
                         : "") +
@@ -96,7 +106,30 @@ public class Model extends ArrayList<ModelNode> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(o instanceof Model m) {
+            return m.stream()
+                    .allMatch(node -> contains(node.name) &&
+                            Arrays.stream(get(node.name).label.split(" ")).collect(Collectors.toSet())
+                                    .equals(Arrays.stream(m.get(node.name).label.split(" ")).collect(Collectors.toSet())) &&
+                            get(node.name).isInitialNode == m.get(node.name).isInitialNode &&
+                            get(node.name).isFinalNode == m.get(node.name).isFinalNode &&
+                            get(node.name).isEncodingStartPoint == m.get(node.name).isEncodingStartPoint &&
+                            get(node.name).isEncodingEndPoint == m.get(node.name).isEncodingEndPoint &&
+                            get(node.name).successors.entrySet().stream()
+                                    .collect(Collectors.toMap(e -> e.getKey().name,
+                                                              e -> Arrays.stream(e.getValue().split(" "))
+                                                                      .collect(Collectors.toSet())))
+                                    .equals(m.get(node.name).successors.entrySet().stream()
+                                                    .collect(Collectors.toMap(e -> e.getKey().name,
+                                                                              e -> Arrays.stream(e.getValue().split(" "))
+                                                                                      .collect(Collectors.toSet())))));
+
+        } else return false;
+    }
+
+    @Override
     public String toString() {
-        return stream().map(ModelNode::toString).collect(Collectors.joining("\n"));
+        return toModelString();
     }
 }

@@ -1,6 +1,7 @@
 package model.kripke;
 
 import bool.parser.logicnode.LogicNode;
+import marker.ModelVariant;
 import temporal.model.KripkeStruct;
 import temporal.model.State;
 import temporal.model.Transition;
@@ -9,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class KripkeStructure extends ArrayList<KripkeNode> {
+public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVariant {
     public KripkeNode get(String name) {
         return stream()
                 .filter(kn -> kn.name.equals(name))
@@ -78,7 +79,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> {
 
     public String toFormulaString(int steps) {
         return IntStream.range(0, steps).mapToObj(step -> stream()
-                        .filter(kn -> kn.successors.size() > 0)
+                        .filter(kn -> !kn.successors.isEmpty())
                         .map(kn -> "(" +
                                 kn.stateMap.entrySet().stream()
                                 .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + step)

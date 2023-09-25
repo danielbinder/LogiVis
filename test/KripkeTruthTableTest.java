@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KripkeTruthTableTest {
+    /**
+     * Can fail, since products of KripkeTruthTable are not deterministic and testing implementation details is not sensible!
+     */
     @Test
     public void testBasic() {
         KripkeTruthTable ktt = Model.of("""

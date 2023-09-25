@@ -1,5 +1,6 @@
 import model.kripke.KripkeGenerator;
 import model.kripke.KripkeStructure;
+import model.parser.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +17,6 @@ public class KripkeStructureTest {
     @Test
     public void testToAndFromString() {
         KripkeStructure ks = KripkeGenerator.generate("4_2_3_1_3_true");
-        String kripkeString = ks.toString();
-        assertEquals(kripkeString, KripkeStructure.fromString(kripkeString).toString());
+        assertEquals(Model.of(ks), Model.of(KripkeStructure.fromString(ks.toString())));
     }
 }

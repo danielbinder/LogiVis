@@ -1,18 +1,18 @@
 import React from 'react'
 import Solver from './components/solver/Solver'
 import Model from './components/model/Model'
-import {useSetRecoilState} from 'recoil';
+import {useRecoilState, useSetRecoilState} from 'recoil';
 import {
     evalErrorMessageState, evalStatusMessageState, evalWarningMessageState,
     formulaState, modelErrorMessageState, modelState, modelStatusMessageState, modelWarningMessageState,
     solutionInfoState, solutionState
 } from './components/atoms';
-import {cleanResultData} from './components/constants';
+import {cleanResultData, solutionInfoWarning} from './components/constants';
 
 export default function App() {
     const setFormula = useSetRecoilState(formulaState)
     const setSolution = useSetRecoilState(solutionState)
-    const setSolutionInfo = useSetRecoilState(solutionInfoState)
+    const [solutionInfo, setSolutionInfo] = useRecoilState(solutionInfoState)
     const setModel = useSetRecoilState(modelState)
     // status messages
     const setEvalStatusMessage = useSetRecoilState(evalStatusMessageState)
@@ -25,7 +25,7 @@ export default function App() {
     const setFormulaTab = (data) => {
         data['result'] && setFormula(cleanResultData(data['result']))
         data['info'] && setSolutionInfo(cleanResultData(data['info']))
-        setEvalStatusMessage('')
+        setEvalStatusMessage(cleanResultData(data['info']).split('\n').length > 500 ? solutionInfoWarning : '')
         setEvalWarningMessage(cleanResultData(data['warning']))
         setEvalErrorMessage(cleanResultData(data['error']))
 
@@ -35,7 +35,7 @@ export default function App() {
     const setSolutionTab = (data) => {
         data['result'] && setSolution(cleanResultData(data['result']))
         data['info'] && setSolutionInfo(cleanResultData(data['info']))
-        setEvalStatusMessage('')
+        setEvalStatusMessage(cleanResultData(data['info']).split('\n').length > 500 ? solutionInfoWarning : '')
         setEvalWarningMessage(cleanResultData(data['warning']))
         setEvalErrorMessage(cleanResultData(data['error']))
 
@@ -45,7 +45,7 @@ export default function App() {
     const setModelTab = (data) => {
         data['result'] && setModel(cleanResultData(data['result']))
         data['info'] && setSolutionInfo(cleanResultData(data['info']))
-        setModelStatusMessage('')
+        setModelStatusMessage(cleanResultData(data['info']).split('\n').length > 500 ? solutionInfoWarning : '')
         setModelWarningMessage(cleanResultData(data['warning']))
         setModelErrorMessage(cleanResultData(data['error']))
 
