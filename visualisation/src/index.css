@@ -82,18 +82,32 @@
     width: 150px;
 }
 
-.doubleButtonLeft {
+.leftBigDoubleButtonLeft {
     margin-top: 10px;
     margin-right: 0;
     margin-left: 15px;
     width: 125px;
 }
 
-.doubleButtonRight {
+.leftBigDoubleButtonRight {
     margin-top: 10px;
     margin-right: 15px;
     margin-left: 0;
-    width: 50px;
+    width: 60px;
+}
+
+.rightBigDoubleButtonLeft {
+    margin-top: 10px;
+    margin-right: 0;
+    margin-left: 15px;
+    width: 60px;
+}
+
+.rightBigDoubleButtonRight {
+    margin-top: 10px;
+    margin-right: 15px;
+    margin-left: 0;
+    width: 125px;
 }
 
 .select {

@@ -72,24 +72,24 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
                     Simplify
                 </button>}
             {formulaType === 'boolean' &&
-                <button className='doubleButtonLeft' onClick={handleCheckFormula}>
+                <button className='leftBigDoubleButtonLeft' onClick={handleCheckFormula}>
                     {checkFormulaLoading && <div className='loading'></div>}
                     Check
                 </button>}
             {formulaType === 'boolean' &&
-                <button className='doubleButtonRight' onClick={handleAllModels}>
+                <button className='leftBigDoubleButtonRight' onClick={handleAllModels}>
                     {allModelsLoading && <div className='loading'></div>}
                     all
                 </button>}
             {formulaType === 'boolean' &&
-                <button className='doubleButtonLeft' onClick={handleParenthesise}>
+                <button className='rightBigDoubleButtonLeft' onClick={handleParenthesise}>
                     {parenthesiseLoading && <div className='loading'></div>}
-                    Parenthesise
+                    De
                 </button>}
             {formulaType === 'boolean' &&
-                <button className='doubleButtonRight' onClick={handleParenthesiseAll}>
+                <button className='rightBigDoubleButtonRight' onClick={handleParenthesiseAll}>
                     {parenthesiseAllLoading && <div className='loading'></div>}
-                    all
+                    parenthesise
                 </button>}
             {formulaType === 'ctl' &&
                 <button className='button' onClick={handleCheckModel}>
