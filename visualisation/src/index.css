@@ -43,6 +43,13 @@
     font-family: 'JetBrains Mono', monospace;
 }
 
+.requires {
+    margin: 2px 0;
+    color: #d10a0a;
+    width: 99%;
+    text-align: left;
+}
+
 .textArea {
     resize: vertical;
     min-width: 99%;

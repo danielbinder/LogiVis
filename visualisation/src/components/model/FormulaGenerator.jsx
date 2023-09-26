@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
-import {serverURL} from "../constants";
+import {serverURL} from '../constants';
+import {useRecoilValue} from 'recoil';
+import {formulaTypeState} from '../atoms';
+import {Requires} from '../Requires';
 
 export default function FormulaGenerator({setFormulaTab}) {
     const [loading, setLoading] = useState(false)
@@ -7,6 +10,7 @@ export default function FormulaGenerator({setFormulaTab}) {
         variables: 3,
         operators: 5,
     })
+    const formulaType = useRecoilValue(formulaTypeState)
 
     function handleChange({target: {name, value, type, checked}}) {
         setGenerationParameters(
@@ -57,6 +61,7 @@ export default function FormulaGenerator({setFormulaTab}) {
                     />
                     <label htmlFor='operators'>Operators</label>
                 </div>
+                {formulaType !== 'boolean' && <Requires>Boolean Algebra</Requires>}
                 <div className='centerContainer'>
                     <button className='button' onClick={handleButtonClick}>
                         {loading && <div className='loading'></div>}

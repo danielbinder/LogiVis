@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {useRecoilValue} from 'recoil';
 import {modelSelector} from '../selectors';
 import {serverURL} from '../constants';
+import {Requires} from '../Requires';
 
 export default function ModelTracer({setSolutionTab}) {
     const getModel = useRecoilValue(modelSelector)
@@ -29,6 +30,9 @@ export default function ModelTracer({setSolutionTab}) {
         <div className='rows'>
             <fieldset className='smallFieldset'>
                 <legend>&nbsp;Trace a model&nbsp;</legend>
+                {getModel.length === 0 && <Requires>Model</Requires>}
+                {(getModel.indexOf('>') === -1 || getModel.indexOf('<') === -1) &&
+                    <Requires>Trace start/end {"'>' & '<'"}</Requires>}
                 <div className='centerContainer'>
                     <button className='button' onClick={handleTraceClick}>
                         {traceLoading && <div className='loading'></div>}

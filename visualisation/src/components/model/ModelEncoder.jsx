@@ -3,6 +3,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {evalStatusMessageState, formulaTypeState} from '../atoms';
 import {modelSelector} from '../selectors';
 import {cleanResultData, serverURL} from '../constants';
+import {Requires} from '../Requires';
 
 export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
     const getModel = useRecoilValue(modelSelector)
@@ -100,6 +101,10 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
                         <label htmlFor='compactQBF'>Limboole QBF</label>
                     </div>
                 </div>
+                {(getModel.length === 0 || !/[a-z0-9]+\s*\[/g.test(getModel)) &&
+                    <Requires>Kripke Structure</Requires>}
+                {(getModel.indexOf('>') === -1 || getModel.indexOf('<') === -1) &&
+                    <Requires>Trace start/end {"'>' & '<'"}</Requires>}
                 <div className='centerContainer'>
                     <button className='button' onClick={handleEncodeClick}>
                         {loadingEncode && <div className='loading'></div>}
