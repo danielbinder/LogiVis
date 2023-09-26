@@ -34,7 +34,7 @@ export default function FormulaTypeSelection() {
                 checked={formulaType === 'regex'}
                 onChange={() => setFormulaType('regex')}
             />
-            <label htmlFor='regex'>Regular Expression</label>
+            <label htmlFor='regex' className='notImplemented'>Regular Expression</label>
             <input
                 type='radio'
                 id='process'
@@ -43,7 +43,7 @@ export default function FormulaTypeSelection() {
                 checked={formulaType === 'process'}
                 onChange={() => setFormulaType('process')}
             />
-            <label htmlFor='process'>Process Algebra</label>
+            <label htmlFor='process' className='notImplemented'>Process Algebra</label>
         </fieldset>
     )
 }
