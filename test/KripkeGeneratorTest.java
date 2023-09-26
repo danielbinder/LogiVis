@@ -13,12 +13,7 @@ public class KripkeGeneratorTest {
         boolean allStatesReachable = true;
 
         for(int i = 0; i < 10; i++) {
-            KripkeStructure ks = KripkeGenerator.generate(nodes + "_" +
-                                                                           initialNodes + "_" +
-                                                                           variables + "_" +
-                                                                           minSuccessors + "_" +
-                                                                           maxSuccessors + "_" +
-                                                                           allStatesReachable);
+            KripkeStructure ks = KripkeGenerator.generate(nodes, initialNodes, variables, minSuccessors, maxSuccessors, allStatesReachable);
 
             System.out.println(ks);
         }

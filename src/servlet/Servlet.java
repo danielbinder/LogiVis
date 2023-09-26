@@ -4,6 +4,7 @@ import bool.BooleanGenerator;
 import bool.interpreter.Parenthesiser;
 import bool.parser.logicnode.LogicNode;
 import marker.RestEndpoint;
+import model.finite.FiniteAutomatonGenerator;
 import model.parser.Model;
 import model.interpreter.ModelTracer;
 import model.kripke.KripkeGenerator;
@@ -83,9 +84,32 @@ public class Servlet implements RestEndpoint {
                                      .toOtherKripke()).getSatisfyingStatesAsResult(preprocess(formula)).computeJSON();
     }
 
-    @GET("/generateKripke/:params")
-    public String generate(String params) {
-        return new Result(() -> Model.of(KripkeGenerator.generate(params))
+    @GET("/generateKripke/:nodes/:initialNodes/:variables/:minSuccessors/:maxSuccessors/:allReachable")
+    public String generateKripke(String allReachable, String initialNodes,
+                           String maxSuccessors, String minSuccessors,
+                           String nodes, String variables) {
+        return new Result(() -> Model.of(KripkeGenerator.generate(Integer.parseInt(nodes),
+                                                                  Integer.parseInt(initialNodes),
+                                                                  Integer.parseInt(variables),
+                                                                  Integer.parseInt(minSuccessors),
+                                                                  Integer.parseInt(maxSuccessors),
+                                                                  Boolean.parseBoolean(allReachable)))
+                .toModelString())
+                .computeJSON();
+    }
+
+    @GET("/generateFiniteAutomaton/:nodes/:initialNodes/:finalNodes/:alphabetSize/:minSuccessors/:maxSuccessors/:allReachable")
+    public String generateFiniteAutomaton(String allReachable, String alphabetSize, String finalNodes,
+                                          String initialNodes, String maxSuccessors, String minSuccessors,
+                                          String nodes) {
+        return new Result(() -> FiniteAutomatonGenerator.generate(Integer.parseInt(nodes),
+                                                                           Integer.parseInt(initialNodes),
+                                                                           Integer.parseInt(finalNodes),
+                                                                           Integer.parseInt(alphabetSize),
+                                                                           Integer.parseInt(minSuccessors),
+                                                                           Integer.parseInt(maxSuccessors),
+                                                                           Boolean.parseBoolean(allReachable))
+                .toModel()
                 .toModelString())
                 .computeJSON();
     }

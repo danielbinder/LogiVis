@@ -28,15 +28,17 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 <h3 className='center'>Tune and apply parameters</h3>
                 <div className='parameters'>
                     <div className='smallColumn'>
-                        <ModelTypeSelector/>
+                        <FormulaGenerator
+                            setFormulaTab={setFormulaTab}
+                        />
                         <AlgorithmTester
                             setSolutionTab={setSolutionTab}
                             setModelTab={setModelTab}
                         />
                     </div>
                     <div className='smallColumn'>
-                        <FormulaGenerator
-                            setFormulaTab={setFormulaTab}
+                        <ModelTracer
+                            setSolutionTab={setSolutionTab}
                         />
                         <ModelEncoder
                             setFormulaTab={setFormulaTab}
@@ -46,9 +48,6 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                     <div className='smallColumn'>
                         <ModelGenerator
                             setModelTab={setModelTab}
-                        />
-                        <ModelTracer
-                            setSolutionTab={setSolutionTab}
                         />
                     </div>
                 </div>

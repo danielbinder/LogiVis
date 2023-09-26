@@ -4,11 +4,13 @@ import {serverURL} from '../constants';
 export default function ModelGenerator({setModelTab}) {
     const [loading, setLoading] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
+            modelType: 'ks',
             nodes: 4,
             variables: 3,
             minSuccessors: 1,
             maxSuccessors: 3,
             initialNodes: 2,
+            finalNodes: 2,
             allReachable: true
         }
     )
@@ -24,12 +26,18 @@ export default function ModelGenerator({setModelTab}) {
 
     function handleButtonClick() {
         setLoading(true)
-        fetch(serverURL + '/generateKripke/' +
-            generationParameters.nodes + '_' +
-            generationParameters.initialNodes + '_' +
-            generationParameters.variables + '_' +
-            generationParameters.minSuccessors + '_' +
-            generationParameters.maxSuccessors + '_' +
+        fetch(serverURL +
+            (generationParameters.modelType === 'ks'
+                ? '/generateKripke/'
+                : '/generateFiniteAutomaton/') +
+            generationParameters.nodes + '/' +
+            generationParameters.initialNodes + '/' +
+            (generationParameters.modelType === 'fa'
+                ? generationParameters.finalNodes + '/'
+                : '') +
+            generationParameters.variables + '/' +
+            generationParameters.minSuccessors + '/' +
+            generationParameters.maxSuccessors + '/' +
             generationParameters.allReachable)
             .then(response => response.json())
             .then(data => {setModelTab(data); return data})
@@ -41,6 +49,28 @@ export default function ModelGenerator({setModelTab}) {
             <fieldset className='smallFieldset'>
                 <legend>&nbsp;Generate a model&nbsp;</legend>
                 <div>
+                    <div>
+                        <input
+                            type='radio'
+                            id='ks'
+                            name='modelType'
+                            value='ks'
+                            checked={generationParameters.modelType === 'ks'}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor='ks'>Kripke Structure</label>
+                    </div>
+                    <div className='bottomSpace'>
+                        <input
+                            type='radio'
+                            id='fa'
+                            name='modelType'
+                            value='fa'
+                            checked={generationParameters.modelType === 'fa'}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor='fa'>Finite Automaton</label>
+                    </div>
                     <input
                         className='input'
                         type='number'
@@ -64,7 +94,11 @@ export default function ModelGenerator({setModelTab}) {
                         value={generationParameters.variables}
                         onChange={handleChange}
                     />
-                    <label htmlFor='variables'>Variables</label>
+                    <label htmlFor='variables'>
+                        {generationParameters.modelType === 'ks'
+                            ? 'Variables'
+                            : 'Alphabet size'}
+                    </label>
                 </div>
                 <div>
                     <input
@@ -105,6 +139,19 @@ export default function ModelGenerator({setModelTab}) {
                     />
                     <label htmlFor='initialNodes'>Initial Nodes</label>
                 </div>
+                {generationParameters.modelType === 'fa' && <div>
+                    <input
+                        className='input'
+                        type='number'
+                        min='0'
+                        id='finalNodes'
+                        name='finalNodes'
+                        placeholder='Final Nodes'
+                        value={generationParameters.finalNodes}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor='finalNodes'>Final Nodes</label>
+                </div>}
                 <div>
                     <input
                         className='input'

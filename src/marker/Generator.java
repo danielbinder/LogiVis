@@ -3,6 +3,7 @@ package marker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static model.kripke.KripkeGenerator.rand;
 
@@ -39,5 +40,11 @@ public interface Generator {
         while(amount-- > 0) picks.add(rand.nextInt(bound) & Integer.MAX_VALUE);
 
         return picks;
+    }
+
+    static List<String> generateVariableNames(int amount) {
+        return IntStream.range(0, amount)
+                .mapToObj(i -> ((char) ('a' + (i % 26))) + String.valueOf(i >= 26 ? i / 26 : ""))
+                .toList();
     }
 }

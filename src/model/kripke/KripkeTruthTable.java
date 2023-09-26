@@ -23,7 +23,7 @@ public class KripkeTruthTable {
                 .orElse(0);
 
         for(KripkeNode kn : ks) {
-            if(kn.successors.size() > 0) {
+            if(!kn.successors.isEmpty()) {
                 // Add the assignment of the current node as top-level key
                 // Add the assignment of every successor as top-level value
                 table.put(kn.stateMap, kn.successors.stream().map(succ -> succ.stateMap).collect(Collectors.toList()));

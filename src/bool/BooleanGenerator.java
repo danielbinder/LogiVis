@@ -14,7 +14,7 @@ public class BooleanGenerator implements Generator {
         int ops = Integer.parseInt(operators);
         if(ops < vars - 1) Generator.error("The minimum amount of operators is " + (vars - 1) + " (variables - 1)");
 
-        List<String> variableNames = generateVariableNames(vars);
+        List<String> variableNames = Generator.generateVariableNames(vars);
         int additionalOps = ops - (vars - 1);
         int openParens = 0;
 
@@ -110,11 +110,5 @@ public class BooleanGenerator implements Generator {
         while(openParens-- > 0) formula.append(")");
 
         return formula.toString();
-    }
-
-    private static List<String> generateVariableNames(int amount) {
-        return IntStream.range(0, amount)
-                .mapToObj(i -> ((char) ('a' + (i % 26))) + String.valueOf(i >= 26 ? i / 26 : ""))
-                .toList();
     }
 }

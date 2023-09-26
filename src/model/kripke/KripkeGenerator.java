@@ -5,40 +5,26 @@ import marker.Generator;
 import java.util.*;
 
 public class KripkeGenerator implements Generator {
-    /**
-     * @param paramString format: nodes_initialNodes_variables_minSuccessors_maxSuccessors_allStatesReachable
-     * @return Kripke Structure
-     */
-    public static KripkeStructure generate(String paramString) {
-        Random rand = new Random();
-        KripkeStructure ks;
-
-        String[] params = paramString.split("_");
-        int nodes = Integer.parseInt(params[0]);
-        int initialNodes = Integer.parseInt(params[1]);
+    public static KripkeStructure generate(int nodes, int initialNodes, int variables,
+                                           int minSuccessors, int maxSuccessors, boolean allReachable) {
         if(initialNodes < 0) Generator.error("The minimum amount of initial nodes needs to be at least 0!");
         if(initialNodes > nodes) Generator.error("The amount of initial nodes can't be larger than the amount of nodes!");
-        int variables = Integer.parseInt(params[2]);
         if(Math.pow(2, variables) < nodes)
             Generator.error(variables + " variables can only have " + (int) Math.pow(2, variables) + " assignments, but there are " + nodes + " nodes!");
-        int minSuccessors = Integer.parseInt(params[3]);
         if(minSuccessors < 0) Generator.error("The minimum amount of successors needs to be at least 0!");
         if(minSuccessors > nodes) Generator.error("The amount of min successors can't be larger than the amount of nodes!");
-        int maxSuccessors = Integer.parseInt(params[4]);
         if(maxSuccessors < 0) Generator.error("The maximum amount of successors needs to be at least 0!");
         if(maxSuccessors > nodes) Generator.error("The amount of max successors can't be larger than the amount of nodes!");
         if(minSuccessors > maxSuccessors) Generator.error("The amount of min successors can't be larger than the amount of max successors!");
-        boolean allStatesReachable = Boolean.parseBoolean(params[5]);
-        if(maxSuccessors < 1 && initialNodes < nodes) Generator.error("It is impossible to make all nodes reachable with this configuration!\nEither maxSuccessors need to be > 0 or initialNodes >= nodes!");
+        if(allReachable && maxSuccessors < 1 && initialNodes < nodes) Generator.error("It is impossible to make all nodes reachable with this configuration!\nEither maxSuccessors need to be > 0 or initialNodes >= nodes!");
 
-
-        ks = new KripkeStructure();
+        KripkeStructure ks = new KripkeStructure();
         for(int i = 0; i < nodes; i++) ks.add(new KripkeNode("n" + i));
 
         for(int i : Generator.pickRandom(nodes, initialNodes)) ks.get(i).isInitialNodeNode = true;
         ks.addStateMaps(generateRandomStateMaps(variables, nodes));
 
-        if(allStatesReachable && nodes > 1) {
+        if(allReachable && nodes > 1) {
             List<KripkeNode> reachable = new ArrayList<>(ks.stream()
                                                                  .filter(kn -> kn.isInitialNodeNode)
                                                                  .toList());

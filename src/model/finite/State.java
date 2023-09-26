@@ -12,6 +12,12 @@ public class State {
     /** Map<Successor, TransitionLabel> */
     private final Map<String, Set<State>> successors = new HashMap<>();
 
+    public State() {}
+
+    public State(String name) {
+        this.name = name;
+    }
+
     public boolean hasSuccessor(State node) {
         return successors.values().stream()
                 .anyMatch(succSet -> succSet.contains(node));
