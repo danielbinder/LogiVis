@@ -1,5 +1,5 @@
 import React from 'react';
-import {useRecoilState} from "recoil";
+import {useRecoilState} from 'recoil';
 import {formulaTypeState} from '../atoms';
 
 export default function FormulaTypeSelection() {
