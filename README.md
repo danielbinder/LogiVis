@@ -33,10 +33,5 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 #### Compile to JAR
 Command: `./gradlew shadowJar` <br>
 JAR Location: `./build/libs/` <br>
-#### Compile to EXE
-1) Download the GraalVM JDK 21 <a href='https://www.graalvm.org/downloads/'>here</a>
-2) Follow the steps described <a href='https://www.graalvm.org/latest/reference-manual/native-image/#prerequisites'>here</a>
-3) Run the command `./gradlew nativeCompile`
-   - The location of the .exe is in `TODO`
 #### Execute JAR
 Command: `java -jar LogiVis-[VERSION]-all.jar` <br>
