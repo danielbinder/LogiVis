@@ -22,7 +22,7 @@ export const cleanResultData = (data) => data.replaceAll(/[$]/g, '\n')
 
 export const serverURL = 'http://localhost:4000'
 
-export const algorithmURL = 'http://localhost:5000'
+export const algorithmURL = 'http://localhost:4000'
 
 export const solutionInfoWarning =
     'Keeping a lot of solution information may lag your page!\n' +

@@ -20,14 +20,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 public class Servlet implements RestEndpoint {
-    private static final int SERVLET_PORT = 4000;
     private static final int APP_PORT = 3000;
 
     public static void main(String[] args) {
         if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
 
-        REST.start(SERVLET_PORT);
-        System.out.println("Server started; go to: http://localhost:" + APP_PORT);
+        REST.start();
+        System.out.println("Started Servlet");
+        System.out.println("Go to: http://localhost:" + APP_PORT);
     }
 
     @GET("/solve/:formula")

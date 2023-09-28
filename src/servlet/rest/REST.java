@@ -13,9 +13,11 @@ import static spark.Spark.get;
  * IMPORTANT: Everything that uses this needs to implement RestEnpoint!
  */
 public class REST {
-    public static void start(int port) {
-        spark.Spark.port(port);
+    static {
+        spark.Spark.port(4000);
+    }
 
+    public static void start() {
         try {
             // target = calling class
             RestEndpoint target = (RestEndpoint) Class.forName(Thread.currentThread().getStackTrace()[2].getClassName())

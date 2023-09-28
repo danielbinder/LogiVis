@@ -1,7 +1,7 @@
 .idea/
+.gradle/
+build/
 out/
 src/META-INF
 
 LogiVis.iml
-
-

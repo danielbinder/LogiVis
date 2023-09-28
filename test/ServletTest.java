@@ -4,6 +4,7 @@ import servlet.Servlet;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -27,7 +28,7 @@ public class ServletTest {
 
     private void testResult(String expected, String url) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
             connection.setRequestMethod("GET");
             try(Scanner s = new Scanner(connection.getInputStream())) {
                 s.nextLine();   // Read over initial {\n of JSON

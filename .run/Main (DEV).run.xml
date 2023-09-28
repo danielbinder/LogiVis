@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AlgorithmTester (DEV)" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="algorithmTester.AlgorithmTester" />
+  <configuration default="false" name="Main (DEV)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="main.Main" />
     <module name="LogiVis.main" />
     <option name="PROGRAM_PARAMETERS" value="DEV" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="algorithmTester.*" />
+        <option name="PATTERN" value="main.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

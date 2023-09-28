@@ -11,12 +11,10 @@ import java.util.regex.Matcher;
 import static marker.AlgorithmImplementation.USER;
 
 public class AlgorithmTester implements RestEndpoint {
-    private static final int ALGORITHM_TESTER_PORT = 5000;
-
     public static void main(String[] args) {
         if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
 
-        REST.start(ALGORITHM_TESTER_PORT);
+        REST.start();
         System.out.println("Started AlgorithmTester!");
     }
 

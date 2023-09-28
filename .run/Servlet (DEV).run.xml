@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Servlet (DEV)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="servlet.Servlet" />
-    <module name="LogiVis" />
+    <module name="LogiVis.main" />
     <option name="PROGRAM_PARAMETERS" value="DEV" />
     <extension name="coverage">
       <pattern>
