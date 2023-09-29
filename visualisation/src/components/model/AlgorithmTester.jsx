@@ -50,6 +50,7 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                         <option className='center' value=''>Choose</option>
                         <option value='isDeterministic'>isDeterministic</option>
                         <option value='isComplete'>isComplete</option>
+                        <option value='isEquivalent'>isEquivalent</option>
                         <option value='toProductAutomaton'>toProductAutomaton</option>
                         <option value='toPowerAutomaton'>toPowerAutomaton</option>
                         <option value='toComplementAutomaton'>toComplementAutomaton</option>

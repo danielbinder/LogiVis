@@ -3,6 +3,7 @@ package algorithmTester;
 import marker.AlgorithmImplementation;
 import model.finite.FiniteAutomaton;
 import model.finite.State;
+import util.Pair;
 
 import java.util.Collection;
 import java.util.Set;
@@ -111,6 +112,11 @@ public class YourImplementation implements AlgorithmImplementation {
         String combinedName = combinedName(s1, s2, s3);
         // You can also create a combinedName from a Collection
         String anotherCombinedName = combinedName(Set.of(s1, s2));
+
+        //Feel free to use the Pair class if you need it
+         Pair<State, State> pair = Pair.of(s1, s2);
+         State left = pair.left;
+         State right = pair.right;
     }
 
     @Override
@@ -121,6 +127,11 @@ public class YourImplementation implements AlgorithmImplementation {
     @Override
     public boolean isComplete(FiniteAutomaton automaton) {
         throw new IllegalStateException("Algorithm 'isComplete' not implemented yet!");
+    }
+
+    @Override
+    public boolean isEquivalent(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        throw new IllegalStateException("Algorithm 'isEquivalent' is not implemented yet!");
     }
 
     @Override
