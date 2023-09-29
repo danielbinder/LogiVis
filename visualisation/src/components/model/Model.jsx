@@ -71,11 +71,11 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                         <Graph/>
                     </ErrorBoundary>
                     <p>
-                        Code: <a href='https://github.com/danielbinder/LogiVis' target='_blank'>github.com/danielbinder/LogiVis</a>
+                        Code: <a href='https://github.com/danielbinder/LogiVis' rel="noreferrer" target='_blank'>github.com/danielbinder/LogiVis</a>
                         <br></br>
                         Contributors:&nbsp;
-                        <a href='https://github.com/danielbinder' target='_blank'>Daniel Binder</a>,&nbsp;
-                        <a href='https://github.com/csteidl' target='_blank'>Christoph Steidl</a>
+                        <a href='https://github.com/danielbinder' rel="noreferrer" target='_blank'>Daniel Binder</a>,&nbsp;
+                        <a href='https://github.com/csteidl' rel="noreferrer" target='_blank'>Christoph Steidl</a>
                     </p>
                 </div>
             </div>

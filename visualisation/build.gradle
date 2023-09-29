@@ -1,0 +1,7 @@
+plugins {
+    id "com.github.node-gradle.node" version "7.0.0"
+}
+
+tasks.register( "npm-run-build", NpmTask) {
+    args = ['run', 'build']
+}

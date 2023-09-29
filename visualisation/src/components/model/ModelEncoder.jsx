@@ -12,7 +12,7 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
 
     const [loadingEncode, setLoadingEncode] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
-        steps: 3,
+        steps: 2,
         encodingType: 'compact'
     })
 
@@ -118,6 +118,6 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
 
 const generateLimbooleLink = (data) =>
     <a href={'https://maximaximal.github.io/limboole/#2' + cleanResultData(data)}
-       target='_blank'>
+       rel="noreferrer" target='_blank'>
         Check in Limboole
     </a>
