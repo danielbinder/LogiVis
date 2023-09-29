@@ -3,8 +3,11 @@ package algorithmTester;
 import marker.AlgorithmImplementation;
 import model.finite.FiniteAutomaton;
 import model.finite.State;
+import util.Pair;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 public class SampleImplementation implements AlgorithmImplementation {
     @Override
@@ -34,6 +37,43 @@ public class SampleImplementation implements AlgorithmImplementation {
                                 .map(state::getSuccessorsFor)
                                 .noneMatch(Set::isEmpty));
     }
+
+    @Override
+    public boolean isEquivalent(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        if(!automaton1.isDeterministic()) automaton1 = automaton1.toPowerAutomaton();
+        else if(!automaton1.isComplete()) automaton1 = automaton1.toSinkAutomaton();
+        if(!automaton2.isDeterministic()) automaton2 = automaton2.toPowerAutomaton();
+        else if(!automaton2.isComplete()) automaton2 = automaton2.toSinkAutomaton();
+
+        if(!automaton1.getAlphabet().equals(automaton2.getAlphabet())) return false;
+
+        Pair<State, State> initialPair = Pair.of(automaton1.getInitialStates().stream()
+                                                         .findAny()
+                                                         .orElseThrow(NoSuchElementException::new),
+                                                 automaton2.getInitialStates().stream()
+                                                         .findAny()
+                                                         .orElseThrow(NoSuchElementException::new));
+
+        return evaluatePair(new HashSet<>(), initialPair, automaton1.getAlphabet());
+    }
+
+    private boolean evaluatePair(Set<Pair<State, State>> visited, Pair<State, State> pair, Set<String> alphabet) {
+        if(visited.contains(pair)) return true;
+        visited.add(pair);
+
+        return pair.left.isInitialState == pair.right.isInitialState &&
+                pair.left.isFinalState == pair.right.isFinalState &&
+                alphabet.stream()
+                        .allMatch(letter -> evaluatePair(visited,
+                                                         Pair.of(pair.left.getSuccessorsFor(letter).stream()
+                                                                         .findAny()
+                                                                         .orElseThrow(NoSuchElementException::new),
+                                                                 pair.right.getSuccessorsFor(letter).stream()
+                                                                         .findAny()
+                                                                         .orElseThrow(NoSuchElementException::new)),
+                                                         alphabet));
+    }
+
     @Override
     public FiniteAutomaton toProductAutomaton(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
         FiniteAutomaton power = new FiniteAutomaton();

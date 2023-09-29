@@ -15,6 +15,7 @@ public interface AlgorithmImplementation {
 
     boolean isDeterministic(FiniteAutomaton automaton);
     boolean isComplete(FiniteAutomaton automaton);
+    boolean isEquivalent(FiniteAutomaton automaton1, FiniteAutomaton automaton2);
     FiniteAutomaton toProductAutomaton(FiniteAutomaton automaton1, FiniteAutomaton automaton2);
     FiniteAutomaton toPowerAutomaton(FiniteAutomaton automaton);
     FiniteAutomaton toComplementAutomaton(FiniteAutomaton automaton);

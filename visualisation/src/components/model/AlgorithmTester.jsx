@@ -14,7 +14,7 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
         setApplyLoading(true)
         fetch(algorithmURL + `/${algorithm}/${getModel}${requiresSecondModel() ? '/' + getSecondModel : ''}`)
             .then(response => response.json())
-            .then((data) => algorithm === 'isDeterministic' || algorithm === 'isComplete'
+            .then((data) => requiresSetSolutionTab()
                 ? setSolutionTab(data)
                 : setModelTab(data))
             .finally(() => setApplyLoading(false))
@@ -25,14 +25,18 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
         fetch(algorithmURL + `/test${algorithm.charAt(0).toUpperCase() + algorithm.slice(1)}/${getModel}
         ${requiresSecondModel() ? '/' + getSecondModel : ''}`)
             .then(response => response.json())
-            .then((data) => algorithm === 'isDeterministic' || algorithm === 'isComplete'
+            .then((data) => requiresSetSolutionTab()
                 ? setSolutionTab(data)
                 : setModelTab(data))
             .finally(() => setTestLoading(false))
     }
 
     function requiresSecondModel() {
-        return algorithm === 'toProductAutomaton'
+        return algorithm === 'toProductAutomaton' || algorithm === 'isEquivalent'
+    }
+
+    function requiresSetSolutionTab() {
+        return algorithm === 'isDeterministic' || algorithm === 'isComplete' || algorithm === 'isEquivalent'
     }
 
     return (
@@ -50,6 +54,7 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                         <option className='center' value=''>Choose</option>
                         <option value='isDeterministic'>isDeterministic</option>
                         <option value='isComplete'>isComplete</option>
+                        <option value='isEquivalent'>isEquivalent</option>
                         <option value='toProductAutomaton'>toProductAutomaton</option>
                         <option value='toPowerAutomaton'>toPowerAutomaton</option>
                         <option value='toComplementAutomaton'>toComplementAutomaton</option>

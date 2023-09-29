@@ -30,6 +30,14 @@ public class AlgorithmTester implements RestEndpoint {
                 .computeJSON();
     }
 
+    @GET("/isEquivalent/:automaton1/:automaton2")
+    public String isEquivalent(String automaton1, String automaton2) {
+        return new Result(() -> Model.of(preprocess(automaton1))
+                .toFiniteAutomaton()
+                .isEquivalent(Model.of(preprocess(automaton2)).toFiniteAutomaton()) ? "true" : "false")
+                .computeJSON();
+    }
+
     @GET("/toProductAutomaton/:automaton1/:automaton2")
     public String toProductAutomaton(String automaton1, String automaton2) {
         return new Result(() -> Model.of(preprocess(automaton1)).toFiniteAutomaton()
@@ -100,6 +108,15 @@ public class AlgorithmTester implements RestEndpoint {
     @GET("/testIsComplete/:automaton")
     public String testIsComplete(String automaton) {
         return new Result(() -> USER.isComplete(Model.of(preprocess(automaton)).toFiniteAutomaton())
+                ? "true"
+                : "false")
+                .computeJSON();
+    }
+
+    @GET("/testIsEquivalent/:automaton1/:automaton2")
+    public String testIsEquivalent(String automaton1, String automaton2) {
+        return new Result(() -> USER.isEquivalent(Model.of(preprocess(automaton1)).toFiniteAutomaton(),
+                                                  Model.of(preprocess(automaton2)).toFiniteAutomaton())
                 ? "true"
                 : "false")
                 .computeJSON();

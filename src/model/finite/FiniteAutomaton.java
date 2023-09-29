@@ -1,16 +1,18 @@
 package model.finite;
 
-import marker.AlgorithmImplementation;
 import marker.ModelVariant;
 import model.parser.Model;
 import model.parser.ModelNode;
-import util.Pair;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static marker.AlgorithmImplementation.SAMPLE;
 
 public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
     public static FiniteAutomaton of(Supplier<Collection<State>> stateSupplier) {
@@ -177,6 +179,25 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
     }
 
     @Override
+    public FiniteAutomaton clone() {
+        FiniteAutomaton clone = new FiniteAutomaton();
+
+        forEach(state -> {
+            State s = clone.getOrCreate(state.name);
+            s.isInitialState = state.isInitialState;
+            s.isFinalState = state.isFinalState;
+            s.isEncodingStart = state.isEncodingStart;
+            s.isEncodingEnd = state.isEncodingEnd;
+
+            state.getSuccessorProperties()
+                    .forEach(prop -> state.getSuccessorsFor(prop)
+                            .forEach(succ -> s.addSuccessor(prop, clone.getOrCreate(succ.name))));
+        });
+
+        return clone;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if(o instanceof FiniteAutomaton fa) {
             return fa.stream()
@@ -195,71 +216,39 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
         } else return false;
     }
 
-    public boolean isEquivalentTo(FiniteAutomaton other) {
-        FiniteAutomaton current = this;
-        if(!isDeterministic()) current = toPowerAutomaton();
-        else if(!current.isComplete()) current = toSinkAutomaton();
-        if(!other.isDeterministic()) other = other.toPowerAutomaton();
-        else if(!other.isComplete()) other = other.toSinkAutomaton();
-
-        if(!current.getAlphabet().equals(other.getAlphabet())) return false;
-
-        Pair<State, State> initialPair = Pair.of(current.getInitialStates().stream()
-                                                       .findAny()
-                                                       .orElseThrow(NoSuchElementException::new),
-                                               other.getInitialStates().stream()
-                                                       .findAny()
-                                                       .orElseThrow(NoSuchElementException::new));
-
-        return evaluatePair(new HashSet<>(), initialPair, current.getAlphabet());
-    }
-
-    private boolean evaluatePair(Set<Pair<State, State>> visited, Pair<State, State> pair, Set<String> alphabet) {
-        if(visited.contains(pair)) return true;
-        visited.add(pair);
-
-        return pair.left.isInitialState == pair.right.isInitialState &&
-                pair.left.isFinalState == pair.right.isFinalState &&
-                alphabet.stream()
-                        .allMatch(letter -> evaluatePair(visited,
-                                                         Pair.of(pair.left.getSuccessorsFor(letter).stream()
-                                                                         .findAny()
-                                                                         .orElseThrow(NoSuchElementException::new),
-                                                                 pair.right.getSuccessorsFor(letter).stream()
-                                                                         .findAny()
-                                                                         .orElseThrow(NoSuchElementException::new)),
-                                                         alphabet));
-    }
-
     public boolean isDeterministic() {
-        return AlgorithmImplementation.SAMPLE.isDeterministic(this);
+        return SAMPLE.isDeterministic(this);
     }
 
     public boolean isComplete() {
-        return AlgorithmImplementation.SAMPLE.isComplete(this);
+        return SAMPLE.isComplete(this);
+    }
+
+    public boolean isEquivalent(FiniteAutomaton other) {
+        return SAMPLE.isEquivalent(this, other);
     }
 
     public FiniteAutomaton toProductAutomaton(FiniteAutomaton other) {
-        return AlgorithmImplementation.SAMPLE.toProductAutomaton(this, other);
+        return SAMPLE.toProductAutomaton(this, other);
     }
 
     public FiniteAutomaton toPowerAutomaton() {
-        return AlgorithmImplementation.SAMPLE.toPowerAutomaton(this);
+        return SAMPLE.toPowerAutomaton(this);
     }
 
     public FiniteAutomaton toComplementAutomaton() {
-        return AlgorithmImplementation.SAMPLE.toComplementAutomaton(this);
+        return SAMPLE.toComplementAutomaton(this);
     }
 
     public FiniteAutomaton toSinkAutomaton() {
-        return AlgorithmImplementation.SAMPLE.toSinkAutomaton(this);
+        return SAMPLE.toSinkAutomaton(this);
     }
 
     public FiniteAutomaton toOracleAutomaton() {
-        return AlgorithmImplementation.SAMPLE.toOracleAutomaton(this);
+        return SAMPLE.toOracleAutomaton(this);
     }
 
     public FiniteAutomaton toOptimisedOracleAutomaton() {
-        return AlgorithmImplementation.SAMPLE.toOptimisedOracleAutomaton(this);
+        return SAMPLE.toOptimisedOracleAutomaton(this);
     }
 }
