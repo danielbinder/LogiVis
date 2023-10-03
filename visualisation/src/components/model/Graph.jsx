@@ -8,6 +8,7 @@ export default function Graph() {
     const setModelStatusMessage = useSetRecoilState(modelStatusMessageState)
     const [model, setModel] = useRecoilState(modelState)
     const [graph, setGraph] = useState('')
+    const [darkMode, setDarkMode] = useState(true)
 
     // whenever 'model' changes, the graph attempts to update
     useEffect(() => {
@@ -21,7 +22,7 @@ export default function Graph() {
 
         try {
             setGraph(model.split(';')
-                .map(model2Graph)
+                .map(m => model2Graph(m, darkMode))
                 .join('$'))
         } catch (e) {}
     }, [model])
@@ -32,18 +33,20 @@ export default function Graph() {
         </div>)
 }
 
-const model2Graph = (model) => {
+const model2Graph = (model, darkMode) => {
     const result = 'digraph {\n' +
         'ratio="0.5";\n' +
         'rankdir=LR;\n' +
-        'bgcolor="#1c1c1c";\n'
+        `bgcolor="${darkMode ? '#1c1c1c' : '#c7c7c7'}";\n`
 
     model = removeComments(model).replaceAll('\n', ' ')
 
-    return result + ((/S\s*?=\s*?\{.*?}/g).test(model) ? traditionalModel2Graph(model) : compactModel2Graph(model)) + '}'
+    return result + ((/S\s*?=\s*?\{.*?}/g).test(model)
+        ? traditionalModel2Graph(model, darkMode)
+        : compactModel2Graph(model, darkMode)) + '}'
 }
 
-const traditionalModel2Graph = (model) => {
+const traditionalModel2Graph = (model, darkMode) => {
     const states = model.match(/S\s*=\s*[{].*?[}]/g)[0]
         .replace(/(S\s*=\s*[{])|}/g, '')
         .split(',')
@@ -67,7 +70,7 @@ const traditionalModel2Graph = (model) => {
             const label = getLabel(s)
 
             return `${removeStateDescriptors(withoutLbl)} ` +
-            `[label="${label ? label : removeStateDescriptors(s)}" fontcolor="#c7c7c7" ` +
+            `[label="${label ? label : removeStateDescriptors(s)}" fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" ` +
             (withoutLbl.includes('>') && withoutLbl.includes('<')
                 ? `style=filled fillcolor="#1a7a5a" `
                 : withoutLbl.includes('>')
@@ -76,44 +79,44 @@ const traditionalModel2Graph = (model) => {
                         ? `style=filled fillcolor="#1a7a2a" `
                         : ``) +
             `${final.includes(removeStateDescriptors(withoutLabel(removeWhiteSpaces(s)))) ? 'shape=doublecircle' : 'shape=circle'} ` +
-            `color="#c7c7c7"];\n`
+            `color="${darkMode ? '#c7c7c7' : '#1c1c1c'}"];\n`
         }).join('') +
         initial.map(s => `none${initial.indexOf(s)} [shape=none label=""];\n`).join('') +
         initial.map(s => `none${initial.indexOf(s)} -> ${withoutLabel(s)} ` +
-            `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getLabel(s)}"];\n`).join('') +
+            `[color="${darkMode ? '#c7c7c7' : '#1c1c1c'}" fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" label="${getLabel(s)}"];\n`).join('') +
         transitions.map(t =>
             `${withoutLabel(t).replace('(', '')
                 .replace(')', '')
                 .replace(',', ' -> ')} ` +
-            `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getLabel(t)}"];\n`).join('')
+            `[color="${darkMode ? '#c7c7c7' : '#1c1c1c'}" fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" label="${getLabel(t)}"];\n`).join('')
 }
 
-const compactModel2Graph = (model) => {
+const compactModel2Graph = (model, darkMode) => {
     const transitions = model.split(',')
 
     return transitions.map(t => {
-        if(t.includes('->')) return t.split('->').map(createGraphNodeFromCState).join('')
-        else if(t.includes('-')) return t.split('-').map(createGraphNodeFromCState).join('')
-        else return createGraphNodeFromCState(t)
+        if(t.includes('->')) return t.split('->').map(s => createGraphNodeFromCState(s, darkMode)).join('')
+        else if(t.includes('-')) return t.split('-').map(s => createGraphNodeFromCState(s, darkMode)).join('')
+        else return createGraphNodeFromCState(t, darkMode)
     }).join('') +
         transitions.map(t => {
             const index = transitions.indexOf(t)
 
             if(t.includes('->'))
-                return createInitialAndFinalNode(index, t.split('->')[0], 'l') +
-                createInitialAndFinalNode(index, t.split('->')[1], 'r')
+                return createInitialAndFinalNode(index, t.split('->')[0], 'l', darkMode) +
+                createInitialAndFinalNode(index, t.split('->')[1], 'r', darkMode)
             else if(t.includes('-'))
-                return createInitialAndFinalNode(index, t.split('-')[0], 'l') +
-                createInitialAndFinalNode(index, t.split('-')[1], 'r')
-            else return createInitialAndFinalNode(index, t, 'c')
+                return createInitialAndFinalNode(index, t.split('-')[0], 'l', darkMode) +
+                createInitialAndFinalNode(index, t.split('-')[1], 'r', darkMode)
+            else return createInitialAndFinalNode(index, t, 'c', darkMode)
         }).join('') +
         transitions.map(t => {
             if(t.includes('->'))
                 return `${getStateName(t.split('->')[0])} -> ${getStateName(t.split('->')[1])} ` +
-                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}"];\n`
+                    `[color="${darkMode ? '#c7c7c7' : '#1c1c1c'}" fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" label="${getCTransitionLabel(t)}"];\n`
             else if(t.includes('-'))
                 return `${getStateName(t.split('-')[0])} -> ${getStateName(t.split('-')[1])} ` +
-                    `[color="#c7c7c7" fontcolor="#c7c7c7" label="${getCTransitionLabel(t)}" dir="both"];\n`
+                    `[color="${darkMode ? '#c7c7c7' : '#1c1c1c'}" fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" label="${getCTransitionLabel(t)}" dir="both"];\n`
             else return ''
         }).join('')
 }
@@ -157,12 +160,12 @@ const withoutLabel = (s) => s.includes('[')
 
 const removeStateDescriptors = (s) => s.replace(/[_*><]/g, '')
 
-const createGraphNodeFromCState = (s) => {
+const createGraphNodeFromCState = (s, darkMode) => {
     const cStateLabel = getCStateLabel(s)
     const withoutLbl = withoutLabel(s)
 
     return `${getStateName(s)} ` +
-    `[${cStateLabel ? `label="${cStateLabel}"` : ''} fontcolor="#c7c7c7" ` +
+    `[${cStateLabel ? `label="${cStateLabel}"` : ''} fontcolor="${darkMode ? '#c7c7c7' : '#1c1c1c'}" ` +
     (withoutLbl.includes('>') && withoutLbl.includes('<')
         ? `style=filled fillcolor="#1a7a5a" `
         : withoutLbl.includes('>')
@@ -171,17 +174,17 @@ const createGraphNodeFromCState = (s) => {
                 ? `style=filled fillcolor="#1a7a2a" `
                 : ``) +
     `${withoutLbl.includes('*') ? 'shape=doublecircle' : 'shape=circle'} ` +
-    `color="#c7c7c7"];\n`
+    `color="${darkMode ? '#c7c7c7' : '#1c1c1c'}"];\n`
 }
 
-const createInitialAndFinalNode = (index, s, uniqueAddition) => {
+const createInitialAndFinalNode = (index, s, uniqueAddition, darkMode) => {
     const stateName = getStateName(s)
     const withoutLbl = withoutLabel(s)
 
     return (withoutLbl.includes('_')
         ? `none${index + uniqueAddition} [shape=none label=""];\n` +
             `none${index + uniqueAddition} -> ${stateName} ` +
-            `[color="#c7c7c7"];\n`
+            `[color="${darkMode ? '#c7c7c7' : '#1c1c1c'}"];\n`
         : '') +
         (withoutLbl.includes('*')
             ? `${stateName} [shape=doublecircle];\n`
