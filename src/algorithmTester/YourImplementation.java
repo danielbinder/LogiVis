@@ -5,9 +5,7 @@ import model.finite.FiniteAutomaton;
 import model.finite.State;
 import util.Pair;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class YourImplementation implements AlgorithmImplementation {

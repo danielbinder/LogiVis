@@ -6,9 +6,8 @@ import servlet.Result;
 import servlet.rest.GET;
 import servlet.rest.REST;
 
-import java.util.regex.Matcher;
-
 import static marker.AlgorithmImplementation.USER;
+import static servlet.rest.REST.preprocess;
 
 public class AlgorithmTester implements RestEndpoint {
     public static void main(String[] args) {
@@ -169,9 +168,5 @@ public class AlgorithmTester implements RestEndpoint {
                 .toModel()
                 .toModelString())
                 .computeJSON();
-    }
-
-    private String preprocess(String raw) {
-        return raw.replaceAll(Matcher.quoteReplacement("$"), "\n");
     }
 }

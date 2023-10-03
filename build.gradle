@@ -4,11 +4,13 @@ plugins {
     id 'application'
 }
 
-version '1.5'
+version '1.5.1'
 
 application {
     mainClass = 'main.Main'
 }
+
+tasks.shadowJar.dependsOn test
 
 java {
     toolchain {
@@ -31,6 +33,13 @@ sourceSets {
         java {
             srcDirs = ['test']
         }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
     }
 }
 

@@ -1,23 +1,24 @@
 package servlet;
 
 import bool.BooleanGenerator;
+import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Parenthesiser;
+import bool.interpreter.Simplification;
 import bool.parser.logicnode.LogicNode;
 import marker.RestEndpoint;
 import model.finite.FiniteAutomatonGenerator;
-import model.parser.Model;
 import model.interpreter.ModelTracer;
 import model.kripke.KripkeGenerator;
-import bool.interpreter.BruteForceSolver;
-import bool.interpreter.Simplification;
 import model.kripke.KripkeTruthTable;
+import model.parser.Model;
 import servlet.rest.GET;
 import servlet.rest.REST;
 import temporal.solver.CTLSolver;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
+
+import static servlet.rest.REST.preprocess;
 
 public class Servlet implements RestEndpoint {
     private static final int APP_PORT = 3000;
@@ -150,11 +151,8 @@ public class Servlet implements RestEndpoint {
 
     @GET("/simplify/:formula")
     public String simplify(String formula) {
-        return new Result(() -> Simplification.of(preprocess(formula)).toString())
+        return new Result(() -> Simplification.of(preprocess(formula))
+                .toString())
                 .computeJSON();
-    }
-
-    private String preprocess(String raw) {
-        return raw.replaceAll(Matcher.quoteReplacement("$"), "\n");
     }
 }

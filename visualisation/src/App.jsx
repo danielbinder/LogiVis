@@ -1,7 +1,7 @@
 import React from 'react'
 import Solver from './components/solver/Solver'
 import Model from './components/model/Model'
-import {useRecoilState, useSetRecoilState} from 'recoil';
+import {useSetRecoilState} from 'recoil';
 import {
     evalErrorMessageState, evalStatusMessageState, evalWarningMessageState,
     formulaState, modelErrorMessageState, modelState, modelStatusMessageState, modelWarningMessageState,
@@ -12,7 +12,7 @@ import {cleanResultData, solutionInfoWarning} from './components/constants';
 export default function App() {
     const setFormula = useSetRecoilState(formulaState)
     const setSolution = useSetRecoilState(solutionState)
-    const [solutionInfo, setSolutionInfo] = useRecoilState(solutionInfoState)
+    const setSolutionInfo = useSetRecoilState(solutionInfoState)
     const setModel = useSetRecoilState(modelState)
     // status messages
     const setEvalStatusMessage = useSetRecoilState(evalStatusMessageState)

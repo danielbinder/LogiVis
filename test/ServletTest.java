@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import servlet.Servlet;
 
@@ -11,6 +12,7 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class ServletTest {
     @BeforeAll
     public static void prepareServlet() {

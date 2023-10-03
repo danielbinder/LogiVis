@@ -5,9 +5,8 @@ import marker.RestEndpoint;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
 
 import static spark.Spark.get;
 
@@ -16,7 +15,6 @@ import static spark.Spark.get;
  * IMPORTANT: Everything that uses this needs to implement RestEnpoint!
  */
 public class REST {
-
     static {
         spark.Spark.port(4000);
         spark.Spark.externalStaticFileLocation(getStaticFileLocation());
@@ -47,5 +45,9 @@ public class REST {
                 InvocationTargetException |
                 NoSuchMethodException |
                 InstantiationException ignored) {}
+    }
+
+    public static String preprocess(String raw) {
+        return raw.replaceAll(Matcher.quoteReplacement("$"), "\n");
     }
 }
