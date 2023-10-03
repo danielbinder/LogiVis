@@ -1,9 +1,19 @@
 @import url("https://fonts.googleapis.com/css?family=JetBrains Mono");
 
+:root {
+    --white: #c7c7c7;
+    --black: #1c1c1c;
+    --green: #069c3a;
+    --orange: #d65023;
+    --red: #d74952;
+    --blue: #0c83e7;
+    --purple: #9f5ed1;
+}
+
 * {
     font-family: "Segoe UI", Arial, sans-serif;
-    background-color: #1c1c1c;
-    color: #c7c7c7;
+    background-color: var(--black);
+    color: var(--white);
     border-radius: 3px;
 }
 
@@ -21,14 +31,14 @@
 }
 
 .green {
-    color: #11d10a;
+    color: var(--green);
     width: 99%;
     text-align: center;
     white-space: pre-wrap;
 }
 
 .orange {
-    color: #d1740a;
+    color: var(--orange);
     width: 99%;
     text-align: left;
     white-space: pre-wrap;
@@ -36,7 +46,7 @@
 }
 
 .red {
-    color: #d10a0a;
+    color: var(--red);
     width: 99%;
     text-align: left;
     white-space: pre-wrap;
@@ -45,7 +55,7 @@
 
 .requires {
     margin: 2px 0;
-    color: #d10a0a;
+    color: var(--red);
     width: 99%;
     text-align: left;
 }
@@ -160,7 +170,7 @@
 
 .graph {
     border-style: solid;
-    border-color: #c7c7c7;
+    border-color: var(--white);
     margin-left: 2px;
     margin-right: -1px;
     display: flex;
@@ -204,7 +214,7 @@
     height: 8px;
     border-radius: 50%;
     border: 3px solid;
-    border-color: #c7c7c7 transparent #c7c7c7 transparent;
+    border-color: var(--white) transparent var(--white) transparent;
     animation: loading 1.2s linear infinite;
 }
 
