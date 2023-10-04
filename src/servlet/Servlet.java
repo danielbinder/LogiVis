@@ -21,7 +21,7 @@ import java.util.Map;
 import static servlet.rest.REST.preprocess;
 
 public class Servlet implements RestEndpoint {
-    private static final int APP_PORT = 3000;
+    private static final int APP_PORT = 4000;
 
     public static void main(String[] args) {
         if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
