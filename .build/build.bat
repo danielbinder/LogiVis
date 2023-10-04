@@ -1,3 +1,3 @@
-./gradlew -p ./visualisation npm-run-build
-./gradlew shadowJar
+call ./gradlew -p ./visualisation npm-run-build
+call ./gradlew shadowJar
 pause
