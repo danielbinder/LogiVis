@@ -41,4 +41,8 @@ public enum BooleanTokenType {
                 .findFirst()
                 .orElseThrow(NoSuchElementException::new);
     }
+
+    public static boolean isValidCharacter(char c) {
+        return String.valueOf(c).matches("[a-z0-9&|!\\-><()EAXFGU]");
+    }
 }
