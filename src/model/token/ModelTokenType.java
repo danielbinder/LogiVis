@@ -43,4 +43,8 @@ public enum ModelTokenType {
                 .findFirst()
                 .orElseThrow(NoSuchElementException::new);
     }
+
+    public static boolean isValidCharacter(char c) {
+        return String.valueOf(c).matches("[a-z0-9SITF=,><_*!'\\-()\\[\\]{}]");
+    }
 }
