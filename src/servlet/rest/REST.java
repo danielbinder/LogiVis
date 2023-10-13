@@ -1,6 +1,7 @@
 package servlet.rest;
 
 import marker.RestEndpoint;
+import spark.Spark;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -15,9 +16,10 @@ import static spark.Spark.get;
  * IMPORTANT: Everything that uses this needs to implement RestEnpoint!
  */
 public class REST {
+
     static {
-        spark.Spark.port(4000);
-        spark.Spark.externalStaticFileLocation(getStaticFileLocation());
+        Spark.port(4000);
+        Spark.staticFiles.externalLocation(getStaticFileLocation());
     }
 
     private static String getStaticFileLocation() {
