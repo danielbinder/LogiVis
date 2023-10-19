@@ -1,4 +1,4 @@
-# <img src="https://github.com/danielbinder/LogiVis/visualisation/public/LogiVis.png" alt="LogiVis Logo" width="25" height="25">  LogiVis
+# <img src="https://github.com/danielbinder/LogiVis/blob/main/visualisation/public/LogiVis.png" alt="LogiVis Logo" width="25" height="25">  LogiVis
 LogiVis is a teaching aid for concepts and algorithms in logic.
 #### Recommended IDEs:
 - `IntelliJ IDEA` for Java back-end
