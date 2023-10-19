@@ -26,7 +26,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 6) Test your algorithm in the front-end
    - For this, use `Test your algorithm` or `Apply your algorithm`
    - `Apply algorithm` applies the sample implementation - NOT your implementation.
-### For contributors:
+### For contributors: See <a href='https://github.com/danielbinder/LogiVis/blob/main/Development.md'>Development.md</a>
 #### Back-end:
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
@@ -59,7 +59,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
    - On Linux, run the commands inside the `build.bat`. Preserve the order of the commands!
    - It compiles the front-end and pulls it into the JAR when compiling the back-end.
    - The JAR is located in `./build/libs/`
-   - You can test your Jar with `java -jar LogiVis-[VERSION]-all.jar`
+   - You can test your Jar with `java -jar LogiVis-[VERSION]-all.jar -extract`
      - If this does not work, your `path` environment variable is messed up. You can still run it using the full paths of the `java.exe` in your JDK and the full path of the `LogiVis.jar`, both wrapped in double quotes.
    - Or by right-clicking it in IntelliJ: `RMB -> Run '[NAME].jar'`
 #### Front-end:
