@@ -26,7 +26,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 6) Test your algorithm in the front-end
    - For this, use `Test your algorithm` or `Apply your algorithm`
    - `Apply algorithm` applies the sample implementation - NOT your implementation.
-### For contributors: See <a href='https://github.com/danielbinder/LogiVis/blob/main/Development.md'>Development.md</a>
+### For contributors:
 #### Back-end:
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
@@ -43,7 +43,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 5) Make your changes
    - Don't forget to also write Tests!!!
    - At least every time you encounter a bug in your code, write a test case for it that tests this specific bug. This way, you and other will never miss this bug in the future.
-   - You can find the full dev guidelines  with explanations here: `Development.md`
+   - You can find the full dev guidelines  with explanations here: <a href='https://github.com/danielbinder/LogiVis/blob/main/Development.md'>Development.md</a>
 6) Start `./src/main/Main.main(String[] args)`
    - You can use the existing run configuration `Main (DEV)`
      - In DEV mode, all Exceptions are caught, but stacktraces are still printed.
