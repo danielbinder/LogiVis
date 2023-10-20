@@ -1,6 +1,7 @@
 .idea/
 .gradle/
-build/
+/build
+!visualisation/build
 out/
 src/META-INF
 
