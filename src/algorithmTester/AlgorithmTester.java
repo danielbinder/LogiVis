@@ -10,11 +10,9 @@ import static marker.AlgorithmImplementation.USER;
 import static servlet.rest.REST.preprocess;
 
 public class AlgorithmTester implements RestEndpoint {
-    public static void main(String[] args) {
-        if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
-
+    public static void run() {
         REST.start();
-        System.out.println("Started AlgorithmTester!");
+        System.out.println("[INFO] Started AlgorithmTester");
     }
 
     @GET("/isDeterministic/:automaton")

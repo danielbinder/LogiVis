@@ -1,7 +1,6 @@
 package main;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -13,11 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FrontendExtractor {
-
     // command line argument required for the extractor to become active
     public static final String CLI_ARG_EXTRACT = "-extract";
 

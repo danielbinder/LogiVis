@@ -21,14 +21,9 @@ import java.util.Map;
 import static servlet.rest.REST.preprocess;
 
 public class Servlet implements RestEndpoint {
-    private static final int APP_PORT = 4000;
-
-    public static void main(String[] args) {
-        if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;
-
+    public static void run() {
         REST.start();
-        System.out.println("Started Servlet");
-        System.out.println("Go to: http://localhost:" + APP_PORT);
+        System.out.println("[INFO] Started Servlet");
     }
 
     @GET("/solve/:formula")

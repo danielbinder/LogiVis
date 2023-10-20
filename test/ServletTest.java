@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ServletTest {
     @BeforeAll
     public static void prepareServlet() {
-        Servlet.main(new String[]{});
+        Servlet.run();
     }
 
     @Test
