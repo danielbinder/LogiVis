@@ -1,4 +1,25 @@
 ## Development explanation and basic guidelines
+### 'I want to make a change' checklist
+1) Write a **L**ogiVis **E**nhancement **P**roposal and add it to `./LEP`
+    - Can be as short as you want as long as it's comprehensive
+    - Its status and further information will be visible in <a href='https://github.com/danielbinder/LogiVis/blob/main/LEP/LEP 0.md'>LEP 0</a>
+2) Make your changes on a **new branch** (don't forget about tests)
+    - Setup information can be viewed in the <a href='https://github.com/danielbinder/LogiVis/blob/main/README.md'>README</a>
+    - Make sure your changes don't violate our <a href='https://github.com/danielbinder/LogiVis/blob/main/LICENSE'>LICENSE</a>
+3) Run `./gradlew shadowJar` to compile changes
+    - It only compiles if all tests run through
+    - Test the `LogiVis.jar` you created
+4) Push the branch to this repository and open a pull request
+    - You need at least `1` approval from file owners
+    - A linear history is required, so `git rebase` on the `remote/main` branch to avoid pushing any merges
+5) Also change the following documents on your branch:
+    - Version in the `build.gradle`
+    - <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a> both your version and accumulated changes if necessary
+    - <a href='https://github.com/danielbinder/LogiVis/blob/main/README.md'>README</a> if you changed anything about how the project is built or run
+   - The status to `Implemented` or `Implemented*` in <a href='https://github.com/danielbinder/LogiVis/blob/LEP/LEP 0.md'>LEP 0</a>
+    - `screenshot.png` if necessary, but make it look a little interesting :)
+    - <a href='https://github.com/danielbinder/LogiVis/blob/main/Development.md'>THIS FILE</a> if necessary
+6) Choose the option with `Rebase` to merge the accepted pull request
 ### Code guidelines:
 1) Your code should be
    - Self explaining, adding clarifying comments only where necessary
