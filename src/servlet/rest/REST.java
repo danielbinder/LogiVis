@@ -3,7 +3,6 @@ package servlet.rest;
 import marker.RestEndpoint;
 import spark.Spark;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.TreeMap;
@@ -16,14 +15,8 @@ import static spark.Spark.get;
  * IMPORTANT: Everything that uses this needs to implement RestEnpoint!
  */
 public class REST {
-
-    static {
+    public static void setup() {
         Spark.port(4000);
-        Spark.staticFiles.externalLocation(getStaticFileLocation());
-    }
-
-    private static String getStaticFileLocation() {
-        return System.getProperty("user.dir") + File.separator + "visualisation" + File.separator + "build";
     }
 
     public static void start() {
