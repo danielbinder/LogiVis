@@ -4,8 +4,8 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 <img src="https://github.com/danielbinder/LogiVis/blob/main/screenshot.png" alt="LogiVis screenshot">
 
 * View the latest features in the <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a>
-* You can run the jar with `java -jar LogiVis-[VERSION].jar -run -extract`
-
+* You can run the jar with `java -jar LogiVis-[VERSION].jar -run -extract` from the folder where the jar is located
+   * Requires Java 21 (to be set up correctly in your path environment variable)
 ---
 ### Recommended development software:
 - `IntelliJ IDEA` for Java back-end
