@@ -68,7 +68,7 @@ public class FrontendExtractor {
         try (Stream<Path> pathStream = Files.walk(f.toPath())) {
             pathStream.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .peek(System.out::println)
+                    .peek(p -> System.out.println("[INFO] Deleted " + p))
                     .forEach(File::delete);
         }
     }
