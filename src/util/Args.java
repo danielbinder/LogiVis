@@ -12,17 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Args {
-    RUN("run", "Runs the Servlet, AlgorithmTester and the pre-built front-end", true, Main::run),
-    RUN_BACKEND("runBackend", "Runs the Servlet and AlgorithmTester", true, () -> {
+    EXTRACT("-extract", "Extracts the front-end out of the .jar file for execution", false, FrontendExtractor::extract),
+    RUN("-run", "Runs the Servlet, AlgorithmTester and the pre-built front-end", true, Main::run),
+    RUN_BACKEND("-runBackend", "Runs the Servlet and AlgorithmTester", true, () -> {
         Servlet.run();
         AlgorithmTester.run();
     }),
-    RUN_SERVLET("runServlet", "Runs the Servlet", true, Servlet::run),
-    RUN_ALGORITHM_TESTER("runAlgorithmTester", "Runs the AlgorithmTester", true, AlgorithmTester::run),
-    RUN_FRONTEND("runFrontend", "Runs the Frontend", true, Frontend::run),
-    DEV("dev", "Prints stack traces of exceptions to the console", false, () -> Result.DEV = true),
-    EXTRACT("extract", "Extracts the front-end out of the .jar file for execution", false, FrontendExtractor::extract),
-    HELP("help", "Prints all available arguments to the console", false, Args::help);
+    RUN_SERVLET("-runServlet", "Runs the Servlet", true, Servlet::run),
+    RUN_ALGORITHM_TESTER("-runAlgorithmTester", "Runs the AlgorithmTester", true, AlgorithmTester::run),
+    RUN_FRONTEND("-runFrontend", "Runs the Frontend", true, Frontend::run),
+    DEV("-dev", "Prints stack traces of exceptions to the console", false, () -> Result.DEV = true),
+    HELP("-help", "Prints all available arguments to the console", false, Args::help);
 
     private final String argText;
     private final String description;
@@ -55,6 +55,7 @@ public enum Args {
 
         Arrays.stream(values())
                 .filter(v -> argList.contains(v.argText))
+                .sorted()
                 .map(v -> v.task)
                 .forEach(Runnable::run);
     }
