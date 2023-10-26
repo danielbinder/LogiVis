@@ -15,9 +15,6 @@ import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 public class FrontendExtractor {
-    // command line argument required for the extractor to become active
-    public static final String CLI_ARG_EXTRACT = "-extract";
-
     // static frontend files/directories which are the result of a production build
     // (every entry is mapped to a boolean value indicating if the target file is a directory (true) or not (false))
     private static final Map<String, Boolean> frontendFiles = Map.of(

@@ -4,7 +4,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 <img src="https://github.com/danielbinder/LogiVis/blob/main/screenshot.png" alt="LogiVis screenshot">
 
 * View the latest features in the <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a>
-* You can run the jar with `java -jar LogiVis-[VERSION]-all.jar -run -extract`
+* You can run the jar with `java -jar LogiVis-[VERSION].jar -run -extract`
 
 ---
 ### Recommended development software:
@@ -68,7 +68,7 @@ There's a list of **L**ogiVis **E**nhancement **P**roposals and their status in 
    - It compiles the front-end and pulls it into the JAR when compiling the back-end.
    - If your front-end does not build, consider downloading the latest version of node (manually from the website)
    - The JAR is located in `./build/libs/`
-   - You can test your Jar with `java -jar LogiVis-[VERSION]-all.jar -run -extract`
+   - You can test your Jar with `java -jar LogiVis-[VERSION]-all.jar -run`
      - If this does not work, your `path` environment variable is messed up. You can still run it using the full paths of the `java.exe` in your JDK and the full path of the `LogiVis.jar`, both wrapped in double quotes.
    - Or by right-clicking it in IntelliJ: `RMB -> Run '[NAME].jar'`
      - Don't forget to add your arguments to the run configuration
