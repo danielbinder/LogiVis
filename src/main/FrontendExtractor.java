@@ -15,9 +15,6 @@ import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 public class FrontendExtractor {
-    // command line argument required for the extractor to become active
-    public static final String CLI_ARG_EXTRACT = "-extract";
-
     // static frontend files/directories which are the result of a production build
     // (every entry is mapped to a boolean value indicating if the target file is a directory (true) or not (false))
     private static final Map<String, Boolean> frontendFiles = Map.of(
@@ -53,18 +50,17 @@ public class FrontendExtractor {
                     }
                 }
             } catch (IOException ex) {
-                System.err.println("Error while extracting JAR contents (" + ex.getMessage() + ").");
-                ex.printStackTrace();
+                System.err.println("[ERROR] Error while extracting JAR contents (" + ex.getMessage() + ").");
             }
         } else {
-            System.out.println("Could not acquire path of JAR file.");
+            System.out.println("[WARNING] Could not acquire path of JAR file.");
         }
     }
 
     private static void initFrontendFolder() throws IOException {
         final File target = new File(TARGET_LOCATION);
         if (target.exists()) deleteRecursively(target);
-        if (target.mkdirs()) System.out.println("Created temporary frontend folder.");
+        if (target.mkdirs()) System.out.println("[INFO] Created temporary frontend folder.");
         installShutdownHook();
     }
 
@@ -85,7 +81,7 @@ public class FrontendExtractor {
                 Files.copy(is, Paths.get(target.toURI()));
             }
         }
-        System.out.println("Copied files: " + target.getPath());
+        System.out.println("[INFO] Copied files: " + target.getPath());
     }
 
     private static void installShutdownHook() {
@@ -94,7 +90,7 @@ public class FrontendExtractor {
                 final File file = new File(TARGET_LOCATION);
                 if (file.exists()) deleteRecursively(file.getParentFile());
             } catch (IOException ex) {
-                System.err.println("Could not remove temporary frontend folder.");
+                System.err.println("[ERROR] Could not remove temporary frontend folder.");
             }
         }));
     }
