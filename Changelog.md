@@ -20,7 +20,6 @@
 ---
 ### 1.5.2 Initial publication improvements
 * Made `.jar` buildable with one single command
-* Added LogiVis Enhancement Proposals in `/LEP`
 * Replaced application entry points with a single one
   * What is run is now defined by program arguments
 * Slightly adapted READMEs
