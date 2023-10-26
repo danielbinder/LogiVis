@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Args {
+    // KEEP 'EXTRACT' AT THE TOP, SINCE IT NEEDS TO BE EXECUTED FIRST
     EXTRACT("-extract", "Extracts the front-end out of the .jar file for execution", false, FrontendExtractor::extract),
     RUN("-run", "Runs the Servlet, AlgorithmTester and the pre-built front-end", true, Main::run),
     RUN_BACKEND("-runBackend", "Runs the Servlet and AlgorithmTester", true, () -> {
@@ -55,7 +56,7 @@ public enum Args {
 
         Arrays.stream(values())
                 .filter(v -> argList.contains(v.argText))
-                .sorted()
+                .sorted()       // makes sure the execution order is correct!
                 .map(v -> v.task)
                 .forEach(Runnable::run);
     }
