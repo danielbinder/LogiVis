@@ -5,7 +5,9 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 
 * View the latest features in the <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a>
 * You can run the jar with `java -jar LogiVis-[VERSION].jar -run -extract` from the folder where the jar is located
-   * Requires Java 21 (to be set up correctly in your path environment variable)
+   * Requires <a href='https://aws.amazon.com/corretto/'>Java 21</a>
+   * Set your `JAVA_HOME` environment variable to the JDK folder e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]`
+   * Set your `PATH` environment variable to the JDK/bin folder (where the java.exe lies) e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]\bin`
 ---
 ### Recommended development software:
 - `IntelliJ IDEA` for Java back-end
