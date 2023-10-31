@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main (DEV)" type="Application" factoryName="Application">
+  <configuration default="false" name="AlgorithmTester (DEV)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="main.Main" />
     <module name="LogiVis.main" />
-    <option name="PROGRAM_PARAMETERS" value="-dev -run" />
+    <option name="PROGRAM_PARAMETERS" value="-dev -runAlgorithmTester" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="main.*" />
