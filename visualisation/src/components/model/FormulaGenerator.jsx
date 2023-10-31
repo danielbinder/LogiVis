@@ -23,7 +23,7 @@ export default function FormulaGenerator({setFormulaTab}) {
 
     function handleButtonClick() {
         setLoading(true)
-        fetch(serverURL + '/generateFormula/' +
+        fetch(serverURL + (formulaType === 'boolean' ? '/generateBooleanFormula/' : '/generateCTLFormula/') +
             generationParameters.variables + "/"
             + generationParameters.operators)
             .then(response => response.json())
@@ -61,7 +61,6 @@ export default function FormulaGenerator({setFormulaTab}) {
                     />
                     <label htmlFor='operators'>Operators</label>
                 </div>
-                {formulaType !== 'boolean' && <Requires>Boolean Algebra</Requires>}
                 <div className='centerContainer'>
                     <button className='button' onClick={handleButtonClick}>
                         {loading && <div className='loading'></div>}

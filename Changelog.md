@@ -7,6 +7,7 @@
 * Evaluate a CTL formula on a given model
 ##### Generate:
 * Generate a boolean formula
+* Generate a CTL formula
 * Generate a Kripke Structure
 * Generate a Finite Automaton
 ##### Encode:

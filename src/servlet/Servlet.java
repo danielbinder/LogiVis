@@ -13,6 +13,7 @@ import model.kripke.KripkeTruthTable;
 import model.parser.Model;
 import servlet.rest.GET;
 import servlet.rest.REST;
+import temporal.CTLGenerator;
 import temporal.solver.CTLSolver;
 import util.Logger;
 
@@ -111,9 +112,15 @@ public class Servlet implements RestEndpoint {
                 .computeJSON();
     }
 
-    @GET("/generateFormula/:variables/:operators")
+    @GET("/generateBooleanFormula/:variables/:operators")
     public String generateFormula(String operators, String variables) {
         return new Result(() -> BooleanGenerator.generate(variables, operators))
+                .computeJSON();
+    }
+
+    @GET("/generateCTLFormula/:variables/:operators")
+    public String generateCTLFormula(String operators, String variables) {
+        return new Result(() -> CTLGenerator.generate(variables, operators))
                 .computeJSON();
     }
 
