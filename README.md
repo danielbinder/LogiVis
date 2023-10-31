@@ -37,8 +37,6 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 6) Test your algorithm in the front-end
    - For this, use `Test your algorithm` or `Apply your algorithm`
    - `Apply algorithm` applies the sample implementation - NOT your implementation.
-### For contributors:
-There's a list of **L**ogiVis **E**nhancement **P**roposals and their status in <a href='https://github.com/danielbinder/LogiVis/blob/main/LEP/LEP 0.md'>LEP 0</a>
 #### Back-end:
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
