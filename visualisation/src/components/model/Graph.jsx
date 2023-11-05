@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import Graphviz from 'graphviz-react';
 import {useRecoilState, useSetRecoilState} from 'recoil';
-import {modelState, modelStatusMessageState} from '../atoms';
+import {darkModeState, modelState, modelStatusMessageState} from '../atoms';
 import {modelPlaceholder, compactModelPlaceholder} from '../constants';
 
 export default function Graph() {
     const setModelStatusMessage = useSetRecoilState(modelStatusMessageState)
     const [model, setModel] = useRecoilState(modelState)
     const [graph, setGraph] = useState('')
-    const [darkMode, setDarkMode] = useState(true)
+    const [darkMode, setDarkMode] = useRecoilState(darkModeState)
 
     // whenever 'model' changes, the graph attempts to update
     useEffect(() => {
