@@ -18,6 +18,8 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
+### 1.5.4 Created light/dark mode button for graph
+* Clicking the button inverts the graph colors for all graphs
 ### 1.5.3 Added hints to buttons that refer you to tutorials
 * Also uploaded corresponding video tutorials to youtube.com/@LogiVis
 ### 1.5.2 Initial publication improvements

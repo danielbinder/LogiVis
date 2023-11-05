@@ -25,11 +25,15 @@ export default function Graph() {
                 .map(m => model2Graph(m, darkMode))
                 .join('$'))
         } catch (e) {}
-    }, [model])
+    }, [model, darkMode])
 
     return (
         <div>
-            {graph && graph.split('$').map(g => <Graphviz className='graph' dot={g}/>)}
+            <button className='graphStyleButton' onClick={() => setDarkMode((prevState) => !prevState)}>
+                {darkMode ? "🌞" : "🌑"}
+            </button>
+            {graph && graph.split('$').map(g =>
+                <Graphviz className={darkMode ? 'graphDark' : 'graphLight'} dot={g}/>)}
         </div>)
 }
 

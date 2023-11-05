@@ -252,17 +252,39 @@
     margin-right: 5px;
 }
 
-.graph {
+.graphDark {
     border-style: solid;
     border-color: var(--white);
+    background-color: var(--black);
     margin-left: 2px;
     margin-right: -1px;
     display: flex;
     justify-content: center;
 }
 
-.graph > svg {
+.graphLight {
+    border-style: solid;
+    border-color: var(--black);
+    background-color: var(--white);
+    margin-left: 2px;
+    margin-right: -1px;
+    display: flex;
+    justify-content: center;
+}
+
+.graphDark > svg {
     max-height: 215px;
+}
+
+.graphLight > svg {
+    max-height: 215px;
+    background-color: var(--white);
+}
+
+.graphStyleButton {
+    position: relative;
+    left: 654px;
+    top: 26px;
 }
 
 .parameters {
