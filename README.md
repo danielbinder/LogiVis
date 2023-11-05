@@ -61,7 +61,8 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
      - There are also run configurations for the individual components
      - `Servlet (DEV)`, `AlgorithmTester (DEV)` or `Backend (DEV)` for both
 7) To compile everything to a JAR, open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew shadowJar`
-   - ALWAYS increment AT LEAST the patch version number e.g. `5.2.3 -> 5.2.4` in the `./build.gradle`
+   - ALWAYS* increment AT LEAST the patch version number e.g. `5.2.3 -> 5.2.4` in the `./build.gradle`
+     - *Except for bug fixes - they just accumulate until the next version is released
      - If you added an entire module, increase the minor version e.g. `5.2.3 -> 5.3.0`
      - If the whole application is different, increase the major version e.g. `5.2.3 -> 6.0.0`
      - Don't forget to reload your gradle changes (in IntelliJ, there is a pop-up on the top right with the gradle elephant)
