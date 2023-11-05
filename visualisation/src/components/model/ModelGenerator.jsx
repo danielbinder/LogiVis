@@ -167,6 +167,9 @@ export default function ModelGenerator({setModelTab}) {
                     <button className='button' onClick={handleButtonClick}>
                         {loading && <div className='loading'></div>}
                         Generate Model
+                        <a className='modelGeneratorInfo' href='https://youtu.be/OTenhwKF0JM' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
                     </button>
                 </div>
             </fieldset>

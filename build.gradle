@@ -4,7 +4,7 @@ plugins {
     id 'application'
 }
 
-version '1.5.2'
+version '1.5.3'
 
 application {
     mainClass = 'main.Main'

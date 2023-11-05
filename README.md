@@ -9,6 +9,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
    * Set your `JAVA_HOME` environment variable to the downloaded JDK folder (don't forget to unzip it after downloading) e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]`
    * Set your `PATH` environment variable to the JDK/bin folder (where the java.exe lies) e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]\bin`
    * There might be other java paths in your `PATH` variable that you need to remove!
+  * You can see how the setup is done in <a href='https://youtu.be/lzKHhATYbmM'>this video</a>
 ---
 ### Recommended development software:
 - `IntelliJ IDEA` for Java back-end

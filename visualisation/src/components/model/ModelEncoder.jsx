@@ -109,6 +109,9 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
                     <button className='button' onClick={handleEncodeClick}>
                         {loadingEncode && <div className='loading'></div>}
                         Encode model
+                        <a className='modelEncoderInfo' href='https://youtu.be/7grzBILj4rM' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
                     </button>
                 </div>
             </fieldset>

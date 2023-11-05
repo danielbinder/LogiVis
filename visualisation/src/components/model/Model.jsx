@@ -2,7 +2,6 @@ import React from 'react';
 import ModelGenerator from './ModelGenerator';
 import ModelEncoder from './ModelEncoder';
 import FormulaGenerator from './FormulaGenerator';
-import ModelTypeSelector from './ModelTypeSelector';
 import AlgorithmTester from './AlgorithmTester';
 import Graph from './Graph';
 import {ErrorBoundary} from '../ErrorBoundary';
@@ -24,6 +23,9 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
 
     return (
         <div>
+            <a className='topRight' href='https://youtu.be/PyPAU3YHYFU' rel="noreferrer" target='_blank'>
+                &#9432;
+            </a>
             <div className='column'>
                 <h3 className='center'>Tune and apply parameters</h3>
                 <div className='parameters'>
@@ -57,6 +59,9 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 <p className='orange'>{modelWarningMessage}</p>
                 <p className='green'>{modelStatusMessage}</p>
                 <div className='model'>
+                    <a className='modelNotationInfo' href='https://youtu.be/JDQRmMbmgfM' rel="noreferrer" target='_blank'>
+                        &#9432;
+                    </a>
                     <textarea
                         className='textArea'
                         value={model}
@@ -71,7 +76,15 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                         <Graph/>
                     </ErrorBoundary>
                     <p>
-                        Code: <a href='https://github.com/danielbinder/LogiVis' rel="noreferrer" target='_blank'>github.com/danielbinder/LogiVis</a>
+                        Code
+                        <a className='inTextInfo' href='https://youtu.be/CLPqkk8B1pM' rel="noreferrer" target='_blank'>
+                            &nbsp;&#9432;&nbsp;
+                        </a>
+                        & Download
+                        <a className='inTextInfo' href='https://youtu.be/lzKHhATYbmM' rel="noreferrer" target='_blank'>
+                            &nbsp;&#9432;&nbsp;
+                        </a>
+                        : <a href='https://github.com/danielbinder/LogiVis' rel="noreferrer" target='_blank'>github.com/danielbinder/LogiVis</a>
                         <br></br>
                         Contributors:&nbsp;
                         <a href='https://github.com/danielbinder' rel="noreferrer" target='_blank'>Daniel Binder</a>,&nbsp;
