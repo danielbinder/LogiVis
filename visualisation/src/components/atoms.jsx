@@ -38,6 +38,11 @@ export const modelState = atom({
     effects: [syncEffect({refine: string()})]
 })
 
+export const darkModeState = atom({
+    key: 'darkMode',
+    default: true
+})
+
 // status messages
 
 export const evalStatusMessageState = atom({
