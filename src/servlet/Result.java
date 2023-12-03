@@ -78,11 +78,19 @@ public class Result {
     public String computeJSON() {
         return "{\n" +
                 // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
-                "\t\"result\": \"" + result.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"info\": \"" + info.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"warning\": \"" + warning.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"error\": \"" + error.replaceAll("\n", Matcher.quoteReplacement("$")) + "\"" +
+                "\t\"result\": \"" + replaceIllegalCharacters(result) + "\",\n" +
+                "\t\"info\": \"" + replaceIllegalCharacters(info) + "\",\n" +
+                "\t\"warning\": \"" + replaceIllegalCharacters(warning) + "\",\n" +
+                "\t\"error\": \"" +replaceIllegalCharacters(error) + "\"\n" +
                 "}";
+    }
+
+    private String replaceIllegalCharacters(String s) {
+        return s.replace("vvv_qmark", "\\u2754")
+                .replace("vvv_x", "\\u274C")
+                .replace("vvv_tick", "\\u2714")
+                .replace("\t", "    ")
+                .replaceAll("\n", Matcher.quoteReplacement("$"));
     }
 
     private static String JSONof(List<Map<String, Boolean>> listOfMap) {

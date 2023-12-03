@@ -10,9 +10,23 @@ import static marker.AlgorithmImplementation.USER;
 import static servlet.rest.REST.preprocess;
 
 public class AlgorithmTester implements RestEndpoint {
+    ImplementationValidator validator = new ImplementationValidator();
+
     public static void run() {
         REST.start();
         System.out.println("[INFO] Started AlgorithmTester");
+    }
+
+    @GET("/validate/:methodName")
+    public String validate(String methodName) {
+        return new Result(() -> validator.validate(methodName))
+                .computeJSON();
+    }
+
+    @GET("/validateAll")
+    public String validateAll() {
+        return new Result(() -> validator.validateAll())
+                .computeJSON();
     }
 
     @GET("/isDeterministic/:automaton")
