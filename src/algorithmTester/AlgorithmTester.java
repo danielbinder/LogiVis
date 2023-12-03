@@ -17,15 +17,15 @@ public class AlgorithmTester implements RestEndpoint {
         System.out.println("[INFO] Started AlgorithmTester");
     }
 
-    @GET("/validate/:methodName")
-    public String validate(String methodName) {
-        return new Result(() -> validator.validate(methodName))
+    @GET("/validate/:methodName/:name/:compact")
+    public String validate(String compact, String methodName, String name) {
+        return new Result(() -> validator.validate(methodName, name, Boolean.parseBoolean(compact)))
                 .computeJSON();
     }
 
-    @GET("/validateAll")
-    public String validateAll() {
-        return new Result(() -> validator.validateAll())
+    @GET("/validateAll/:name/:compact")
+    public String validateAll(String compact, String name) {
+        return new Result(() -> validator.validateAll(name, Boolean.parseBoolean(compact)))
                 .computeJSON();
     }
 

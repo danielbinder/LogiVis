@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TestReport<I, E> {
+    private static final String TICK = "vvv_tick";
+    private static final String QMARK = "vvv_qmark";
+    private static final String X = "vvv_x";
     private final Map<String, List<String>> testMap = new HashMap<>();
     private final BiFunction<E, E, Boolean> customEquals;
 
@@ -62,7 +65,7 @@ public class TestReport<I, E> {
 
     public void testFalse(String testName, BiFunction<I, I, Boolean> testFunction, List<I> inputs1, List<I> inputs2) {
         getFor(testName).addAll(IntStream.range(0, inputs1.size())
-                                        .mapToObj(i -> equalsBoolean(inputs1 + "\n" + inputs2,
+                                        .mapToObj(i -> equalsBoolean(inputs1.get(i) + "\n" + inputs2.get(i),
                                                                      () -> testFunction.apply(inputs1.get(i), inputs2.get(i)),
                                                                      false))
                                         .toList());
@@ -78,7 +81,7 @@ public class TestReport<I, E> {
 
     public void compare(String testName, BiFunction<I, I, E> testFunction, BiFunction<I, I, E> sampleFunction, List<I> inputs1, List<I> inputs2) {
         getFor(testName).addAll(IntStream.range(0, inputs1.size())
-                                        .mapToObj(i -> equals(inputs1 + "\n" + inputs2,
+                                        .mapToObj(i -> equals(inputs1.get(i) + "\n" + inputs2.get(i),
                                                               () -> testFunction.apply(inputs1.get(i), inputs2.get(i)),
                                                               () -> sampleFunction.apply(inputs1.get(i), inputs2.get(i))))
                                         .toList());
@@ -138,7 +141,7 @@ public class TestReport<I, E> {
         try {
             return equals(input, callable.call(), expected);
         } catch(Exception e) {
-            return failure(input, expected.toString(), e);
+            return failure(input, e.toString(), expected.toString());
         }
     }
 
@@ -188,28 +191,39 @@ public class TestReport<I, E> {
         }
     }
 
-    public String compile() {
+    public String compile(String name, boolean compact) {
         String result = testMap.entrySet().stream()
                 .map(e -> {
                     String test = e.getValue().stream()
                             .map(String::toString)
+                            .filter(s -> !compact || !s.contains(TICK))
                             .collect(Collectors.joining("\n"));
-                    return (test.contains("vvv_x")
-                                ? "vvv_x "
-                                : (test.contains("vvv_qmark")
-                                    ? "vvv_qmark "
-                                    : "vvv_tick ")) +
-                            e.getKey() + "\n" + test;
+                    if(test.contains(X)) return X + " " + e.getKey() +
+                            (compact
+                                    ? " " + (TICK + " ").repeat((int) e.getValue().stream().filter(s -> s.contains(TICK)).count())
+                                    : "") +
+                            "\n" + test;
+                    else if(test.contains(QMARK)) return QMARK + " " + e.getKey() +
+                            (compact
+                                    ? " " + (TICK + " ").repeat((int) e.getValue().stream().filter(s -> s.contains(TICK)).count())
+                                    : "") +
+                            "\n" + test;
+                    else if(compact) return TICK + " " + e.getKey() + " " + (TICK + " ").repeat((int) e.getValue().stream().filter(s -> s.contains(TICK)).count());
+                    else return TICK + " " + e.getKey() + "\n" + test;
                 })
                 .collect(Collectors.joining("\n"));
 
-        return "Verdict:" + verdict(result) + "\n\n" + result;
+        return "Verdict" + (!name.isBlank() ? " for " + name : "") + ":" + verdict(result) + "\n\n" + result;
     }
 
     private String verdict(String result) {
-        return "  vvv_tick " + (result.split("vvv_tick").length - 1) +
-                "  vvv_qmark " + (result.split("vvv_qmark").length - 1) +
-                "  vvv_x " + (result.split("vvv_x").length - 1);
+        return "  " + TICK + " " + count(result, TICK) +
+                "  " + QMARK + " " + count(result, QMARK) +
+                "  " + X + " " + count(result, X);
+    }
+
+    private int count(String string, String subString) {
+        return string.split(subString).length - 1;
     }
 
     public void sectionDivider(String testName) {
@@ -221,7 +235,7 @@ public class TestReport<I, E> {
     }
 
     private String success(String input) {
-        return "\tvvv_tick " + input.replace("\n", "\n\t   ");
+        return "\t" + TICK + " " + input.replace("\n", "\n\t   ");
     }
 
     public void uncertain(String testName, String s) {
@@ -229,7 +243,7 @@ public class TestReport<I, E> {
     }
 
     private String uncertain(String name) {
-        return "\tvvv_qmark " + name.replace("\n", "\n\t   ");
+        return "\t" + QMARK + " " + name.replace("\n", "\n\t   ");
     }
 
     public void failure(String testName, String input, String test, String expected) {
@@ -237,7 +251,7 @@ public class TestReport<I, E> {
     }
 
     private String failure(String input, String test, String expected) {
-        return "\tvvv_x " + input.replace("\n", "\n\t   ") + "\n" +
+        return "\t" + X + " " + input.replace("\n", "\n\t   ") + "\n" +
                 "\t\tExpected:\n\t\t\t" + expected.replace("\n", "\n\t\t\t") + "\n" +
                 "\t\tBut got:\n\t\t\t" + test.replace("\n", "\n\t\t\t");
     }
