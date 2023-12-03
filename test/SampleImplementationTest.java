@@ -55,6 +55,20 @@ public class SampleImplementationTest {
                                    Model.of("q4_* -> [c] q4, q4 - [d] q5, q5 -> [c] q6, q6 -> [d] q6, q6 - [c] q7, q7 -> [d] q4")
                                            .toFiniteAutomaton()));
 
+        assertTrue(Model.of("""
+                                    S = {s0}
+                                    I = {s0}
+                                    T = {(s0, s0) [as0]}
+                                    F = {s0}""")
+                           .toFiniteAutomaton()
+                           .isEquivalent(
+                                   Model.of("""
+                                    S = {s0}
+                                    I = {s0}
+                                    T = {(s0, s0) [as0]}
+                                    F = {s0}""")
+                                           .toFiniteAutomaton()));
+
         assertFalse(Model.of("q1_* -> [c] q1, q1 - [d] q2, q2 - [c] q3, q3 -> [d] q3")
                             .toFiniteAutomaton()
                             .isEquivalent(
