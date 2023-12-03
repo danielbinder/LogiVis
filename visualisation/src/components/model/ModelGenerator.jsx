@@ -154,7 +154,7 @@ export default function ModelGenerator({setModelTab}) {
                 </div>}
                 <div>
                     <input
-                        className='input'
+                        className='checkbox'
                         type='checkbox'
                         id='allReachable'
                         name='allReachable'

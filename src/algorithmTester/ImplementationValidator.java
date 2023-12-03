@@ -16,7 +16,7 @@ public class ImplementationValidator {
     private static final Function<String, FiniteAutomaton> automatonFunction = s -> Model.of(s).toFiniteAutomaton();
     private TestReport<String, FiniteAutomaton> testReport;
 
-    public String validateAll() {
+    public String validateAll(String name, boolean compact) {
         testReport = new TestReport<>(FiniteAutomaton::isEquivalent);
 
         if(isImplemented(() -> USER.isDeterministic(automaton("a")))) validateIsDeterministic();
@@ -29,10 +29,10 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.toOracleAutomaton(automaton("a")))) validateToOracleAutomaton();
         if(isImplemented(() -> USER.toOptimisedOracleAutomaton(automaton("a")))) validateToOptimisedOracleAutomaton();
 
-        return testReport.compile();
+        return testReport.compile(name, compact);
     }
 
-    public String validate(String method) {
+    public String validate(String method, String name, boolean compact) {
         testReport = new TestReport<>(FiniteAutomaton::isEquivalent);
 
         switch(method) {
@@ -47,7 +47,7 @@ public class ImplementationValidator {
             case "toOptimisedOracleAutomaton" -> validateToOptimisedOracleAutomaton();
         }
 
-        return testReport.compile();
+        return testReport.compile(name, compact);
     }
 
     private void validateIsDeterministic() {
@@ -275,14 +275,14 @@ public class ImplementationValidator {
     }
 
     private List<String> generateAutomatons() {
-        return IntStream.range(1, 20)
-                .mapToObj(i -> FiniteAutomatonGenerator.generate(i,
-                                                                 Math.max(i / 3, 1),
-                                                                 Math.max(i / 2, 1),
-                                                                 Math.min(i, 3),
-                                                                 1,
-                                                                 Math.min(i, 3),
-                                                                 false))
+        return IntStream.range(1, 23)
+                .mapToObj(i -> FiniteAutomatonGenerator.generate(6,
+                                                                 i % 3 + 1,
+                                                                 i % 4 + 1,
+                                                                 i % 3 + 1,
+                                                                 i % 2,
+                                                                 i % 4 + 1,
+                                                                 i % 3 == 0))
                 .map(FiniteAutomaton::toModel)
                 .map(Model::toString)
                 .toList();
@@ -293,7 +293,7 @@ public class ImplementationValidator {
             r.run();
             return true;
         } catch(Exception e) {
-            return !(e instanceof IllegalStateException) && e.getMessage().contains("not implemented yet!");
+            return !(e instanceof IllegalStateException) && !e.getMessage().contains("not implemented yet!");
         }
     }
 }
