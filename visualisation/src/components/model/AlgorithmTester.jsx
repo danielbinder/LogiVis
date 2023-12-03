@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {algorithmURL} from '../constants';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {modelSelector, secondModelSelector} from '../selectors';
 
 export default function AlgorithmTester({setSolutionTab, setModelTab}) {
     const [applyLoading, setApplyLoading] = useState(false)
     const [testLoading, setTestLoading] = useState(false)
+    const [validateLoading, setValidateLoading] = useState(false)
+    const [validateAllLoading, setValidateAllLoading] = useState(false)
     const [algorithm, setAlgorithm] = useState('')
     const getModel = useRecoilValue(modelSelector)
     const getSecondModel = useRecoilValue(secondModelSelector)
@@ -29,6 +31,22 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                 ? setSolutionTab(data)
                 : setModelTab(data))
             .finally(() => setTestLoading(false))
+    }
+
+    function handleValidateClick() {
+        setValidateLoading(true)
+        fetch(algorithmURL + `/validate/${algorithm}`)
+            .then(response => response.json())
+            .then(setSolutionTab)
+            .finally(() => setValidateLoading(false))
+    }
+
+    function handleValidateAllClick() {
+        setValidateAllLoading(true)
+        fetch(algorithmURL + `/validateAll`)
+            .then(response => response.json())
+            .then(setSolutionTab)
+            .finally(() => setValidateAllLoading(false))
     }
 
     function requiresSecondModel() {
@@ -76,6 +94,18 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                     <button className='button' onClick={handleTestClick}>
                         {testLoading && <div className='loading'></div>}
                         Test your algorithm
+                    </button>
+                </div>
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleValidateClick}>
+                        {validateLoading && <div className='loading'></div>}
+                        Validate algorithm
+                    </button>
+                </div>
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleValidateAllClick}>
+                        {validateAllLoading && <div className='loading'></div>}
+                        Validate all
                     </button>
                 </div>
             </fieldset>
