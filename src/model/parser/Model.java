@@ -5,7 +5,9 @@ import model.interpreter.ModelTracer;
 import model.kripke.KripkeNode;
 import model.kripke.KripkeStructure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Model extends ArrayList<ModelNode> {
@@ -80,28 +82,28 @@ public class Model extends ArrayList<ModelNode> {
                                     (n.isEncodingStartPoint ? ">" : "") +
                                     (n.isEncodingEndPoint ? "<" : "") +
                                     (!n.label.isBlank() ? " [" + n.label + "]" : ""))
-                            .collect(Collectors.joining(", ")) + "}\n"
+                            .collect(Collectors.joining(", ")) + "}"
                         : "") +
                 (stream().anyMatch(n -> n.isInitialNode)
-                        ? ("I = {" + stream()
+                        ? ("\nI = {" + stream()
                             .filter(n -> n.isInitialNode)
                             .map(n -> n.name)
-                            .collect(Collectors.joining(", ")) + "}\n")
+                            .collect(Collectors.joining(", ")) + "}")
                         : "") +
                 (stream().anyMatch(n -> !n.successors.isEmpty())
-                        ? "T = {" + stream()
+                        ? "\nT = {" + stream()
                             .filter(n -> !n.successors.isEmpty())
                             .map(n -> n.successors.entrySet().stream()
                                     .map(succ -> "(" + n.name + ", " + succ.getKey().name + ")" +
                                             (!succ.getValue().isBlank() ?" [" + succ.getValue() + "]" : ""))
                                     .collect(Collectors.joining(", ")))
-                            .collect(Collectors.joining(", ")) + "}\n"
+                            .collect(Collectors.joining(", ")) + "}"
                         : "") +
                 (stream().anyMatch(n -> n.isFinalNode)
-                        ? ("F = {" + stream()
+                        ? ("\nF = {" + stream()
                         .filter(n -> n.isFinalNode)
                         .map(n -> n.name)
-                        .collect(Collectors.joining(", ")) + "}\n")
+                        .collect(Collectors.joining(", ")) + "}")
                         : "");
     }
 

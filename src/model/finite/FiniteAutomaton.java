@@ -251,4 +251,9 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
     public FiniteAutomaton toOptimisedOracleAutomaton() {
         return SAMPLE.toOptimisedOracleAutomaton(this);
     }
+
+    @Override
+    public String toString() {
+        return toModel().toString();
+    }
 }
