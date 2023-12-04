@@ -30,9 +30,6 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 <h3 className='center'>Tune and apply parameters</h3>
                 <div className='parameters'>
                     <div className='smallColumn'>
-                        <FormulaGenerator
-                            setFormulaTab={setFormulaTab}
-                        />
                         <AlgorithmTester
                             setSolutionTab={setSolutionTab}
                             setModelTab={setModelTab}
@@ -48,6 +45,9 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                         />
                     </div>
                     <div className='smallColumn'>
+                        <FormulaGenerator
+                            setFormulaTab={setFormulaTab}
+                        />
                         <ModelGenerator
                             setModelTab={setModelTab}
                         />
