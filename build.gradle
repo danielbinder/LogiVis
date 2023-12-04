@@ -12,6 +12,9 @@ application {
 
 tasks.shadowJar.dependsOn test
 tasks.shadowJar.dependsOn ':visualisation:npm-run-build'
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:all"
+}
 
 java {
     toolchain {
