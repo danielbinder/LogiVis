@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TestReport<I, E> {
-    private static final String TICK = "vvv_tick";
-    private static final String QMARK = "vvv_qmark";
-    private static final String X = "vvv_x";
+    static final String TICK = "vvv_tick";
+    static final String QMARK = "vvv_qmark";
+    static final String X = "vvv_x";
     private final Map<String, List<String>> testMap = new HashMap<>();
     private final BiFunction<E, E, Boolean> customEquals;
 
@@ -198,6 +198,7 @@ public class TestReport<I, E> {
                             .map(String::toString)
                             .filter(s -> !compact || !s.contains(TICK))
                             .collect(Collectors.joining("\n"));
+
                     if(test.contains(X)) return X + " " + e.getKey() +
                             (compact
                                     ? " " + (TICK + " ").repeat((int) e.getValue().stream().filter(s -> s.contains(TICK)).count())

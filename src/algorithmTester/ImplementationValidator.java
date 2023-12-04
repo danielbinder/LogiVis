@@ -29,6 +29,7 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.toOracleAutomaton(automaton("a")))) validateToOracleAutomaton();
         if(isImplemented(() -> USER.toOptimisedOracleAutomaton(automaton("a")))) validateToOptimisedOracleAutomaton();
 
+        TestReportFile.compile(testReport.compile(name, false), name);
         return testReport.compile(name, compact);
     }
 
