@@ -78,19 +78,18 @@ public class Result {
     public String computeJSON() {
         return "{\n" +
                 // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
-                "\t\"result\": \"" + replaceIllegalCharacters(result) + "\",\n" +
-                "\t\"info\": \"" + replaceIllegalCharacters(info) + "\",\n" +
-                "\t\"warning\": \"" + replaceIllegalCharacters(warning) + "\",\n" +
-                "\t\"error\": \"" +replaceIllegalCharacters(error) + "\"\n" +
+                "\t\"result\": \"" + replaceIllegalCharacters(result).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"info\": \"" + replaceIllegalCharacters(info).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"warning\": \"" + replaceIllegalCharacters(warning).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"error\": \"" +replaceIllegalCharacters(error).replaceAll("\n", Matcher.quoteReplacement("$")) + "\"\n" +
                 "}";
     }
 
-    private String replaceIllegalCharacters(String s) {
+    private static String replaceIllegalCharacters(String s) {
         return s.replace("vvv_qmark", "\\u2754")
                 .replace("vvv_x", "\\u274C")
                 .replace("vvv_tick", "\\u2714")
-                .replace("\t", "    ")
-                .replaceAll("\n", Matcher.quoteReplacement("$"));
+                .replace("\t", "    ");
     }
 
     private static String JSONof(List<Map<String, Boolean>> listOfMap) {
