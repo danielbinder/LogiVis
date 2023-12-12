@@ -78,6 +78,8 @@ public class TestReportFile {
                                 "\t\t\"a\":\"" + sha512(name) + "\",\n" +
                                 // timestamp
                                 "\t\t\"ts\":\"" + sha512(timeStamp) + "\",\n" +
+                                // Username (on local PC)
+                                "\t\t\"un\":\"" + sha512(System.getProperty("user.name")) + "\",\n" +
                                 // verdict
                                 "\t\t\"v\":\"" + sha512(replaceCharacters(tests.split("\n")[0])) + "\",\n" +
                                 // raw content
