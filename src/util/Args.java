@@ -45,10 +45,10 @@ public enum Args {
 
         argList.stream()
                 .filter(arg -> !possibleArgs.contains(arg))
-                .forEach(arg -> System.out.println("[WARNING] Unknown argument: " + arg));
+                .forEach(arg -> Logger.warning("Unknown argument: " + arg));
         
         if((argList.contains("run") || argList.contains("runFrontend")) && !argList.contains("extract"))
-            System.out.println("[WARNING] If you're running this from the .jar, you should add '-extract' to your arguments, which is required for the frontend to run");
+            Logger.warning("If you're running this from the .jar, you should add '-extract' to your arguments, which is required for the frontend to run");
 
         if(Arrays.stream(values())
                 .filter(v -> argList.contains(v.argText))

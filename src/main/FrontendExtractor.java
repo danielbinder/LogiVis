@@ -1,5 +1,7 @@
 package main;
 
+import util.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,17 +52,17 @@ public class FrontendExtractor {
                     }
                 }
             } catch (IOException ex) {
-                System.err.println("[ERROR] Error while extracting JAR contents (" + ex.getMessage() + ").");
+                Logger.error("Error while extracting JAR contents (" + ex.getMessage() + ").");
             }
         } else {
-            System.out.println("[WARNING] Could not acquire path of JAR file.");
+            Logger.warning("Could not acquire path of JAR file.");
         }
     }
 
     private static void initFrontendFolder() throws IOException {
         final File target = new File(TARGET_LOCATION);
         if (target.exists()) deleteRecursively(target);
-        if (target.mkdirs()) System.out.println("[INFO] Created temporary frontend folder.");
+        if (target.mkdirs()) Logger.info("Created temporary frontend folder.");
         installShutdownHook();
     }
 
@@ -68,7 +70,7 @@ public class FrontendExtractor {
         try (Stream<Path> pathStream = Files.walk(f.toPath())) {
             pathStream.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .peek(p -> System.out.println("[INFO] Deleted " + p))
+                    .peek(p -> Logger.info("Deleted " + p))
                     .forEach(File::delete);
         }
     }
@@ -81,7 +83,7 @@ public class FrontendExtractor {
                 Files.copy(is, Paths.get(target.toURI()));
             }
         }
-        System.out.println("[INFO] Copied files: " + target.getPath());
+        Logger.info("Copied files: " + target.getPath());
     }
 
     private static void installShutdownHook() {
@@ -90,7 +92,8 @@ public class FrontendExtractor {
                 final File file = new File(TARGET_LOCATION);
                 if (file.exists()) deleteRecursively(file.getParentFile());
             } catch (IOException ex) {
-                System.err.println("[ERROR] Could not remove temporary frontend folder.");
+                Logger.error("Could not remove temporary frontend folder");
+                Logger.error(ex);
             }
         }));
     }
