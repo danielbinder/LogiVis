@@ -12,6 +12,7 @@
 3) Run `./gradlew shadowJar` to compile changes
     - It only compiles if all tests run through
     - Test the `LogiVis.jar` you created
+    - Don't forget to also commit the rebuilt frontend!
 4) Push the branch to this repository and open a pull request
     - You need at least `1` approval from file owners
     - A linear history is required, so `git rebase` on the `remote/main` branch to avoid pushing any merges
