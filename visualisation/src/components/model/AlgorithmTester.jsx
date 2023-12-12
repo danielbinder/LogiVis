@@ -95,7 +95,10 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                 <div className='centerContainer'>
                     <button className='button' onClick={handleTestClick}>
                         {testLoading && <div className='loading'></div>}
-                        Apply your algorithm
+                        Apply your own
+                        <a className='algorithmImplementationInfo' href='https://youtu.be/UXu0TBOh53U' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
                     </button>
                 </div>
                 <div>

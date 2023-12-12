@@ -115,6 +115,15 @@ public class YourImplementation implements AlgorithmImplementation {
          Pair<State, State> pair = Pair.of(s1, s2);
          State left = pair.left;
          State right = pair.right;
+
+         // You can clone an automaton if you want to work on it in place
+        FiniteAutomaton clonedVersion = automaton.clone();
+
+        // The following will show up in the frontend as warning (orange)
+        System.out.println("some warning");
+        // While Exceptions show up as errors in the frontend (red)
+        throw new IllegalStateException("Some exception");
+        // In dev mode, they will be printed to the console instead
     }
 
     @Override
