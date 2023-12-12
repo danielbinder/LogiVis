@@ -5,6 +5,7 @@ import model.parser.Model;
 import servlet.Result;
 import servlet.rest.GET;
 import servlet.rest.REST;
+import util.Logger;
 
 import static marker.AlgorithmImplementation.USER;
 import static servlet.rest.REST.preprocess;
@@ -14,7 +15,7 @@ public class AlgorithmTester implements RestEndpoint {
 
     public static void run() {
         REST.start();
-        System.out.println("[INFO] Started AlgorithmTester");
+        Logger.info("Started AlgorithmTester");
     }
 
     @GET("/validate/:methodName/:name/:compact")
