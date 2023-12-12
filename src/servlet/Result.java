@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import static util.Logger.stdOut;
+
 public class Result {
     //In DEV mode, stacktraces are printed to the console. Don't use in production!
     public static boolean DEV = false;
@@ -55,7 +57,6 @@ public class Result {
 
     public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream stdOut = System.out;
         System.setOut(new PrintStream(outputStream));
         try {
             T base = baseSupplier.get();
