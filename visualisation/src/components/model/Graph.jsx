@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import Graphviz from 'graphviz-react';
 import {useRecoilState, useSetRecoilState} from 'recoil';
-import {modelState, modelStatusMessageState} from '../atoms';
+import {darkModeState, modelState, modelStatusMessageState} from '../atoms';
 import {modelPlaceholder, compactModelPlaceholder} from '../constants';
 
 export default function Graph() {
     const setModelStatusMessage = useSetRecoilState(modelStatusMessageState)
     const [model, setModel] = useRecoilState(modelState)
     const [graph, setGraph] = useState('')
-    const [darkMode, setDarkMode] = useState(true)
+    const [darkMode, setDarkMode] = useRecoilState(darkModeState)
 
     // whenever 'model' changes, the graph attempts to update
     useEffect(() => {
@@ -25,11 +25,15 @@ export default function Graph() {
                 .map(m => model2Graph(m, darkMode))
                 .join('$'))
         } catch (e) {}
-    }, [model])
+    }, [model, darkMode])
 
     return (
         <div>
-            {graph && graph.split('$').map(g => <Graphviz className='graph' dot={g}/>)}
+            <button className='graphStyleButton' onClick={() => setDarkMode((prevState) => !prevState)}>
+                {darkMode ? "🌞" : "🌑"}
+            </button>
+            {graph && graph.split('$').map(g =>
+                <Graphviz className={darkMode ? 'graphDark' : 'graphLight'} dot={g}/>)}
         </div>)
 }
 

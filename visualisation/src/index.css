@@ -30,6 +30,90 @@
     margin: 10px;
 }
 
+.topRight {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    top: 5px;
+}
+
+.inTextInfo {
+    font-size: 10px;
+    text-decoration: none;
+}
+
+.simplifyInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 43px;
+}
+
+.checkInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 15px;
+}
+
+.parenthesiseInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 17px;
+}
+
+.formulaGeneratorInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 15px;
+}
+
+.algorithmTesterInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 19px;
+}
+
+.tracerInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 37px;
+}
+
+.modelGeneratorInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 19px;
+}
+
+.modelEncoderInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 24px;
+}
+
+.modelNotationInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -26px;
+    left: 677px;
+}
+
 .green {
     color: var(--green);
     width: 99%;
@@ -168,17 +252,39 @@
     margin-right: 5px;
 }
 
-.graph {
+.graphDark {
     border-style: solid;
     border-color: var(--white);
+    background-color: var(--black);
     margin-left: 2px;
     margin-right: -1px;
     display: flex;
     justify-content: center;
 }
 
-.graph > svg {
+.graphLight {
+    border-style: solid;
+    border-color: var(--black);
+    background-color: var(--white);
+    margin-left: 2px;
+    margin-right: -1px;
+    display: flex;
+    justify-content: center;
+}
+
+.graphDark > svg {
     max-height: 215px;
+}
+
+.graphLight > svg {
+    max-height: 215px;
+    background-color: var(--white);
+}
+
+.graphStyleButton {
+    position: relative;
+    left: 654px;
+    top: 26px;
 }
 
 .parameters {

@@ -70,6 +70,9 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
                 <button className='button' onClick={handleSimplify}>
                     {simplifyFormulaLoading && <div className='loading'></div>}
                     Simplify
+                    <a className='simplifyInfo' href='https://youtu.be/K1o87uwvaQU' rel="noreferrer" target='_blank'>
+                        &#9432;
+                    </a>
                 </button>}
             {formulaType === 'boolean' &&
                 <button className='leftBigDoubleButtonLeft' onClick={handleCheckFormula}>
@@ -80,6 +83,9 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
                 <button className='leftBigDoubleButtonRight' onClick={handleAllModels}>
                     {allModelsLoading && <div className='loading'></div>}
                     all
+                    <a className='checkInfo' href='https://youtu.be/QnphQwwmdHo' rel="noreferrer" target='_blank'>
+                        &#9432;
+                    </a>
                 </button>}
             {formulaType === 'boolean' &&
                 <button className='rightBigDoubleButtonLeft' onClick={handleParenthesise}>
@@ -90,6 +96,9 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
                 <button className='rightBigDoubleButtonRight' onClick={handleParenthesiseAll}>
                     {parenthesiseAllLoading && <div className='loading'></div>}
                     parenthesise
+                    <a className='parenthesiseInfo' href='https://youtu.be/n4lEA4JjBB8' rel="noreferrer" target='_blank'>
+                        &#9432;
+                    </a>
                 </button>}
             {formulaType === 'ctl' &&
                 <button className='button' onClick={handleCheckModel}>

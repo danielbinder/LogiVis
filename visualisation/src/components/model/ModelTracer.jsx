@@ -37,6 +37,9 @@ export default function ModelTracer({setSolutionTab}) {
                     <button className='button' onClick={handleTraceClick}>
                         {traceLoading && <div className='loading'></div>}
                         Find trace
+                        <a className='tracerInfo' href='https://youtu.be/ppiR0M2n7eA' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
                     </button>
                 </div>
                 <div className='centerContainer'>

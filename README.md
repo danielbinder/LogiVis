@@ -5,7 +5,11 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 
 * View the latest features in the <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a>
 * You can run the jar with `java -jar LogiVis-[VERSION].jar -run -extract` from the folder where the jar is located
-   * Requires Java 21 (to be set up correctly in your path environment variable)
+   * Requires <a href='https://aws.amazon.com/corretto/'>Java 21</a>
+   * Set your `JAVA_HOME` environment variable to the downloaded JDK folder (don't forget to unzip it after downloading) e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]`
+   * Set your `PATH` environment variable to the JDK/bin folder (where the java.exe lies) e.g. `C:\Users\[yourUser]\.jdks\[name of the downloaded jdk folder]\bin`
+   * There might be other java paths in your `PATH` variable that you need to remove!
+  * You can see how the setup is done in <a href='https://youtu.be/lzKHhATYbmM'>this video</a>
 ---
 ### Recommended development software:
 - `IntelliJ IDEA` for Java back-end
@@ -34,8 +38,6 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 6) Test your algorithm in the front-end
    - For this, use `Test your algorithm` or `Apply your algorithm`
    - `Apply algorithm` applies the sample implementation - NOT your implementation.
-### For contributors:
-There's a list of **L**ogiVis **E**nhancement **P**roposals and their status in <a href='https://github.com/danielbinder/LogiVis/blob/main/LEP/LEP 0.md'>LEP 0</a>
 #### Back-end:
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
@@ -60,7 +62,8 @@ There's a list of **L**ogiVis **E**nhancement **P**roposals and their status in 
      - There are also run configurations for the individual components
      - `Servlet (DEV)`, `AlgorithmTester (DEV)` or `Backend (DEV)` for both
 7) To compile everything to a JAR, open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew shadowJar`
-   - ALWAYS increment AT LEAST the patch version number e.g. `5.2.3 -> 5.2.4` in the `./build.gradle`
+   - ALWAYS* increment AT LEAST the patch version number e.g. `5.2.3 -> 5.2.4` in the `./build.gradle`
+     - *Except for bug fixes - they just accumulate until the next version is released
      - If you added an entire module, increase the minor version e.g. `5.2.3 -> 5.3.0`
      - If the whole application is different, increase the major version e.g. `5.2.3 -> 6.0.0`
      - Don't forget to reload your gradle changes (in IntelliJ, there is a pop-up on the top right with the gradle elephant)

@@ -40,6 +40,11 @@ public class SampleImplementation implements AlgorithmImplementation {
 
     @Override
     public boolean isEquivalent(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        if(automaton1.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
+        if(automaton2.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The second automaton does not have any!");
+
         if(!automaton1.isDeterministic()) automaton1 = automaton1.toPowerAutomaton();
         else if(!automaton1.isComplete()) automaton1 = automaton1.toSinkAutomaton();
         if(!automaton2.isDeterministic()) automaton2 = automaton2.toPowerAutomaton();
@@ -76,6 +81,11 @@ public class SampleImplementation implements AlgorithmImplementation {
 
     @Override
     public FiniteAutomaton toProductAutomaton(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        if(automaton1.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
+        if(automaton2.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The second automaton does not have any!");
+
         FiniteAutomaton power = new FiniteAutomaton();
 
          automaton1.getInitialStates()
@@ -113,6 +123,8 @@ public class SampleImplementation implements AlgorithmImplementation {
     public FiniteAutomaton toPowerAutomaton(FiniteAutomaton automaton) {
         if(automaton.isDeterministic() && automaton.isComplete()) return automaton;
 
+        if(automaton.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work, but this automaton does not have any!");
         FiniteAutomaton power = recursivePowerAutomaton(automaton, new FiniteAutomaton(), automaton.getInitialStates());
 
         if(power.contains("sink")) {

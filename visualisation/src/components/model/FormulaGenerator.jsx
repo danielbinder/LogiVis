@@ -65,6 +65,9 @@ export default function FormulaGenerator({setFormulaTab}) {
                     <button className='button' onClick={handleButtonClick}>
                         {loading && <div className='loading'></div>}
                         Generate formula
+                        <a className='formulaGeneratorInfo' href='https://youtu.be/BJx75bndTwE' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
                     </button>
                 </div>
             </fieldset>
