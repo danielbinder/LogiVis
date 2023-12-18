@@ -3,9 +3,13 @@ package temporal;
 import marker.Generator;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class CTLGenerator implements Generator {
-    private static final List<String> operationSymbols = List.of(" & ", " & ", " | ", " | ", " -> ", " <-> ");
+    private static final List<String> booleanOperationSymbols = List.of(" & ", " & ", " | ", " | ", " -> ", " <-> ");
+    private static final List<String> temporalOperationSymbols = List.of("EX(", "AX(",
+            "EF(", "AF(", "EG(", "AG(");
+    private static final List<String> untilOperators = List.of("E(%s U %s)", "A(%s U %s)");
 
     public static String generate(String variables, String operators) {
         int vars = Integer.parseInt(variables);
@@ -19,10 +23,11 @@ public class CTLGenerator implements Generator {
 
         StringBuilder formula = new StringBuilder();
         boolean endsWithOp = false;
+        boolean lastOpUntil = false;
         for(String varName : variableNames) {
-            formula.append(switch(Generator.pickRandom(9)) {
+            formula.append(switch((Integer) Generator.pickRandom(17)) {
                 // To even make !-chance 50% and (-chance 50%:
-                case 0, 6, 7, 8 -> "";
+                case Integer val when val == 0 || IntStream.range(11, 19).anyMatch(n -> n == val) -> "";
                 case 1 -> additionalOps-- > 0 ? "!" : "";
                 case 2 -> {
                     openParens++;
@@ -43,20 +48,56 @@ public class CTLGenerator implements Generator {
                         yield "!(!";
                     } else yield "(";
                 }
-                default -> throw new IllegalStateException("Unexpected value in BooleanGenerator!");
+                case 6 -> {
+                    openParens++;
+                    yield pickRandomTemporalOperator();
+                }
+                case 7 -> {
+                    openParens += 2;
+                    yield additionalOps-- > 0 ? "!(" + pickRandomTemporalOperator()
+                            : "(" + pickRandomTemporalOperator();
+                }
+                case 8 -> {
+                    openParens += 2;
+                    yield additionalOps-- > 0 ? "(!" + pickRandomTemporalOperator()
+                            : "(" + pickRandomTemporalOperator();
+                }
+                case 9 -> {
+                    if(additionalOps > 1) {
+                        openParens += 2;
+                        additionalOps -= 2;
+                        yield "!(!" + pickRandomTemporalOperator();
+                    } else {
+                        openParens++;
+                        yield "(" + pickRandomTemporalOperator();
+                    }
+                }
+                case 10 -> {
+                    additionalOps--;
+                    lastOpUntil = true;
+                    yield String.format(untilOperators.get(Generator.pickRandom(untilOperators.size())),
+                            variableNames.get(Generator.pickRandom(variableNames.size())),
+                            variableNames.get(Generator.pickRandom(variableNames.size())));
+                }
+                default -> throw new IllegalStateException("Unexpected value in CTLGenerator!");
             });
+
+            if(lastOpUntil) {
+                formula.append(booleanOperationSymbols.get(Generator.pickRandom(booleanOperationSymbols.size())));
+                lastOpUntil = false;
+            }
 
             formula.append(varName);
             endsWithOp = false;
 
-            if(openParens > 0 && Generator.pickRandom(2) == 0) {
+            if (openParens > 0 && Generator.pickRandom(2) == 0) {
                 openParens--;
                 formula.append(")");
             }
 
             // if(not last)
-            if(!varName.equals(variableNames.get(variableNames.size() - 1))) {
-                formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
+            if (!varName.equals(variableNames.get(variableNames.size() - 1))) {
+                formula.append(booleanOperationSymbols.get(Generator.pickRandom(booleanOperationSymbols.size())));
                 endsWithOp = true;
             }
         }
@@ -68,11 +109,11 @@ public class CTLGenerator implements Generator {
         int currVarName = 0;
         while(additionalOps > 0) {
             additionalOps--;
-            formula.append(operationSymbols.get(Generator.pickRandom(operationSymbols.size())));
+            formula.append(booleanOperationSymbols.get(Generator.pickRandom(booleanOperationSymbols.size())));
 
-            formula.append(switch(Generator.pickRandom(9)) {
+            formula.append(switch((Integer) Generator.pickRandom(17)) {
                 // To even make !-chance 50% and (-chance 50%:
-                case 0, 6, 7, 8 -> "";
+                case Integer val when val == 0 || IntStream.range(10, 17).anyMatch(n -> n == val) -> "";
                 case 1 -> additionalOps-- > 0 ? "!" : "";
                 case 2 -> {
                     openParens++;
@@ -93,7 +134,31 @@ public class CTLGenerator implements Generator {
                         yield "!(!";
                     } else yield "(";
                 }
-                default -> throw new IllegalStateException("Unexpected value in BooleanGenerator!");
+                case 6 -> {
+                    openParens++;
+                    yield pickRandomTemporalOperator();
+                }
+                case 7 -> {
+                    openParens += 2;
+                    yield additionalOps-- > 0 ? "!(" + pickRandomTemporalOperator()
+                            : "(" + pickRandomTemporalOperator();
+                }
+                case 8 -> {
+                    openParens += 2;
+                    yield additionalOps-- > 0 ? "(!" + pickRandomTemporalOperator()
+                            : "(" + pickRandomTemporalOperator();
+                }
+                case 9 -> {
+                    if(additionalOps > 1) {
+                        openParens += 2;
+                        additionalOps -= 2;
+                        yield "!(!" + pickRandomTemporalOperator();
+                    } else {
+                        openParens++;
+                        yield "(" + pickRandomTemporalOperator();
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected value in CTLGenerator!");
             });
 
             formula.append(variableNames.get(currVarName++));
@@ -109,5 +174,9 @@ public class CTLGenerator implements Generator {
         while(openParens-- > 0) formula.append(")");
 
         return formula.toString();
+    }
+
+    private static String pickRandomTemporalOperator() {
+        return temporalOperationSymbols.get(Generator.pickRandom(temporalOperationSymbols.size()));
     }
 }
