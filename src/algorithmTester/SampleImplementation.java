@@ -40,6 +40,11 @@ public class SampleImplementation implements AlgorithmImplementation {
 
     @Override
     public boolean isEquivalent(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        if(automaton1.equals(automaton2)) return true;
+
+        automaton1 = automaton1.clone();
+        automaton2 = automaton2.clone();
+
         if(automaton1.getInitialStates().isEmpty())
             throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
         if(automaton2.getInitialStates().isEmpty())
@@ -85,11 +90,14 @@ public class SampleImplementation implements AlgorithmImplementation {
             throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
         if(automaton2.getInitialStates().isEmpty())
             throw new IllegalArgumentException("This algorithm needs initial states to work! The second automaton does not have any!");
+        automaton1 = automaton1.clone();
+        automaton2 = automaton2.clone();
 
         FiniteAutomaton power = new FiniteAutomaton();
 
-         automaton1.getInitialStates()
-                 .forEach(s1 -> automaton2.getInitialStates()
+        FiniteAutomaton finalAutomaton = automaton2;
+        automaton1.getInitialStates()
+                 .forEach(s1 -> finalAutomaton.getInitialStates()
                          .forEach(s2 -> recursiveProductAutomaton(s1, s2, power)));
 
          return power;
@@ -122,6 +130,7 @@ public class SampleImplementation implements AlgorithmImplementation {
     @Override
     public FiniteAutomaton toPowerAutomaton(FiniteAutomaton automaton) {
         if(automaton.isDeterministic() && automaton.isComplete()) return automaton;
+        automaton = automaton.clone();
 
         if(automaton.getInitialStates().isEmpty())
             throw new IllegalArgumentException("This algorithm needs initial states to work, but this automaton does not have any!");
@@ -176,6 +185,7 @@ public class SampleImplementation implements AlgorithmImplementation {
     @Override
     public FiniteAutomaton toSinkAutomaton(FiniteAutomaton automaton) {
         if(automaton.isComplete()) return automaton;
+        automaton = automaton.clone();
 
         FiniteAutomaton sink = new FiniteAutomaton();
         State sinkstate = sink.getOrCreate("sink");

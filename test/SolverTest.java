@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Assumption: Lexer and Parser are correct!
@@ -151,14 +150,10 @@ public class SolverTest {
     }
 
     private Map<String, Boolean> getAssignment(String formula) {
-        var assignment = new BruteForceSolver(formula).solve();
-        System.out.println(assignment);
-        return assignment;
+        return new BruteForceSolver(formula).solve();
     }
 
     private List<Map<String, Boolean>> getAllAssignments(String formula) {
-        var allAssignments = new BruteForceSolver(formula).solveAll();
-        System.out.println(allAssignments);
-        return allAssignments;
+        return new BruteForceSolver(formula).solveAll();
     }
 }

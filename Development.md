@@ -3,18 +3,20 @@
 1) Make your changes on a **new branch** (don't forget about tests)
     - Setup information can be viewed in the <a href='https://github.com/danielbinder/LogiVis/blob/main/README.md'>README</a>
     - Make sure your changes don't violate our <a href='https://github.com/danielbinder/LogiVis/blob/main/LICENSE'>LICENSE</a>
-2) Run `./gradlew shadowJar` to compile changes
-    - It only compiles if all tests run through
-    - Test the `LogiVis.jar` you created
-3) Push the branch to this repository and open a pull request
-    - You need at least `1` approval from file owners
-    - A linear history is required, so `git rebase` on the `remote/main` branch to avoid pushing any merges
-4) Also change the following documents on your branch:
+2) Also change the following documents on your branch:
     - Version in the `build.gradle`
     - <a href='https://github.com/danielbinder/LogiVis/blob/main/Changelog.md'>Changelog</a> both your version and accumulated changes if necessary
     - <a href='https://github.com/danielbinder/LogiVis/blob/main/README.md'>README</a> if you changed anything about how the project is built or run
     - `screenshot.png` if necessary, but make it look a little interesting :)
     - <a href='https://github.com/danielbinder/LogiVis/blob/main/Development.md'>THIS FILE</a> if necessary
+3) Run `./gradlew shadowJar` to compile changes
+    - It only compiles if all tests run through
+    - Test the `LogiVis.jar` you created
+    - Don't forget to also commit the rebuilt frontend!
+4) Push the branch to this repository and open a pull request
+    - You need at least `1` approval from file owners
+    - A linear history is required, so `git rebase` on the `remote/main` branch to avoid pushing any merges
+    - Whoever creates the pull request first, gets to keep their version number in the `build.gradle`
 5) Choose the option with `Rebase` to merge the accepted pull request
 ### Code guidelines:
 1) Your code should be

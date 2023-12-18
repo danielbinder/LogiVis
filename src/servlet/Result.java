@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import static util.Logger.stdOut;
+
 public class Result {
     //In DEV mode, stacktraces are printed to the console. Don't use in production!
     public static boolean DEV = false;
@@ -55,7 +57,6 @@ public class Result {
 
     public <T> Result(Supplier<T> baseSupplier, Function<T, String> resultFunction, Function<T, String> infoFunction) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream stdOut = System.out;
         System.setOut(new PrintStream(outputStream));
         try {
             T base = baseSupplier.get();
@@ -78,11 +79,18 @@ public class Result {
     public String computeJSON() {
         return "{\n" +
                 // '$' has special meaning in Regex, Matcher.quoteReplacement() ignores that special meaning
-                "\t\"result\": \"" + result.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"info\": \"" + info.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"warning\": \"" + warning.replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"error\": \"" + error.replaceAll("\n", Matcher.quoteReplacement("$")) + "\"" +
+                "\t\"result\": \"" + replaceIllegalCharacters(result).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"info\": \"" + replaceIllegalCharacters(info).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"warning\": \"" + replaceIllegalCharacters(warning).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
+                "\t\"error\": \"" +replaceIllegalCharacters(error).replaceAll("\n", Matcher.quoteReplacement("$")) + "\"\n" +
                 "}";
+    }
+
+    private static String replaceIllegalCharacters(String s) {
+        return s.replace("vvv_qmark", "\\u2754")
+                .replace("vvv_x", "\\u274C")
+                .replace("vvv_tick", "\\u2714")
+                .replace("\t", "    ");
     }
 
     private static String JSONof(List<Map<String, Boolean>> listOfMap) {

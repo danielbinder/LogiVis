@@ -15,6 +15,7 @@ import servlet.rest.GET;
 import servlet.rest.REST;
 import temporal.CTLGenerator;
 import temporal.solver.CTLSolver;
+import util.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import static servlet.rest.REST.preprocess;
 public class Servlet implements RestEndpoint {
     public static void run() {
         REST.start();
-        System.out.println("[INFO] Started Servlet");
+        Logger.info("Started Servlet");
     }
 
     @GET("/solve/:formula")

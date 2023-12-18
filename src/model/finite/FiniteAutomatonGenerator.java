@@ -16,7 +16,7 @@ public class FiniteAutomatonGenerator implements Generator {
             Generator.error("The minimum alphabet size for more than 1 node needs to be at least 1 if minSuccessors is larger than 0!");
         if(alphabetSize < 1 && nodes > 1 && allReachable)
             Generator.error("The minimum alphabet size for more than 1 node needs to be at least 1 if all States should be reachable!");
-        if(alphabetSize > maxSuccessors * nodes) Generator.error(maxSuccessors * nodes + "transitions cannot accommodate an alphabet size of" + alphabetSize);
+        if(alphabetSize > maxSuccessors * nodes) Generator.error(maxSuccessors * nodes + " transitions cannot accommodate an alphabet size of " + alphabetSize);
         if(minSuccessors < 0) Generator.error("The minimum amount of successors needs to be at least 0!");
         if(minSuccessors > nodes) Generator.error("The amount of min successors can't be larger than the amount of nodes!");
         if(maxSuccessors < 0) Generator.error("The maximum amount of successors needs to be at least 0!");
@@ -36,11 +36,9 @@ public class FiniteAutomatonGenerator implements Generator {
         boolean allLettersUsed = false;
 
         if(allReachable && nodes > 1) {
-            List<State> reachable = new ArrayList<>(fa.stream()
-                                                                 .filter(state -> state.isInitialState)
+            List<State> reachable = new ArrayList<>(fa.stream().filter(state -> state.isInitialState)
                                                                  .toList());
-            List<State> unreachable = new ArrayList<>(fa.stream()
-                                                                   .filter(state -> !state.isInitialState)
+            List<State> unreachable = new ArrayList<>(fa.stream().filter(state -> !state.isInitialState)
                                                                    .toList());
 
             if(initialNodes == 0) {

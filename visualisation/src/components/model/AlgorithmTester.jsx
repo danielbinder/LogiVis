@@ -6,7 +6,11 @@ import {modelSelector, secondModelSelector} from '../selectors';
 export default function AlgorithmTester({setSolutionTab, setModelTab}) {
     const [applyLoading, setApplyLoading] = useState(false)
     const [testLoading, setTestLoading] = useState(false)
+    const [validateLoading, setValidateLoading] = useState(false)
+    const [validateAllLoading, setValidateAllLoading] = useState(false)
     const [algorithm, setAlgorithm] = useState('')
+    const [compactReport, setCompactReport] = useState(true)
+    const [reportAuthor, setReportAuthor] = useState('')
     const getModel = useRecoilValue(modelSelector)
     const getSecondModel = useRecoilValue(secondModelSelector)
 
@@ -29,6 +33,22 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                 ? setSolutionTab(data)
                 : setModelTab(data))
             .finally(() => setTestLoading(false))
+    }
+
+    function handleValidateClick() {
+        setValidateLoading(true)
+        fetch(algorithmURL + `/validate/${algorithm}/${reportAuthor === '' ? ' ' : reportAuthor}/${compactReport}`)
+            .then(response => response.json())
+            .then(setSolutionTab)
+            .finally(() => setValidateLoading(false))
+    }
+
+    function handleValidateAllClick() {
+        setValidateAllLoading(true)
+        fetch(algorithmURL + `/validateAll/${reportAuthor === '' ? ' ' : reportAuthor}/${compactReport}`)
+            .then(response => response.json())
+            .then(setSolutionTab)
+            .finally(() => setValidateAllLoading(false))
     }
 
     function requiresSecondModel() {
@@ -75,7 +95,44 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                 <div className='centerContainer'>
                     <button className='button' onClick={handleTestClick}>
                         {testLoading && <div className='loading'></div>}
-                        Test your algorithm
+                        Apply your own
+                        <a className='algorithmImplementationInfo' href='https://youtu.be/UXu0TBOh53U' rel="noreferrer" target='_blank'>
+                            &#9432;
+                        </a>
+                    </button>
+                </div>
+                <div>
+                    <input
+                        className='textInput'
+                        type='text'
+                        id='reportAuthor'
+                        name='reportAuthor'
+                        placeholder='Report Author'
+                        value={reportAuthor}
+                        onChange={({target: {value}}) => setReportAuthor(value)}
+                    />
+                </div>
+                <div>
+                    <input
+                        className='checkbox'
+                        type='checkbox'
+                        id='compactReport'
+                        name='compactReport'
+                        checked={compactReport}
+                        onChange={() => setCompactReport(!compactReport)}
+                    />
+                    <label htmlFor='compactReport'>Compact Report</label>
+                </div>
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleValidateClick}>
+                        {validateLoading && <div className='loading'></div>}
+                        Validate algorithm
+                    </button>
+                </div>
+                <div className='centerContainer'>
+                    <button className='button' onClick={handleValidateAllClick}>
+                        {validateAllLoading && <div className='loading'></div>}
+                        Validate all
                     </button>
                 </div>
             </fieldset>

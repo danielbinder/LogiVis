@@ -82,6 +82,14 @@
     left: 19px;
 }
 
+.algorithmImplementationInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 19px;
+}
+
 .tracerInfo {
     position: relative;
     font-size: 10px;
@@ -250,6 +258,18 @@
 .input {
     width: 50px;
     margin-right: 5px;
+}
+
+.checkbox {
+    width: 50px;
+    margin-top: 10px;
+    margin-right: -5px;
+}
+
+.textInput {
+    width: 142px;
+    margin-top: 10px;
+    margin-left: 21px;
 }
 
 .graphDark {

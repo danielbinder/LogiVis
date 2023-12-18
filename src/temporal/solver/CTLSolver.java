@@ -1,14 +1,17 @@
 package temporal.solver;
 
 import bool.interpreter.Simplification;
-import lexer.Lexer;
 import bool.parser.BooleanParser;
+import lexer.Lexer;
 import servlet.Result;
 import temporal.model.KripkeStruct;
 import temporal.model.State;
 import temporal.model.Transition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class CTLSolver {
@@ -560,7 +563,7 @@ public class CTLSolver {
     private void logStep(String message, String... params) {
         if(!message.isEmpty()) {
             if(params.length != 0) {
-                message = String.format(message, (Object []) params);
+                message = String.format(message, (Object[]) params);
             }
             this.solverSteps.append(message);
             this.solverSteps.append("\n");
