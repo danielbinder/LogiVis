@@ -560,7 +560,7 @@ public class CTLSolver {
     private void logStep(String message, String... params) {
         if(!message.isEmpty()) {
             if(params.length != 0) {
-                message = String.format(message, params);
+                message = String.format(message, (Object []) params);
             }
             this.solverSteps.append(message);
             this.solverSteps.append("\n");

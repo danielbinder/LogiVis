@@ -3,7 +3,6 @@ package bool;
 import marker.Generator;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class BooleanGenerator implements Generator {
     private static final List<String> operationSymbols = List.of(" & ", " & ", " | ", " | ", " -> ", " <-> ");
