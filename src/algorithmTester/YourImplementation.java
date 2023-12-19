@@ -144,6 +144,11 @@ public class YourImplementation implements AlgorithmImplementation {
     }
 
     @Override
+    public boolean isSimulatedBy(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        throw new IllegalStateException("Algorithm 'isSimulatedBy' is not implemented yet!");
+    }
+
+    @Override
     public boolean areReachable(FiniteAutomaton automaton) {
         Set<State> toCheck = automaton.getEncodingEnds();
         throw new IllegalStateException("Algorithm 'isReachable' is not implemented yet!");

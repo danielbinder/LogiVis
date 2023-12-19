@@ -52,11 +52,11 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
     }
 
     function requiresSecondModel() {
-        return  ['toProductAutomaton', 'isEquivalent'].includes(algorithm)
+        return  ['toProductAutomaton', 'isEquivalent', 'isSimulatedBy'].includes(algorithm)
     }
 
     function requiresSetSolutionTab() {
-        return ['isDeterministic', 'isComplete', 'isEquivalent', 'areReachable'].includes(algorithm)
+        return ['isDeterministic', 'isComplete', 'isEquivalent', 'isSimulatedBy', 'areReachable'].includes(algorithm)
     }
 
     return (
@@ -82,6 +82,7 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                         <option value='toSinkAutomaton'>toSinkAutomaton</option>
                         <option value='toOracleAutomaton'>toOracleAutomaton</option>
                         <option value='toOptimisedOracleAutomaton'>toOptimisedOracleAutomaton</option>
+                        <option value='isSimulatedBy'>isSimulatedBy</option>
                     </select>
                 </div>
                 <div className='centerContainer'>
