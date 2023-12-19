@@ -19,6 +19,8 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
+### 1.5.7 CTL Formula Generator
+* Added CTL formula generator
 ### 1.5.6 Created Logger
 * Contains static methods that log to `System.out` even when called in `Result`
 * Added video on how to create and test your own algorithm to frontend
