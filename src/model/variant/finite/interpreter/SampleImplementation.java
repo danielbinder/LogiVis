@@ -168,6 +168,13 @@ public class SampleImplementation implements AlgorithmImplementation {
         return power;
     }
 
+
+    @Override
+    public boolean isSimulatedBy(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
+        // TODO
+        return true;
+    }
+
     private FiniteAutomaton recursivePowerAutomaton(FiniteAutomaton original, FiniteAutomaton power, Set<State> current) {
         State powerstate = power.getOrCreate(combinedName(current));
 

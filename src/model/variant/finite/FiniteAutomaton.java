@@ -232,6 +232,10 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
         return SAMPLE.isEquivalent(this, other);
     }
 
+    public boolean isSimulatedBy(FiniteAutomaton other) {
+        return SAMPLE.isSimulatedBy(this, other);
+    }
+
     public boolean areReachable() {
         return SAMPLE.areReachable(this);
     }
