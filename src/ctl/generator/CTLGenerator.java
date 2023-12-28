@@ -25,7 +25,7 @@ public class CTLGenerator implements Generator {
         boolean endsWithOp = false;
         boolean lastOpUntil = false;
         for(String varName : variableNames) {
-            formula.append(switch((Integer) Generator.pickRandom(17)) {
+            formula.append(switch((Integer) Generator.pickRandom(19)) {
                 // To even make !-chance 50% and (-chance 50%:
                 case Integer val when val == 0 || IntStream.range(11, 19).anyMatch(n -> n == val) -> "";
                 case 1 -> additionalOps-- > 0 ? "!" : "";
@@ -63,17 +63,15 @@ public class CTLGenerator implements Generator {
                             : "(" + pickRandomTemporalOperator();
                 }
                 case 9 -> {
+                    openParens += 2;
                     if(additionalOps > 1) {
-                        openParens += 2;
                         additionalOps -= 2;
                         yield "!(!" + pickRandomTemporalOperator();
                     } else {
-                        openParens++;
                         yield "(" + pickRandomTemporalOperator();
                     }
                 }
                 case 10 -> {
-                    additionalOps--;
                     lastOpUntil = true;
                     yield String.format(untilOperators.get(Generator.pickRandom(untilOperators.size())),
                             variableNames.get(Generator.pickRandom(variableNames.size())),
@@ -149,12 +147,11 @@ public class CTLGenerator implements Generator {
                             : "(" + pickRandomTemporalOperator();
                 }
                 case 9 -> {
+                    openParens += 2;
                     if(additionalOps > 1) {
-                        openParens += 2;
                         additionalOps -= 2;
                         yield "!(!" + pickRandomTemporalOperator();
                     } else {
-                        openParens++;
                         yield "(" + pickRandomTemporalOperator();
                     }
                 }
