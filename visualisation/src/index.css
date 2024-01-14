@@ -66,6 +66,14 @@
     left: 17px;
 }
 
+.checkModelInfo {
+    position: relative;
+    font-size: 10px;
+    text-decoration: none;
+    bottom: -1px;
+    left: 28px;
+}
+
 .formulaGeneratorInfo {
     position: relative;
     font-size: 10px;
