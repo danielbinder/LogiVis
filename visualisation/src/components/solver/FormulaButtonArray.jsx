@@ -104,6 +104,9 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
                 <button className='button' onClick={handleCheckModel}>
                     {checkModelLoading && <div className='loading'></div>}
                     Check model
+                    <a className='checkModelInfo' href='https://youtu.be/68CpPHSrQ9o' rel="noreferrer" target='_blank'>
+                        &#9432;
+                    </a>
                 </button>}
         </div>
     )
