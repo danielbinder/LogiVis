@@ -4,6 +4,7 @@ import lexer.Lexer;
 import marker.Parser;
 import model.token.ModelToken;
 import model.token.ModelTokenType;
+import util.Error;
 
 import java.util.*;
 
@@ -25,15 +26,7 @@ public class ModelParser implements Parser {
         try {
             return parse(tokens);
         } catch(IllegalArgumentException e) {
-            String line = input.split("\n")[current.line - 1];
-            int col = current.col;
-            if(line.length() > 40) {
-                line = line.substring(Math.max(0, col - 40), Math.min(line.length(), col + 40));
-                col = col - 40 < 0 ? col : 40;
-            }
-
-            System.out.println(line);
-            System.out.println(" ".repeat(col - 1) + "^");
+            Error.printPosition(input.split("\n")[current.line - 1], current.col);
             throw e;
         }
     }
