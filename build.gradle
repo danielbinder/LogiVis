@@ -10,9 +10,13 @@ application {
     mainClass = 'main.Main'
 }
 
-tasks.shadowJar.dependsOn test
-tasks.compileJava.dependsOn ':visualisation:npm-run-build'
-tasks.withType(JavaCompile) {
+shadowJar {
+    setArchiveClassifier(null)
+    dependsOn test
+}
+
+compileJava {
+    dependsOn ':visualisation:npm-run-build'
     options.compilerArgs << "-Xlint:all"
 }
 

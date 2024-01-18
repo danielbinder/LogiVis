@@ -16,7 +16,7 @@ LogiVis is a teaching aid for concepts and algorithms in logic.
 - `IntelliJ IDEA` for Java back-end
 - `WebStorm` for React front-end
 - `Git Extensions` for Git operations
-### For AlgorithmTesters:
+### For algorithm testers:
 You can see how the setup is done in <a href='https://youtu.be/UXu0TBOh53U'>this video</a>
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
@@ -40,6 +40,7 @@ You can see how the setup is done in <a href='https://youtu.be/UXu0TBOh53U'>this
 6) Test your algorithm in the front-end
    - For this, use `Test your algorithm` or `Apply your algorithm`
    - `Apply algorithm` applies the sample implementation - NOT your implementation.
+### For contributors:
 #### Back-end:
 1) Set your IDE to use `Java 21+`
    - You can download it from <a href='https://aws.amazon.com/corretto/'>here</a>
@@ -73,7 +74,7 @@ You can see how the setup is done in <a href='https://youtu.be/UXu0TBOh53U'>this
    - It compiles the front-end and pulls it into the JAR when compiling the back-end.
    - If your front-end does not build, consider downloading the latest version of node (manually from the website)
    - The JAR is located in `./build/libs/`
-   - You can test your Jar with `java -jar LogiVis-[VERSION]-all.jar -run`
+   - You can test your Jar with `java -jar LogiVis-[VERSION].jar -run`
      - If this does not work, your `path` environment variable is messed up. You can still run it using the full paths of the `java.exe` in your JDK and the full path of the `LogiVis.jar`, both wrapped in double quotes.
    - Or by right-clicking it in IntelliJ: `RMB -> Run '[NAME].jar'`
      - Don't forget to add your arguments to the run configuration
