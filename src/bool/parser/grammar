@@ -1,20 +1,20 @@
-Formula         =               Expression
+Formula             =           DoubleImplication
 
-Expression      =               Logic
+DoubleImplication   =           Implication { '<->' Implication }
 
-Logic           =               Implication '<->' Implication
+Implication         =           Expression { '->' Expression }
 
-Implication     =               Or '->' Or
+Expression          =           Term { '|' Term }
 
-Or              =               And '|' And
+Term                =           Factor { '&' Factor }
 
-And             =               Not '&' Not
+Factor              =           '!' Factor
+                    |           Atom
 
-Not             =               '!' Formula
-                |               Action
-                |               Constant
-                |               '(' Formula ')'
+Atom                =           Action
+                    |           Constant
+                    |           '(' Formula ')'
 
-Action          =               \Regex: [a-z]+([a-z]*[0-9]*)*
+Action              =           \Regex: [a-z][a-z0-9]*
 
-Constant        =               'false' | 'true' | '0' | '1'
+Constant            =           'false' | 'true' | '0' | '1'
