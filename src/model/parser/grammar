@@ -3,7 +3,7 @@ Model           =               Traditional
 
 Label           =               '[' {Name | String} ']'
 
-Name            =               \Regex: !?[a-z]+([a-z]*[0-9]*)*
+Name            =               \Regex: !?[a-z][a-z0-9]*
 
 String          =               \Regex: '.*'
 
