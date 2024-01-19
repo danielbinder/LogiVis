@@ -4,9 +4,9 @@ import algorithmTester.SampleImplementation;
 import algorithmTester.YourImplementation;
 import model.finite.FiniteAutomaton;
 import model.finite.State;
-import model.kripke.KripkeStructure;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public interface AlgorithmImplementation {
@@ -34,6 +34,18 @@ public interface AlgorithmImplementation {
                 : collection.stream()
                 .map(node -> node.name)
                 .sorted()
+                .collect(Collectors.joining());
+    }
+
+    default String unsortedCombinedName(State... nodes) {
+        return unsortedCombinedName(Arrays.stream(nodes).toList());
+    }
+
+    default String unsortedCombinedName(Collection<State> collection) {
+        return collection.isEmpty()
+                ? "sink"
+                : collection.stream()
+                .map(node -> node.name)
                 .collect(Collectors.joining());
     }
 }
