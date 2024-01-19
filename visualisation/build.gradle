@@ -3,5 +3,9 @@ plugins {
 }
 
 tasks.register( "npm-run-build", NpmTask) {
+    onlyIf {
+        gradle.taskGraph.hasTask(':shadowJar')
+    }
+
     args = ['run', 'build']
 }
