@@ -105,7 +105,7 @@ public class SampleImplementation implements AlgorithmImplementation {
 
     private void recursiveProductAutomaton(State s1, State s2, FiniteAutomaton product) {
         // S = S1 x S2
-        State productstate = product.getOrCreate(combinedName(s1, s2));
+        State productstate = product.getOrCreate(unsortedCombinedName(s1, s2));
         // I = I1 x I2
         if(s1.isInitialState && s2.isInitialState) productstate.isInitialState = true;
         // F = F1 x F2
@@ -116,9 +116,9 @@ public class SampleImplementation implements AlgorithmImplementation {
         for(String prop1 : s1.getSuccessorProperties()){
             for(State succ1 : s1.getSuccessorsFor(prop1)) {
                 for(State succ2 : s2.getSuccessorsFor(prop1)) {
-                    if(productstate.getSuccessorsFor(prop1).contains(product.getOrCreate(combinedName(succ1, succ2)))) continue;
+                    if(productstate.getSuccessorsFor(prop1).contains(product.getOrCreate(unsortedCombinedName(succ1, succ2)))) continue;
 
-                    productstate.addSuccessor(prop1, product.getOrCreate(combinedName(succ1, succ2)));
+                    productstate.addSuccessor(prop1, product.getOrCreate(unsortedCombinedName(succ1, succ2)));
 
                     recursiveProductAutomaton(succ1, succ2, product);
                 }

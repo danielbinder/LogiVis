@@ -110,6 +110,8 @@ public class YourImplementation implements AlgorithmImplementation {
         String combinedName = combinedName(s1, s2, s3);
         // You can also create a combinedName from a Collection
         String anotherCombinedName = combinedName(Set.of(s1, s2));
+        // Sometimes you shouldn't sort the states, so there is also
+        String s2s1s3 = unsortedCombinedName(s2, s1, s3);
 
         //Feel free to use the Pair class if you need it
          Pair<State, State> pair = Pair.of(s1, s2);
