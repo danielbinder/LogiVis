@@ -1,4 +1,4 @@
-package servlet.rest;
+package util.rest;
 
 import marker.RestEndpoint;
 import spark.Spark;

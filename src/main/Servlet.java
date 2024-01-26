@@ -1,26 +1,28 @@
-package servlet;
+package main;
 
-import bool.BooleanGenerator;
+import bool.generator.BooleanGenerator;
 import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Parenthesiser;
 import bool.interpreter.Simplification;
 import bool.parser.logicnode.LogicNode;
+import ctl.generator.CTLGenerator;
+import ctl.interpreter.CTLSolver;
+import ctl.parser.ctlnode.CTLNode;
 import marker.RestEndpoint;
-import model.finite.FiniteAutomatonGenerator;
 import model.interpreter.ModelTracer;
-import model.kripke.KripkeGenerator;
-import model.kripke.KripkeTruthTable;
 import model.parser.Model;
-import servlet.rest.GET;
-import servlet.rest.REST;
-import temporal.CTLGenerator;
-import temporal.solver.CTLSolver;
+import model.variant.finite.FiniteAutomatonGenerator;
+import model.variant.kripke.KripkeGenerator;
+import model.variant.kripke.KripkeTruthTable;
 import util.Logger;
+import util.Result;
+import util.rest.GET;
+import util.rest.REST;
 
 import java.util.List;
 import java.util.Map;
 
-import static servlet.rest.REST.preprocess;
+import static util.rest.REST.preprocess;
 
 public class Servlet implements RestEndpoint {
     public static void run() {
@@ -77,9 +79,14 @@ public class Servlet implements RestEndpoint {
 
     @GET("/solveCTL/:formula/:model")
     public String solveCTL(String formula, String model) {
-        return new CTLSolver(Model.of(preprocess(model))
-                                     .toKripkeStructure()
-                                     .toOtherKripke()).getSatisfyingStatesAsResult(preprocess(formula)).computeJSON();
+        return new Result(() -> new CTLSolver(Model.of(preprocess(model)).toKripkeStructure()),
+                          solver -> List.of(solver.solve(CTLNode.of(preprocess(formula)))),
+                          solver -> String.join("\n", solver.solutionInfo),
+                          Map.of())
+                .computeJSON();
+//        return new CTLSolver(Model.of(preprocess(model))
+//                                     .toKripkeStructure()
+//                                     .toOtherKripke()).getSatisfyingStatesAsResult(preprocess(formula)).computeJSON();
     }
 
     @GET("/generateKripke/:nodes/:initialNodes/:variables/:minSuccessors/:maxSuccessors/:allReachable")
