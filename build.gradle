@@ -2,9 +2,11 @@ plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'application'
+    id 'maven-publish'
 }
 
-version '1.5.7'
+group = 'com.github.danielbinder'
+version '1.6.0'
 
 application {
     mainClass = 'main.Main'
@@ -61,4 +63,12 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.8.1"
+}
+
+publishing {
+    publications {
+        pub(MavenPublication) {
+            artifact shadowJar
+        }
+    }
 }

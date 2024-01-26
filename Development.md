@@ -20,13 +20,30 @@
 5) Choose the option with `Rebase` to merge the accepted pull request
 ### Code guidelines:
 1) Your code should be
-   - Self explaining, adding clarifying comments only where necessary
-   - Object Oriented
-   - Expandable
-   - Usable for a purpose that is as generic as possible/sensible
-   - Self-contained - it should not depend on implementation details of other packages and other packages should also not depend on your implementation. This is especially true for the information being sent over REST i.e. your implementation should not be specifically designed to be a String - **modeling your object structure according to the underlying concepts comes first and converting it from and to a String should be the afterthought!**
+    - Self explaining, adding clarifying comments only where necessary
+    - Object Oriented
+    - Expandable
+    - Usable for a purpose that is as generic as possible/sensible
+    - Self-contained - it should not depend on implementation details of other packages and other packages should also not depend on your implementation. This is especially true for the information being sent over REST i.e. your implementation should not be specifically designed to be a String - **modeling your object structure according to the underlying concepts comes first and converting it from and to a String should be the afterthought!**
 2) Write Tests!
-   - Whenever you encounter a bug in your code, write a test case that reproduces it, so no one will ever run into that same bug! This also makes testing your fix faster.
+    - Whenever you encounter a bug in your code, write a test case that reproduces it, so no one will ever run into that same bug! This also makes testing your fix faster.
+### Repository structure:
+Often, changes in one class also require changes up- or downstream,
+which is why the repository is grouped by concepts (e.g. bool, ctl, model) and not by function (e.g. Lexer, Parser, Interpreter)
+
+- ConceptRepresentations (e.g. bool, ctl, and model)
+  - lexer
+  - parser
+  - interpreter - anything that uses the ConceptRepresentation
+  - generator
+  - variant (e.g. finite and kripke are ModelVariants)
+    - lexer/parser/interpreter/generator (if they are more than one class big, otherwise they reside in this package directly)
+    - variant
+      - and so on...
+- algorithmTester - for custom algorithm implementations (so they are easy to find)
+- main - contains all program parts directly executed by Args
+- marker - contain marker interfaces and abstract classes that don't belong inside a certain ConceptRepresentation
+- util - for all utility classes (never create a class Util!)
 ### Explanation:
 Write your code without thinking about sending it over REST.
 The `Result` class in `./src/servlet` will take care of that.
