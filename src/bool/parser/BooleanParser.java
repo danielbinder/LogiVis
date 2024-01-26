@@ -1,35 +1,18 @@
 package bool.parser;
 
+import bool.lexer.BooleanLexer;
+import bool.lexer.token.BooleanToken;
+import bool.lexer.token.BooleanTokenType;
 import bool.parser.logicnode.*;
-import bool.token.BooleanToken;
-import bool.token.BooleanTokenType;
-import lexer.Lexer;
 import marker.Parser;
-import util.Error;
 
-import java.util.List;
-
-public class BooleanParser implements Parser {
-    private List<BooleanToken> booleanTokens;
-    private BooleanToken current;
-    private int i;
-
-    public LogicNode parse(String input) {
-        List<BooleanToken> tokens = Lexer.tokenizeBooleanFormula(input);
-
-        try {
-            return parse(tokens);
-        } catch(IllegalArgumentException e) {
-            Error.printPosition(input.split("\n")[current.line - 1], current.col);
-            throw e;
-        }
+public class BooleanParser extends Parser<BooleanTokenType, BooleanToken, LogicNode> {
+    public static LogicNode parse(String input) {
+        return new BooleanParser().parse(input, BooleanLexer::tokenize);
     }
 
-    public LogicNode parse(List<BooleanToken> booleanTokens) {
-        this.booleanTokens = booleanTokens;
-        i = 0;
-        advance();
-
+    @Override
+    protected LogicNode start() {
         return formula();
     }
 
@@ -37,80 +20,26 @@ public class BooleanParser implements Parser {
         return doubleImplication();
     }
 
-    /**
-     * DoubleImplication = Implication ('<->' Implication)*
-     */
     private LogicNode doubleImplication() {
-        LogicNode result = implication();
-
-        while(isType(BooleanTokenType.DOUBLE_IMPLICATION)) {
-            advance();
-            result = new DoubleImplicationNode(result, implication());
-        }
-
-        return result;
+        return subRepetitionTTSub_(this::implication, BooleanTokenType.DOUBLE_IMPLICATION, DoubleImplicationNode::new);
     }
 
-    /**
-     * Implication = Expression ('->' Expression)*
-     */
     private LogicNode implication() {
-        LogicNode result = expression();
-
-        while(isType(BooleanTokenType.IMPLICATION)) {
-            advance();
-            result = new ImplicationNode(result, expression());
-        }
-
-        return result;
+        return subRepetitionTTSub_(this::expression, BooleanTokenType.IMPLICATION, ImplicationNode::new);
     }
 
-    /**
-     * Expression = Term ('|' Term)*
-     */
     private LogicNode expression() {
-        LogicNode result = term();
-
-        while(isType(BooleanTokenType.OR)) {
-            advance();
-            result = new OrNode(result, term());
-        }
-
-        return result;
+        return subRepetitionTTSub_(this::term, BooleanTokenType.OR, OrNode::new);
     }
 
-    /**
-     * Term = Factor ('&' Factor)*
-     */
     private LogicNode term() {
-        LogicNode result = factor();
-
-        while(isType(BooleanTokenType.AND)) {
-            advance();
-            result = new AndNode(result, factor());
-        }
-
-        return result;
+        return subRepetitionTTSub_(this::factor, BooleanTokenType.AND, AndNode::new);
     }
 
-    /**
-     * Factor = ('!')? Factor
-     *        | Atom
-     */
     private LogicNode factor() {
-        if(isType(BooleanTokenType.NOT)) {
-            advance();
-            return new NegationNode(factor());
-        }
-
-        return atom();
+        return optionalTT_Sub(BooleanTokenType.NOT, this::atom, NegationNode::new);
     }
 
-    /**
-     * Atom = Action
-     *      | Constant
-     *      | '(' Formula ')'
-     */
     private LogicNode atom() {
         LogicNode result;
 
@@ -127,15 +56,5 @@ public class BooleanParser implements Parser {
 
         advance();
         return result;
-    }
-
-    /* H E L P E R S */
-
-    private void advance() {
-        if(i < booleanTokens.size()) current = booleanTokens.get(i++);
-    }
-
-    private boolean isType(BooleanTokenType type) {
-        return current.type == type;
     }
 }

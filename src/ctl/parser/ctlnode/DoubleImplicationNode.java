@@ -1,9 +1,9 @@
-package bool.parser.logicnode;
+package ctl.parser.ctlnode;
 
 /**
  * left <-> right i.e., left -> right & right -> left
  */
-public record DoubleImplicationNode(LogicNode left, LogicNode right) implements LogicNode {
+public record DoubleImplicationNode(CTLNode left, CTLNode right) implements CTLNode {
     @Override
     public String toString() {
         return "(" + left.toString() + " <-> " + right.toString() + ")";

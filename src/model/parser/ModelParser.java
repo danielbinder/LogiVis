@@ -1,41 +1,30 @@
 package model.parser;
 
-import lexer.Lexer;
 import marker.Parser;
-import model.token.ModelToken;
-import model.token.ModelTokenType;
-import util.Error;
+import model.lexer.ModelLexer;
+import model.lexer.token.ModelToken;
+import model.lexer.token.ModelTokenType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static model.token.ModelTokenType.*;
+import static model.lexer.token.ModelTokenType.*;
 
-public class ModelParser implements Parser {
+public class ModelParser extends Parser<ModelTokenType, ModelToken, Model> {
     private Model model;
-    private List<ModelToken> modelTokens;
-    private ModelToken current;
-    private int i;
     // Map<Node1, Map<Node2, Label>>
     private final Map<String, Map<String, String>> delayedTransitions = new HashMap<>();
     private final List<String> delayedInitialStates = new ArrayList<>();
     private final List<String> delayedFinalStates = new ArrayList<>();
 
-    public Model parse(String input) {
-        List<ModelToken> tokens = Lexer.tokenizeModel(input);
-
-        try {
-            return parse(tokens);
-        } catch(IllegalArgumentException e) {
-            Error.printPosition(input.split("\n")[current.line - 1], current.col);
-            throw e;
-        }
+    public static Model parse(String input) {
+        return new ModelParser().parse(input, ModelLexer::tokenize);
     }
 
-    public Model parse(List<ModelToken> modelTokens) {
-        this.modelTokens = modelTokens;
-        i = 0;
-        advance();
-
+    @Override
+    protected Model start() {
         model = new Model();
         model();
 
@@ -56,7 +45,7 @@ public class ModelParser implements Parser {
 
     private void traditional() {
         if(!isType(PART_TYPE)) throw new IllegalArgumentException("Illegal Token! Expected PART_TYPE, but got " + current);
-        while(i < modelTokens.size() && isType(PART_TYPE)) {
+        while(i < tokens.size() && isType(PART_TYPE)) {
             switch(current.value) {
                 case "S" -> states();
                 case "I" -> initial();
@@ -70,7 +59,7 @@ public class ModelParser implements Parser {
         delayedFinalStates.forEach(s -> model.get(s).isFinalNode = true);
 
         // Misses the following case: [validInput] + '}'
-        if(i < modelTokens.size() || !isType(EOF)) throw new IllegalArgumentException(
+        if(i < tokens.size() || !isType(EOF)) throw new IllegalArgumentException(
                 "Illegal Token " + current.type + " at [" + current.line + "|" + current.col + "]");
     }
 
@@ -191,7 +180,7 @@ public class ModelParser implements Parser {
             cTransition();
         }
 
-        if(i < modelTokens.size()) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
+        if(i < tokens.size()) throw new IllegalArgumentException("Illegal input - not all tokens parsed!");
     }
 
     private void cTransition() {
@@ -271,21 +260,5 @@ public class ModelParser implements Parser {
         }
 
         return labelString.toString();
-    }
-
-    // H E L P E R S
-
-    private void advance() {
-        if(i < modelTokens.size()) current = modelTokens.get(i++);
-    }
-
-    private void check(ModelTokenType type) {
-        if(isType(type)) advance();
-        else throw new IllegalArgumentException("Illegal Token " + current);
-    }
-
-    private boolean isType(ModelTokenType...types) {
-        return Arrays.stream(types)
-                .anyMatch(t -> current.type == t);
     }
 }
