@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import servlet.Servlet;
+import main.Servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;

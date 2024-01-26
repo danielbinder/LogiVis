@@ -1,239 +1,42 @@
+import ctl.interpreter.CTLSolver;
+import ctl.parser.ctlnode.CTLNode;
+import model.parser.Model;
+import model.variant.kripke.KripkeStructure;
 import org.junit.jupiter.api.Test;
-import temporal.solver.CTLSolver;
-import temporal.model.KripkeStruct;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CTLTest {
+    private static final String SIMPLE_KRIPKE = "s1_ [!p !q] -> s2_ [p q], s1 -> s3 [p q]," +
+            "s2 -> s4 [p !q], s2 -> s5 [!p q], s3 -> s6 [!p !q], s3 -> s7 [!p !q]";
 
-    /*
-    Some clean string representations of valid models.
+    private static final String KRIPKE_LONG_ATOMS = "s1_ [!bananas !apples !kiwis] -> s2 [bananas apples !kiwis]," +
+            "s1 -> s3 [bananas apples !kiwis], s2 -> s4 [bananas !apples !kiwis], s2 -> s5 [!bananas apples !kiwis]," +
+            "s3 -> s6 [!bananas !apples !kiwis], s3 -> s7 [!bananas !apples kiwis]";
 
-    s1, s2, s3, s4, s5, s6, s7;"
-    initial: s1, s2;
-    t1 : s1 - s2,
-    t2 : s1 - s3,
-    t3 : s2 - s4,
-    t4 : s2 - s5,
-    t5 : s3 - s6,
-    t6 : s3 - s7;
-    s1 : ,
-    s2 : p q,
-    s3 : p q,
-    s4 : p,
-    s5 : q,
-    s6 : ,
-    s7 : ;
+    private static final String UNTIL_KRIPKE = "s1 [p !q] -> s2 [p !q], s1 -> s3 [p !q], s2 -> s4 [p q]," +
+            "s2 -> s5 [!p !q], s3 -> s6 [!p q], s3 -> s7 [!p q]";
 
-    s1, s2, s3, s4, s5, s6, s7;
-    initial: s1;
-    t1 : s1 - s2,
-    t2 : s1 - s3,
-    t3 : s2 - s4,
-    t4 : s2 - s5,
-    t5 : s3 - s6,
-    t6 : s3 - s7;
-    s1 : ,
-    s2 : bananas apples,
-    s3 : bananas apples,
-    s4 : bananas,
-    s5 : apples,
-    s6 : ,
-    s7 : kiwis;
+    private static final String SMALL_KRIPKE = "s1 [p q !t !r] -> s2 [!p q t r], s1 -> s3 [!p !q !t !r]," +
+            "s3 -> s4 [!p !q t !r], s4 -> s2, s2 -> s3";
 
-    s1, s2, s3, s4, s5, s6, s7;
-    initial: s1, s2;
-    t1 : s1 - s2,
-    t2 : s1 - s3,
-    t3 : s2 - s4,
-    t4 : s2 - s5,
-    t5 : s3 - s6,
-    t6 : s3 - s7;
-    s1 : ,
-    s2 : p,
-    s3 : p,
-    s4 : p,
-    s5 : ,
-    s6 : ,
-    s7 : ;
+    private static final String LARGE_KRIPKE_ONE = "s1 [!p !q] -> s2 [p !q], s2 -> s3 [p q], s3 - s4 [!p q]," +
+            "s2 -> s5 [p !q], s5 -> s6 [p q], s6 - s7 [p !q], s5 -> s8 [p q], s8 -> s10 [p q], s9 [p q] - s10, s9 -> s8";
 
-    // "deadlock" automaton from BMC slides of Formal Models
-    0,1,2,3;
-    initial: 0;
-    t0: 0 - 1,
-    t1: 1 - 0,
-    t2: 0 - 2,
-    t3: 2 - 0,
-    t4: 1 - 3,
-    t5: 3 - 0;
-    0: ,
-    1: p,
-    2: q,
-    3: p q;
-    */
+    private static final String LARGE_KRIPKE_TWO = "s1 [!c1 !c2 n1 n2 !t1 !t2] -> s2 [!c1 !c2 t1 !t2 !n1 n2]," +
+            "s2 -> s3 [c1 !c2 !n1 n2 !t1 !t2], s3 -> s4 [c1 !c2 !t1 t2 !n1 !n2], s5 [!c1 !c2 t1 t2 !n1 !n2] -> s4," +
+            "s2 -> s5, s4 -> s6 [!c1 !c2 n1 !n2 !t1 t2], s8 -> s2, s1 -> s6, s6 -> s7 [!c1 !c2 t1 t2 !n1 !n2]," +
+            "s7 -> s8 [t1 t2 !c1 c2 !n1 !n2], s9 [n1 !n2 !t1 !t2 !c1 c2] -> s8, s6 -> s9";
 
-    private static final String SIMPLE_KRIPKE = """
-            s1, s2, s3, s4, s5, s6, s7;
-            initial: s1, s2;
-            t1 : s1 - s2,
-            t2 : s1 - s3,
-            t3 : s2 - s4,
-            t4 : s2 - s5,
-            t5 : s3 - s6,
-            t6 : s3 - s7;
-            s1 : ,
-            s2 : p q,
-            s3 : p q,
-            s4 : p,
-            s5 : q,
-            s6 : ,
-            s7 : ;""";
-
-    private static final String KRIPKE_LONG_ATOMS = """
-            s1, s2, s3, s4, s5, s6, s7;
-            initial: s1;
-            t1 : s1 - s2,
-            t2 : s1 - s3,
-            t3 : s2 - s4,
-            t4 : s2 - s5,
-            t5 : s3 - s6,
-            t6 : s3 - s7;
-            s1 : ,
-            s2 : bananas apples,
-            s3 : bananas apples,
-            s4 : bananas,
-            s5 : apples,
-            s6 : ,
-            s7 : kiwis;""";
-
-    private static final String UNTIL_KRIPKE = """
-            s1, s2, s3, s4, s5, s6, s7;
-            initial: ;
-            t1 : s1 - s2,
-            t2 : s1 - s3,
-            t3 : s2 - s4,
-            t4 : s2 - s5,
-            t5 : s3 - s6,
-            t6 : s3 - s7;
-            s1 : p,
-            s2 : p,
-            s3 : p,
-            s4 : p q,
-            s5 : ,
-            s6 : q,
-            s7 : q;""";
-
-    private static final String SMALL_KRIPKE = """
-            s1, s2, s3, s4;
-            initial: ;
-            t1 : s1 - s2,
-            t2 : s1 - s3,
-            t3 : s3 - s4,
-            t4 : s4 - s2,
-            t5 : s2 - s3;
-            s1 : p q,
-            s2 : q t r,
-            s3 : ,
-            s4 : t;""";
-
-    private static final String LARGE_KRIPKE_ONE = """
-            s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
-            initial: ;
-            t1 : s1 - s2,
-            t2 : s2 - s3,
-            t3 : s3 - s4,
-            t4 : s4 - s3,
-            t5 : s2 - s5,
-            t6 : s5 - s6,
-            t7 : s6 - s7,
-            t8 : s7 - s6,
-            t9 : s5 - s8,
-            t10 : s8 - s10,
-            t11 : s9 - s10,
-            t12 : s10 - s9,
-            t13 : s9 - s8;
-            s1 : ,
-            s2 : p,
-            s3 : p q,
-            s4 : q,
-            s5 : p,
-            s6 : p q,
-            s7 : p,
-            s8 : p q,
-            s9 : p q,
-            s10 : p q;""";
-
-    private static final String LARGE_KRIPKE_TWO = """
-            s1, s2, s3, s4, s5, s6, s7, s8, s9;
-            initial: ;
-            t1 : s1 - s2,
-            t2 : s2 - s3,
-            t3 : s3 - s4,
-            t4 : s5 - s4,
-            t5 : s2 - s5,
-            t6 : s4 - s6,
-            t7 : s8 - s2,
-            t8 : s1 - s6,
-            t9 : s6 - s7,
-            t10 : s7 - s8,
-            t11 : s9 - s8,
-            t12 : s6 - s9;
-            s1 : n1 n2 0,
-            s2 : t1 n2 1,
-            s3 : c1 n2 1,
-            s4 : c1 t2 1,
-            s5 : t1 t2 1,
-            s6 : n1 t2 2,
-            s7 : t1 t2 2,
-            s8 : t1 c2 2,
-            s9 : n1 c2 2;""";
-
-    private static final String SMALL_GENERATED_KRIPKE = """
-            0,1,2,3;
-            initial: 2,3;
-            t0 : 0 - 0,
-            t1 : 0 - 2,
-            t2 : 1 - 2,
-            t3 : 2 - 0,
-            t4 : 2 - 3,
-            t5 : 2 - 2,
-            t6 : 3 - 1,
-            t7 : 3 - 3,
-            t8 : 3 - 2;
-            0 : ,
-            1 : c,
-            2 : a,
-            3 : a b;""";
-
-    @Test
-    public void testModelParser() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
-        System.out.println(structure);
-        assertEquals("""
-                States (with atoms):\s
-                s1:\s
-                s2: p, q
-                s3: p, q
-                s4: p
-                s5: q
-                s6:\s
-                s7:\s
-                Initial state(s): s1, s2
-                Transitions:\s
-                t1: s1 -> s2
-                t2: s1 -> s3
-                t3: s2 -> s4
-                t4: s2 -> s5
-                t5: s3 -> s6
-                t6: s3 -> s7""",
-                structure.toString());
-    }
+    private static final String SMALL_GENERATED_KRIPKE = "s0 [!a !b !c] -> s0, s0 - s2, s1 [!a !b c] -> s2 [a !b !c]," +
+            "s2 - s3 [a b !c], s2 -> s2, s3 -> s1, s3 -> s3";
 
     @Test
     public void testFormulaImplication() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                         "s2", true,
@@ -241,12 +44,12 @@ public class CTLTest {
                         "s4", false,
                         "s5", true,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("p -> q").solverResult);
+                        "s7", true), solver.solve(CTLNode.of("p -> q")));
     }
 
     @Test
     public void testFormulaEquivalence() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                         "s2", true,
@@ -254,12 +57,12 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("p <-> q").solverResult);
+                        "s7", true), solver.solve(CTLNode.of("p <-> q")));
     }
 
     @Test
     public void testNestedBooleanFormula() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                         "s2", true,
@@ -267,12 +70,12 @@ public class CTLTest {
                         "s4", true,
                         "s5", false,
                         "s6", true,
-                        "s7", true), solver.getSatisfyingStates("((p | q) & q) -> p").solverResult);
+                        "s7", true), solver.solve(CTLNode.of("((p | q) & q) -> p")));
     }
 
     @Test
     public void testFormulaWithTautology() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                         "s2", true,
@@ -280,12 +83,12 @@ public class CTLTest {
                         "s4", false,
                         "s5", true,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("(p | true) & q").solverResult);
+                        "s7", false), solver.solve(CTLNode.of("(p | true) & q")));
     }
 
     @Test
     public void testContradiction() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                         "s2", false,
@@ -293,12 +96,12 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("true & false").solverResult);
+                        "s7", false), solver.solve(CTLNode.of("true & false")));
     }
 
     @Test
     public void testCTLExpressionEXOne() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                         "s2", true,
@@ -306,12 +109,12 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6",  false,
-                        "s7", false), solver.getSatisfyingStates("q & EXp").solverResult);
+                        "s7", false), solver.solve(CTLNode.of("q & EXp")));
     }
 
     @Test
     public void testCTLExpressionEXTwo() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                         "s2", false,
@@ -319,26 +122,26 @@ public class CTLTest {
                         "s4", false,
                         "s5", false,
                         "s6", false,
-                        "s7", false), solver.getSatisfyingStates("EX(p & q)").solverResult);
+                        "s7", false), solver.solve(CTLNode.of("EX(p & q)")));
     }
 
     @Test
     public void testFaultyExpression() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
-        assertEquals("invalid expression", solver.getSatisfyingStates("a &&&& b").errorMessage);
+        assertThrows(IllegalArgumentException.class, () -> solver.solve(CTLNode.of("a &&&& b")));
     }
 
     @Test
     public void testFaultyCTLExpression() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
-        assertEquals("Unknown expression/atom/constant '(y)'.", solver.getSatisfyingStates("EX(y)").errorMessage);
+        assertThrows(Exception.class, () -> solver.solve(CTLNode.of("EX(y)")));
     }
 
     @Test
     public void testDoubleNegation() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
@@ -346,12 +149,12 @@ public class CTLTest {
                 "s4", false,
                 "s5", true,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("!!q").solverResult);
+                "s7", false), solver.solve(CTLNode.of("!!q")));
     }
 
     @Test
     public void testTripleNegation() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
@@ -359,12 +162,12 @@ public class CTLTest {
                 "s4", true,
                 "s5", true,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("!!!(p & false)").solverResult);
+                "s7", true), solver.solve(CTLNode.of("!!!(p & false)")));
     }
 
     @Test
     public void testLongAtomNames() {
-        KripkeStruct structure = new KripkeStruct(KRIPKE_LONG_ATOMS);
+        KripkeStructure structure = Model.of(KRIPKE_LONG_ATOMS).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
@@ -372,12 +175,12 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("EX(kiwis)").solverResult);
+                "s7", false), solver.solve(CTLNode.of("EX(kiwis)")));
     }
 
     @Test
     public void testSimplificationOne() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
@@ -385,12 +188,12 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("(false & true) | (p & q)").solverResult);
+                "s7", false), solver.solve(CTLNode.of("(false & true) | (p & q)")));
     }
 
     @Test
     public void testSimplificationTwo() {
-        KripkeStruct structure = new KripkeStruct(KRIPKE_LONG_ATOMS);
+        KripkeStructure structure = Model.of(KRIPKE_LONG_ATOMS).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
@@ -398,12 +201,12 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", false,
-                "s7", true), solver.getSatisfyingStates("!(!bananas & !kiwis)").solverResult);
+                "s7", true), solver.solve(CTLNode.of("!(!bananas & !kiwis)")));
     }
 
     @Test
     public void testCTLExpressionAXOne() {
-        KripkeStruct structure = new KripkeStruct(SIMPLE_KRIPKE);
+        KripkeStructure structure = Model.of(SIMPLE_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", false,
@@ -411,12 +214,12 @@ public class CTLTest {
                 "s4", false,
                 "s5", false,
                 "s6", false,
-                "s7", false), solver.getSatisfyingStates("(q | true) & AXp").solverResult);
+                "s7", false), solver.solve(CTLNode.of("(q | true) & AXp")));
     }
 
     @Test
     public void testCTLExpressionEUOne() {
-        KripkeStruct structure = new KripkeStruct(UNTIL_KRIPKE);
+        KripkeStructure structure = Model.of(UNTIL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
@@ -424,12 +227,12 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("E(p U q)").solverResult);
+                "s7", true), solver.solve(CTLNode.of("E(p U q)")));
     }
 
     @Test
     public void testCTLExpressionAUOne() {
-        KripkeStruct structure = new KripkeStruct(UNTIL_KRIPKE);
+        KripkeStructure structure = Model.of(UNTIL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
@@ -437,222 +240,222 @@ public class CTLTest {
                 "s4", true,
                 "s5", false,
                 "s6", true,
-                "s7", true), solver.getSatisfyingStates("A(p U q)").solverResult);
+                "s7", true), solver.solve(CTLNode.of("A(p U q)")));
     }
 
     @Test
     public void testCTLExpressionsEGAndAG() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("EGp & AGp").solverResult);
+                "s4", false), solver.solve(CTLNode.of("EGp & AGp")));
     }
 
     @Test
     public void testCLTExpressionAGAndEF() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("(!AGp) | EFq").solverResult);
+                "s4", true), solver.solve(CTLNode.of("(!AGp) | EFq")));
     }
 
     @Test
     public void testCTLExpressionEGImplies() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EG(r -> t)").solverResult);
+                "s4", true), solver.solve(CTLNode.of("EG(r -> t)")));
     }
 
     @Test
     public void testCTLExpressionAXTwo() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("AX(r -> p)").solverResult);
+                "s4", false), solver.solve(CTLNode.of("AX(r -> p)")));
     }
 
     @Test
     public void testCTLExpressionAXThree() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("AXq").solverResult);
+                "s4", true), solver.solve(CTLNode.of("AXq")));
     }
 
     @Test
     public void testCTLExpressionEXThree() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", false,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("EXq").solverResult);
+                "s4", true), solver.solve(CTLNode.of("EXq")));
     }
 
     @Test
     public void testCTLExpressionAXFour() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("!AXq").solverResult);
+                "s4", false), solver.solve(CTLNode.of("!AXq")));
     }
 
     @Test
     public void testCTLExpressionEXFour() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", true,
-                "s4", false), solver.getSatisfyingStates("!EXq").solverResult);
+                "s4", false), solver.solve(CTLNode.of("!EXq")));
     }
 
     @Test
     public void testCTLExpressionAUTwo() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("A(p U q)").solverResult);
+                "s4", false), solver.solve(CTLNode.of("A(p U q)")));
     }
 
     @Test
     public void testCTLExpressionEUTwo() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("E(p U q)").solverResult);
+                "s4", false), solver.solve(CTLNode.of("E(p U q)")));
     }
 
     @Test
     public void testCTLExpressionAXAndAU() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("AXq & A(p U q)").solverResult);
+                "s4", false), solver.solve(CTLNode.of("AXq & A(p U q)")));
     }
 
     @Test
     public void testCTLExpressionAXOrAU() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("AXq | A(p U q)").solverResult);
+                "s4", true), solver.solve(CTLNode.of("AXq | A(p U q)")));
     }
 
     @Test
     public void testCTLExpressionEFOne() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EFr").solverResult);
+                "s4", true), solver.solve(CTLNode.of("EFr")));
     }
 
     @Test
     public void testCTLExpressionAFOne() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AFr").solverResult);
+                "s4", true), solver.solve(CTLNode.of("AFr")));
     }
 
     @Test
     public void testCTLExpressionEGOne() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("EGt").solverResult);
+                "s4", false), solver.solve(CTLNode.of("EGt")));
     }
 
     @Test
     public void testCTLExpressionAGOne() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("AGq").solverResult);
+                "s4", false), solver.solve(CTLNode.of("AGq")));
     }
 
     @Test
     public void testComplexCTLExpressionOne() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AX((EFp) | (AFr))").solverResult);
+                "s4", true), solver.solve(CTLNode.of("AX((EFp) | (AFr))")));
     }
 
     @Test
     public void testComplexCTLExpressionTwo() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("EX((AFp) | (EFr))").solverResult);
+                "s4", true), solver.solve(CTLNode.of("EX((AFp) | (EFr))")));
     }
 
     @Test
     public void testComplexCTLExpressionThree() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", false,
-                "s4", false), solver.getSatisfyingStates("A(p U A(q U r))").solverResult);
+                "s4", false), solver.solve(CTLNode.of("A(p U A(q U r))")));
     }
 
     @Test
     public void testComplexCTLExpressionFour() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", true,
                 "s3", false,
-                "s4", true), solver.getSatisfyingStates("E(A(q U r) U t)").solverResult);
+                "s4", true), solver.solve(CTLNode.of("E(A(q U r) U t)")));
     }
 
     @Test
     public void testComplexCTLExpressionFive() {
-        KripkeStruct structure = new KripkeStruct(SMALL_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", true,
-                "s4", true), solver.getSatisfyingStates("AG(p -> A(p U (!p & A(!p U q))))").solverResult);
+                "s4", true), solver.solve(CTLNode.of("AG(p -> A(p U (!p & A(!p U q))))")));
     }
 
     @Test
     public void testComplexCTLExpressionSix() {
-        KripkeStruct structure = new KripkeStruct(LARGE_KRIPKE_TWO);
+        KripkeStructure structure = Model.of(LARGE_KRIPKE_TWO).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", true,
                 "s2", true,
@@ -662,12 +465,12 @@ public class CTLTest {
                 "s6", true,
                 "s7", true,
                 "s8", true,
-                "s9", true), solver.getSatisfyingStates("AG(t1 -> (AF c1))").solverResult);
+                "s9", true), solver.solve(CTLNode.of("AG(t1 -> (AF c1))")));
     }
 
     @Test
     public void testCTLExpressionEGTwo() {
-        KripkeStruct structure = new KripkeStruct(LARGE_KRIPKE_ONE);
+        KripkeStructure structure = Model.of(LARGE_KRIPKE_ONE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
@@ -678,12 +481,12 @@ public class CTLTest {
                 "s7", false,
                 "s8", true,
                 "s9", true,
-                "s10", true), solver.getSatisfyingStates("EGq").solverResult);
+                "s10", true), solver.solve(CTLNode.of("EGq")));
     }
 
     @Test
     public void testCTLExpressionAGTwo() {
-        KripkeStruct structure = new KripkeStruct(LARGE_KRIPKE_ONE);
+        KripkeStructure structure = Model.of(LARGE_KRIPKE_ONE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
         assertEquals(Map.of("s1", false,
                 "s2", false,
@@ -694,16 +497,16 @@ public class CTLTest {
                 "s7", true,
                 "s8", true,
                 "s9", true,
-                "s10", true), solver.getSatisfyingStates("AGp").solverResult);
+                "s10", true), solver.solve(CTLNode.of("AGp")));
     }
 
     @Test
     public void testComplexCTLExpressionSeven() {
-        KripkeStruct structure = new KripkeStruct(SMALL_GENERATED_KRIPKE);
+        KripkeStructure structure = Model.of(SMALL_GENERATED_KRIPKE).toKripkeStructure();
         CTLSolver solver = new CTLSolver(structure);
-        assertEquals(Map.of("0", false,
-                "1", false,
-                "2", true,
-                "3", true), solver.getSatisfyingStates("EX((a & b) | !!!!c) & true").solverResult);
+        assertEquals(Map.of("s0", false,
+                "s1", false,
+                "s2", true,
+                "s3", true), solver.solve(CTLNode.of("EX((a & b) | !!!!c) & true")));
     }
 }

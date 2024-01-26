@@ -1,4 +1,4 @@
-import model.kripke.KripkeTruthTable;
+import model.variant.kripke.KripkeTruthTable;
 import model.parser.Model;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
