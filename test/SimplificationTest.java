@@ -1,7 +1,6 @@
 import bool.interpreter.Simplification;
-import lexer.Lexer;
+import bool.parser.logicnode.LogicNode;
 import org.junit.jupiter.api.Test;
-import bool.parser.BooleanParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,6 +77,6 @@ public class SimplificationTest {
     }
 
     private String runInput(String input) {
-        return Simplification.of(new BooleanParser().parse(Lexer.tokenizeBooleanFormula(input))).toString();
+        return Simplification.of(LogicNode.of(input)).toString();
     }
 }

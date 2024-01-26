@@ -1,7 +1,5 @@
 import bool.parser.logicnode.*;
-import lexer.Lexer;
 import org.junit.jupiter.api.Test;
-import bool.parser.BooleanParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

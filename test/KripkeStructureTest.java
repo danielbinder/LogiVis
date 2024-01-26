@@ -1,5 +1,5 @@
-import model.kripke.KripkeGenerator;
-import model.kripke.KripkeStructure;
+import model.variant.kripke.KripkeGenerator;
+import model.variant.kripke.KripkeStructure;
 import model.parser.Model;
 import org.junit.jupiter.api.Test;
 
