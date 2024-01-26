@@ -1,8 +1,8 @@
-package model.finite;
+package model.variant.finite;
 
-import marker.ModelVariant;
 import model.parser.Model;
 import model.parser.ModelNode;
+import model.variant.ModelVariant;
 
 import java.util.Collection;
 import java.util.HashSet;

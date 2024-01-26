@@ -1,4 +1,4 @@
-package model.finite;
+package model.variant.finite;
 
 import marker.Generator;
 

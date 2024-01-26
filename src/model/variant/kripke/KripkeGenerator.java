@@ -1,8 +1,11 @@
-package model.kripke;
+package model.variant.kripke;
 
 import marker.Generator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KripkeGenerator implements Generator {
     public static KripkeStructure generate(int nodes, int initialNodes, int variables,

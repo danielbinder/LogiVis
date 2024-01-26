@@ -1,7 +1,7 @@
-package model.kripke;
+package model.variant.kripke;
 
 import bool.parser.logicnode.LogicNode;
-import marker.ModelVariant;
+import model.variant.ModelVariant;
 import temporal.model.KripkeStruct;
 import temporal.model.State;
 import temporal.model.Transition;

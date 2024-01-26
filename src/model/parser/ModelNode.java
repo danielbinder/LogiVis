@@ -1,9 +1,11 @@
 package model.parser;
 
-import model.finite.State;
-import model.kripke.KripkeNode;
+import model.variant.finite.State;
+import model.variant.kripke.KripkeNode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ModelNode {
