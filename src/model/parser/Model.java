@@ -1,16 +1,17 @@
 package model.parser;
 
-import model.finite.FiniteAutomaton;
+import marker.ConceptRepresentation;
 import model.interpreter.ModelTracer;
-import model.kripke.KripkeNode;
-import model.kripke.KripkeStructure;
+import model.variant.finite.FiniteAutomaton;
+import model.variant.kripke.KripkeNode;
+import model.variant.kripke.KripkeStructure;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-public class Model extends ArrayList<ModelNode> {
+public class Model extends HashSet<ModelNode> implements ConceptRepresentation {
     public Model() {}
 
     private Model(KripkeStructure ks) {
@@ -22,7 +23,7 @@ public class Model extends ArrayList<ModelNode> {
     }
 
     public static Model of(String modelString) {
-        return new ModelParser().parse(modelString);
+        return ModelParser.parse(modelString);
     }
 
     public static Model of(KripkeStructure ks) {
