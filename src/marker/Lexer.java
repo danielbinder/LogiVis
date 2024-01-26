@@ -1,10 +1,5 @@
-package lexer;
+package marker;
 
-import bool.token.BooleanToken;
-import bool.token.BooleanTokenType;
-import marker.Token;
-import model.token.ModelToken;
-import model.token.ModelTokenType;
 import util.Error;
 import util.TriFunction;
 
@@ -13,18 +8,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-public class Lexer {
-    public static List<BooleanToken> tokenizeBooleanFormula(final String input) {
-        return Lexer.tokenize(input, BooleanTokenType::isValidCharacter, BooleanToken::fromString);
-    }
-
-    public static List<ModelToken> tokenizeModel(final String input) {
-        return Lexer.tokenize(input, ModelTokenType::isValidCharacter, ModelToken::fromString);
-    }
-
-    private static <T extends Token> List<T> tokenize(String input,
-                                                     Predicate<Character> characterValidator,
-                                                     TriFunction<String, Integer, Integer, T> tokenCreator) {
+public abstract class Lexer {
+    protected static <T extends Token<? extends TokenType>> List<T> tokenize(String input,
+                                                                             Predicate<Character> characterValidator,
+                                                                             TriFunction<String, Integer, Integer, T> tokenCreator) {
         int line = 1;
         int col = 0;
         boolean openString = false;
@@ -53,7 +40,7 @@ public class Lexer {
             if(!openString && !characterValidator.test(input.charAt(i))) error(input, line, col);
             current.append(input.charAt(i));
 
-            if((Character.isAlphabetic(input.charAt(i)) || Character.isDigit(input.charAt(i))) &&
+            if(((Character.isAlphabetic(input.charAt(i)) && Character.isLowerCase(input.charAt(i))) || Character.isDigit(input.charAt(i))) &&
                     i + 1 < input.length() &&
                     (Character.isAlphabetic(input.charAt(i + 1)) || Character.isDigit(input.charAt(i + 1)))) continue;
 
