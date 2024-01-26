@@ -1,8 +1,9 @@
 package bool.parser.logicnode;
 
 import bool.parser.BooleanParser;
+import marker.ConceptRepresentation;
 
-public sealed interface LogicNode permits
+public sealed interface LogicNode extends ConceptRepresentation permits
         ActionNode,
         AndNode,
         ConstantNode,
@@ -11,7 +12,7 @@ public sealed interface LogicNode permits
         NegationNode,
         OrNode {
     static LogicNode of(String formula) {
-        return new BooleanParser().parse(formula);
+        return BooleanParser.parse(formula);
     }
 }
 

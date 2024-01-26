@@ -1,9 +1,9 @@
-package bool.parser.logicnode;
+package ctl.parser.ctlnode;
 
 /**
  * left & right
  */
-public record AndNode(LogicNode left, LogicNode right) implements LogicNode {
+public record AndNode(CTLNode left, CTLNode right) implements CTLNode {
     @Override
     public String toString() {
         return "(" + left.toString() + " & " + right.toString() + ")";
