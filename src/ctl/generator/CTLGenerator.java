@@ -1,4 +1,4 @@
-package temporal;
+package ctl.generator;
 
 import marker.Generator;
 
