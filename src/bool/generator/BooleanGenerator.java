@@ -1,4 +1,4 @@
-package bool;
+package bool.generator;
 
 import marker.Generator;
 
