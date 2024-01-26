@@ -1,9 +1,9 @@
 package marker;
 
-import algorithmTester.SampleImplementation;
 import algorithmTester.YourImplementation;
-import model.finite.FiniteAutomaton;
-import model.finite.State;
+import model.variant.finite.FiniteAutomaton;
+import model.variant.finite.State;
+import model.variant.finite.interpreter.SampleImplementation;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,8 +1,8 @@
 package algorithmTester;
 
 import marker.AlgorithmImplementation;
-import model.finite.FiniteAutomaton;
-import model.finite.State;
+import model.variant.finite.FiniteAutomaton;
+import model.variant.finite.State;
 import util.Pair;
 
 import java.util.Set;
