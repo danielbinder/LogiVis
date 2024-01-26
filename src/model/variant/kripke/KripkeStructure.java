@@ -2,9 +2,6 @@ package model.variant.kripke;
 
 import bool.parser.logicnode.LogicNode;
 import model.variant.ModelVariant;
-import temporal.model.KripkeStruct;
-import temporal.model.State;
-import temporal.model.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,33 +37,6 @@ public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVaria
                 });
 
         return ks;
-    }
-
-    public KripkeStruct toOtherKripke() {
-        List<State> states = new ArrayList<>();
-        List<State> initial = new ArrayList<>();
-        Map<KripkeNode, State> stateMap = new HashMap<>();
-        for(KripkeNode kn : this) {
-            State s = new State(kn.name);
-            states.add(s);
-            stateMap.put(kn, s);
-
-            if(kn.isInitialNodeNode) initial.add(s);
-
-            s.setAtoms(kn.stateMap.entrySet().stream()
-                               .filter(Map.Entry::getValue)
-                               .map(Map.Entry::getKey)
-                               .toList());
-        }
-
-        List<Transition> transitions = new ArrayList<>();
-        for(KripkeNode kn : this)
-            for(KripkeNode kn2 : kn.successors)
-                transitions.add(new Transition(stateMap.get(kn), stateMap.get(kn2)));
-
-        List<String> atoms = get(0).stateMap.keySet().stream().toList();
-
-        return new KripkeStruct(states, initial, transitions, atoms);
     }
 
     public KripkeTruthTable toKripkeTruthTable() {
