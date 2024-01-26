@@ -1,7 +1,5 @@
 package main;
 
-import algorithmTester.AlgorithmTester;
-import servlet.Servlet;
 import util.Args;
 
 public class Main {

@@ -1,12 +1,10 @@
 package util;
 
-import algorithmTester.AlgorithmTester;
+import main.AlgorithmTester;
 import main.Frontend;
-import main.FrontendExtractor;
 import main.Main;
-import servlet.Result;
-import servlet.Servlet;
-import servlet.rest.REST;
+import main.Servlet;
+import util.rest.REST;
 
 import java.util.Arrays;
 import java.util.List;

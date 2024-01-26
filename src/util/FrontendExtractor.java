@@ -1,6 +1,6 @@
-package main;
+package util;
 
-import util.Logger;
+import main.Main;
 
 import java.io.File;
 import java.io.IOException;
