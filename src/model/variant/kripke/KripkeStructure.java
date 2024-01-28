@@ -3,11 +3,15 @@ package model.variant.kripke;
 import bool.parser.logicnode.LogicNode;
 import model.variant.ModelVariant;
 
+import java.io.Serial;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVariant {
+    @Serial
+    private static final long serialVersionUID = 6635546786082740679L;
+
     public KripkeNode get(String name) {
         return stream()
                 .filter(kn -> kn.name.equals(name))
