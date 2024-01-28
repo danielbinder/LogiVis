@@ -22,6 +22,7 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.isDeterministic(automaton("a")))) validateIsDeterministic();
         if(isImplemented(() -> USER.isComplete(automaton("a")))) validateIsComplete();
         if(isImplemented(() -> USER.isEquivalent(automaton("a"), automaton("b")))) validateIsEquivalent();
+        if(isImplemented(() -> USER.areReachable(automaton("a")))) validateAreReachable();
         if(isImplemented(() -> USER.toProductAutomaton(automaton("a"), automaton("b")))) validateToProductAutomaton();
         if(isImplemented(() -> USER.toPowerAutomaton(automaton("a")))) validateToPowerAutomaton();
         if(isImplemented(() -> USER.toComplementAutomaton(automaton("a")))) validateToComplementAutomaton();
@@ -40,6 +41,7 @@ public class ImplementationValidator {
             case "isDeterministic" -> validateIsDeterministic();
             case "isComplete" -> validateIsComplete();
             case "isEquivalent" -> validateIsEquivalent();
+            case "areReachable" -> validateAreReachable();
             case "toProductAutomaton" -> validateToProductAutomaton();
             case "toPowerAutomaton" -> validateToPowerAutomaton();
             case "toComplementAutomaton" -> validateToComplementAutomaton();
@@ -113,6 +115,35 @@ public class ImplementationValidator {
                                   (i1, i2) -> USER.isEquivalent(automaton(i1), automaton(i2)),
                                   (i1, i2) -> SAMPLE.isEquivalent(automaton(i1), automaton(i2)),
                                   generateAutomatons(),
+                                  generateAutomatons());
+    }
+
+    private void validateAreReachable() {
+        String testName = "areReachable";
+
+        testReport.testTrue(testName,
+                            automatonFunction.andThen(USER::areReachable),
+                            List.of("s1_ -> [a] s2, s2 -> [b] s3, s3 -> [c] s4<",
+                                    """
+                                    S = {s0, s5<, s4, s8, s1, s7, s3, s6<, s2}
+                                    I = {s0, s2}
+                                    T = {(s0, s4) [c], (s0, s1) [b], (s5, s0) [b], (s4, s8) [c], (s4, s7) [c], (s8, s3) [b], (s1, s1) [a], (s7, s7) [a], (s7, s6) [c], (s3, s5) [b], (s3, s1) [a], (s6, s0) [a], (s2, s7) [a], (s2, s3) [a]}
+                                    F = {s0, s3}"""));
+
+        testReport.testFalse(testName,
+                             automatonFunction.andThen(USER::areReachable),
+                             List.of("s1_ -> [a] s2, s2 -> [b] s3, s4<",
+                                     """
+                                     S = {s0, s5<, s4, s8, s1, s7, s3, s6<, s2, s9, s10<}
+                                     I = {s0, s2}
+                                     T = {(s0, s4) [c], (s0, s1) [b], (s5, s0) [b], (s4, s8) [c], (s4, s7) [c], (s8, s3) [b], (s1, s1) [a], (s7, s7) [a], (s7, s6) [c], (s3, s5) [b], (s3, s1) [a], (s6, s0) [a], (s2, s7) [a], (s2, s3) [a], (s9, s10) [a], (s10, s9) [b]}
+                                     F = {s0, s3}"""));
+
+        testReport.sectionDivider(testName);
+
+        testReport.compareBoolean(testName,
+                                  automatonFunction.andThen(USER::areReachable),
+                                  automatonFunction.andThen(SAMPLE::areReachable),
                                   generateAutomatons());
     }
 
@@ -284,6 +315,10 @@ public class ImplementationValidator {
                                                                  i % 2,
                                                                  i % 4 + 1,
                                                                  i % 3 == 0))
+                .map(fa -> fa.mapStates(state -> {
+                    state.isEncodingEnd = Integer.parseInt(state.name.replace("s", "")) % 3 == 0;
+                    return state;
+                }))
                 .map(FiniteAutomaton::toModel)
                 .map(Model::toString)
                 .toList();

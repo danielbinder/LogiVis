@@ -228,6 +228,10 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
         return SAMPLE.isEquivalent(this, other);
     }
 
+    public boolean areReachable() {
+        return SAMPLE.areReachable(this);
+    }
+
     public FiniteAutomaton toProductAutomaton(FiniteAutomaton other) {
         return SAMPLE.toProductAutomaton(this, other);
     }

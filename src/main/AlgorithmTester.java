@@ -51,6 +51,14 @@ public class AlgorithmTester implements RestEndpoint {
                 .computeJSON();
     }
 
+    @GET("areReachable/:automaton")
+    public String areReachable(String automaton) {
+        return new Result(() -> Model.of(preprocess(automaton))
+                .toFiniteAutomaton()
+                .areReachable() ? "true" : "false")
+                .computeJSON();
+    }
+
     @GET("/toProductAutomaton/:automaton1/:automaton2")
     public String toProductAutomaton(String automaton1, String automaton2) {
         return new Result(() -> Model.of(preprocess(automaton1)).toFiniteAutomaton()

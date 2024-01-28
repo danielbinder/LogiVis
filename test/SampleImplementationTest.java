@@ -77,6 +77,33 @@ public class SampleImplementationTest {
     }
 
     @Test
+    public void testAreReachable() {
+        assertTrue(Model.of("s1_ -> [a] s2, s2 -> [b] s3, s3 -> [c] s4<")
+                           .toFiniteAutomaton()
+                           .areReachable());
+
+        assertTrue(Model.of("""
+                                    S = {s0, s5<, s4, s8, s1, s7, s3, s6<, s2}
+                                    I = {s0, s2}
+                                    T = {(s0, s4) [c], (s0, s1) [b], (s5, s0) [b], (s4, s8) [c], (s4, s7) [c], (s8, s3) [b], (s1, s1) [a], (s7, s7) [a], (s7, s6) [c], (s3, s5) [b], (s3, s1) [a], (s6, s0) [a], (s2, s7) [a], (s2, s3) [a]}
+                                    F = {s0, s3}""")
+                           .toFiniteAutomaton()
+                           .areReachable());
+
+        assertFalse(Model.of("s1_ -> [a] s2, s2 -> [b] s3, s4<")
+                            .toFiniteAutomaton()
+                            .areReachable());
+
+        assertFalse(Model.of("""
+                                     S = {s0, s5<, s4, s8, s1, s7, s3, s6<, s2, s9, s10<}
+                                     I = {s0, s2}
+                                     T = {(s0, s4) [c], (s0, s1) [b], (s5, s0) [b], (s4, s8) [c], (s4, s7) [c], (s8, s3) [b], (s1, s1) [a], (s7, s7) [a], (s7, s6) [c], (s3, s5) [b], (s3, s1) [a], (s6, s0) [a], (s2, s7) [a], (s2, s3) [a], (s9, s10) [a], (s10, s9) [b]}
+                                     F = {s0, s3}""")
+                            .toFiniteAutomaton()
+                            .areReachable());
+    }
+
+    @Test
     public void testToProductAutomaton() {
         assertEquals(Model.of("s0_ -> [a] s1, s1 -> [b] s2*, s2 -> [a b] s2")
                              .toFiniteAutomaton()

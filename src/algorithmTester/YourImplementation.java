@@ -144,6 +144,12 @@ public class YourImplementation implements AlgorithmImplementation {
     }
 
     @Override
+    public boolean areReachable(FiniteAutomaton automaton) {
+        Set<State> toCheck = automaton.getEncodingEnds();
+        throw new IllegalStateException("Algorithm 'isReachable' is not implemented yet!");
+    }
+
+    @Override
     public FiniteAutomaton toProductAutomaton(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
         throw new IllegalStateException("Algorithm 'toProductAutomaton' not implemented yet!");
     }
