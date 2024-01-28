@@ -44,7 +44,10 @@ public class KripkeGenerator implements Generator {
 
             while(!unreachable.isEmpty()) {
                 KripkeNode firstUnreachable = unreachable.remove(0);
-                reachable.get(Generator.pickRandom(reachable.size()))
+                List<KripkeNode> filteredReachable = reachable.stream().filter(state -> state.successors.size() < maxSuccessors)
+                        .filter(state -> state != firstUnreachable || unreachable.size() == 1)
+                        .toList();
+                filteredReachable.get(Generator.pickRandom(filteredReachable.size()))
                         .successors.add(firstUnreachable);
                 reachable.add(firstUnreachable);
             }
