@@ -1,6 +1,6 @@
+import model.parser.Model;
 import model.variant.kripke.KripkeGenerator;
 import model.variant.kripke.KripkeStructure;
-import model.parser.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,8 +10,8 @@ public class KripkeStructureTest {
     public void testToFormula() {
         KripkeStructure ks = KripkeGenerator.generate(4,2,3,1,3,true);
         System.out.println(ks);
-        System.out.println(ks.toFormulaString(3));
-        System.out.println(ks.toFormula(3));
+        System.out.println(ks.toFormulaString(true,3));
+        System.out.println(ks.toFormula(true,3));
     }
 
     @Test

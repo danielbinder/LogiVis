@@ -13,7 +13,8 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
     const [loadingEncode, setLoadingEncode] = useState(false)
     const [generationParameters, setGenerationParameters] = useState({
         steps: 2,
-        encodingType: 'compact'
+        encodingType: 'compact',
+        upUntil: true
     })
 
     const urls = new Map([
@@ -35,7 +36,7 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
     function handleEncodeClick() {
         setLoadingEncode(true)
         fetch(urls.get(generationParameters.encodingType) +
-            getModel + '/' + generationParameters.steps)
+            getModel + '/' + generationParameters.upUntil + '/' + generationParameters.steps)
             .then(response => response.json())
             .then((data) => {
                 if(generationParameters.encodingType === 'naive' || generationParameters.encodingType === 'compact') {
@@ -99,6 +100,17 @@ export default function ModelEncoder({setFormulaTab, setSolutionTab}) {
                             onChange={handleChange}
                         />
                         <label htmlFor='compactQBF'>Limboole QBF</label>
+                    </div>
+                    <div>
+                        <input
+                            className='checkbox'
+                            type='checkbox'
+                            id='upUntil'
+                            name='upUntil'
+                            checked={generationParameters.upUntil}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor='upUntil'>Always endable</label>
                     </div>
                 </div>
                 {(getModel.length === 0 || !/[a-z0-9]+\s*\[/g.test(getModel)) &&
