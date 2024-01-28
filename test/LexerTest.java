@@ -36,4 +36,10 @@ public class LexerTest {
         assertThrows(IllegalArgumentException.class, () -> ModelLexer.tokenize("a :"));
         assertThrows(IllegalArgumentException.class, () -> BooleanLexer.tokenize("a :"));
     }
+
+    @Test
+    public void testIllegalSequenceOfLegalCharacters() {
+        assertThrows(IllegalArgumentException.class, () -> ModelLexer.tokenize("a 123"));
+        assertThrows(IllegalArgumentException.class, () -> ModelLexer.tokenize("a 123"));
+    }
 }
