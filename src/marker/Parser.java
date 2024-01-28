@@ -70,6 +70,7 @@ public abstract class Parser<TT extends TokenType, T extends Token<TT>, R extend
     }
 
     @SafeVarargs
+    @SuppressWarnings("varargs")
     protected final boolean isType(TT... types) {
         return Arrays.stream(types)
                 .anyMatch(t -> current.type == t);

@@ -14,6 +14,8 @@ public abstract class Lexer {
                                                                              TriFunction<String, Integer, Integer, T> tokenCreator) {
         int line = 1;
         int col = 0;
+        int safePointLine = 1;
+        int safePointCol = 1;
         boolean openString = false;
         final List<T> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
@@ -38,6 +40,10 @@ public abstract class Lexer {
             // Take anything inside String
             if(input.charAt(i) == '\'') openString = !openString;
             if(!openString && !characterValidator.test(input.charAt(i))) error(input, line, col);
+            if(current.isEmpty()) {
+                safePointLine = line;
+                safePointCol = col;
+            }
             current.append(input.charAt(i));
 
             if(((Character.isAlphabetic(input.charAt(i)) && Character.isLowerCase(input.charAt(i))) || Character.isDigit(input.charAt(i))) &&
@@ -54,6 +60,7 @@ public abstract class Lexer {
             } catch(NoSuchElementException ignored) {}
         }
 
+        if(!current.isEmpty()) error(input, safePointLine, safePointCol);
         tokens.add(tokenCreator.apply("EOF", line, col));
 
         return tokens;
