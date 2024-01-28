@@ -19,6 +19,8 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
+### 1.6.2 Added 'always endable' option to
+* It encodes end states at all steps
 ### 1.6.1 Added areReachable() to finite Automaton algorithms
 * Checks if all 'isEncodingEnd' states are reachable
 ### 1.6.0 Restructured and Refactored the whole Project
