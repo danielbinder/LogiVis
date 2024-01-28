@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {serverURL} from '../constants';
 import {useRecoilValue} from 'recoil';
 import {formulaTypeState} from '../atoms';
-import {Requires} from '../Requires';
 
 export default function FormulaGenerator({setFormulaTab}) {
     const [loading, setLoading] = useState(false)

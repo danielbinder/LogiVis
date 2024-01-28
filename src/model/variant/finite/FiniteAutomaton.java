@@ -4,6 +4,7 @@ import model.parser.Model;
 import model.parser.ModelNode;
 import model.variant.ModelVariant;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,9 @@ import java.util.stream.Stream;
 import static marker.AlgorithmImplementation.SAMPLE;
 
 public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
+    @Serial
+    private static final long serialVersionUID = 3922428273647384203L;
+
     public static FiniteAutomaton of(Supplier<Collection<State>> stateSupplier) {
         FiniteAutomaton automaton = new FiniteAutomaton();
         automaton.addAll(stateSupplier.get());

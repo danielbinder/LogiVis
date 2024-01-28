@@ -6,12 +6,16 @@ import model.variant.finite.FiniteAutomaton;
 import model.variant.kripke.KripkeNode;
 import model.variant.kripke.KripkeStructure;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Model extends HashSet<ModelNode> implements ConceptRepresentation {
+    @Serial
+    private static final long serialVersionUID = 3237311348082874119L;
+
     public Model() {}
 
     private Model(KripkeStructure ks) {

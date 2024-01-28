@@ -25,7 +25,7 @@ export default function Graph() {
                 .map(m => model2Graph(m, darkMode))
                 .join('$'))
         } catch (e) {}
-    }, [model, darkMode])
+    }, [model, darkMode, setModelStatusMessage, setModel])
 
     return (
         <div>
