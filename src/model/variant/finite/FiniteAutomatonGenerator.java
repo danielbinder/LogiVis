@@ -51,7 +51,10 @@ public class FiniteAutomatonGenerator implements Generator {
 
             while(!unreachable.isEmpty()) {
                 State firstUnreachable = unreachable.remove(0);
-                reachable.get(Generator.pickRandom(reachable.size()))
+                List<State> filteredReachable = reachable.stream().filter(state -> state.getSuccessors().size() < maxSuccessors)
+                        .filter(state -> state != firstUnreachable || unreachable.size() == 1)
+                        .toList();
+                filteredReachable.get(Generator.pickRandom(filteredReachable.size()))
                         .addSuccessor(alphabet.get(currLetter) ,firstUnreachable);
                 if(allLettersUsed) currLetter = Generator.pickRandom(alphabet.size());
                 else if(currLetter + 1 >= alphabet.size()) {
