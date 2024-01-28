@@ -13,14 +13,15 @@ public class SampleImplementation implements AlgorithmImplementation {
     @Override
     public boolean isDeterministic(FiniteAutomaton automaton) {
         // Example of a solution without streams ('CTRL + /' to comment in/out highlighted lines)
-//        boolean isDeterministic = automaton.getInitialStates().size() <= 1;
+//        if(automaton.getInitialStates().size() > 1) return false;
+//
 //        for(State state : automaton) {
 //            for(String property : state.getSuccessorProperties()) {
-//                if(state.getSuccessorsFor(property).size() > 1) isDeterministic = false;
+//                if(state.getSuccessorsFor(property).size() > 1) return false;
 //            }
 //        }
 //
-//        return isDeterministic;
+//        return true;
         return automaton.getInitialStates().size() <= 1 && automaton
                 .allMatch(state -> state.getSuccessorProperties().stream()
                         .map(state::getSuccessorsFor)
@@ -82,6 +83,28 @@ public class SampleImplementation implements AlgorithmImplementation {
                                                                          .findAny()
                                                                          .orElseThrow(NoSuchElementException::new)),
                                                          alphabet));
+    }
+
+    @Override
+    public boolean areReachable(FiniteAutomaton automaton) {
+        Set<State> toCheck = automaton.getEncodingEnds();
+
+        if(automaton.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
+        if(toCheck.isEmpty())
+            throw new IllegalArgumentException("This algorithm needs some states to be marked with '<', meaning those states need to be checked!");
+
+        Set<State> visited = new HashSet<>();
+        automaton.getInitialStates().forEach(initial -> walk(visited, initial));
+
+        return visited.containsAll(toCheck);
+    }
+
+    private void walk(Set<State> visited, State current) {
+        if(visited.contains(current)) return;
+
+        visited.add(current);
+        current.getSuccessors().forEach(succ -> walk(visited, succ));
     }
 
     @Override

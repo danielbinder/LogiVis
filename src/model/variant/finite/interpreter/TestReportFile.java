@@ -20,6 +20,7 @@ public class TestReportFile {
             List.of(Pattern.compile("public boolean isDeterministic\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public boolean isComplete\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public boolean isEquivalent\\(FiniteAutomaton automaton1, FiniteAutomaton automaton2\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
+                    Pattern.compile("public boolean areReachable\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toProductAutomaton\\(FiniteAutomaton automaton1, FiniteAutomaton automaton2\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toPowerAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toComplementAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
@@ -28,7 +29,7 @@ public class TestReportFile {
                     // End last pattern in file with \\z, since there is no @Override after
                     Pattern.compile("public FiniteAutomaton toOptimisedOracleAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s*\\z", Pattern.DOTALL));
     private static final Set<String> KNOWN_WORDS =
-            Set.of("if", "return", "stream", "getInitialStates", "size", "allMatch",
+            Set.of("if", "return", "stream", "getInitialStates", "size", "allMatch", "toCheck",
                    "getSuccessorProperties", "getSuccessorsFor", "map", "FiniteAutomaton", "getAlphabet", "noneMatch",
                    "equals", "automaton1", "automaton2", "clone", "isEmpty", "getFinalStates", "Pair", "findAny",
                    "orElseThrow", "NoSuchElementException", "new", "true", "false", "HashSet", "State", "contains",
