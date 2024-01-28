@@ -1,5 +1,5 @@
-import model.variant.kripke.KripkeTruthTable;
 import model.parser.Model;
+import model.variant.kripke.KripkeTruthTable;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ public class KripkeTruthTableTest {
                                                           
                              (((p2 <-> ((p1 & !q1))) & (q2 <-> ((p1 & !q1) | (!p1 & !q1)))) |
                              ((p2 <-> ((!p1 & !q1))) & !q2)))
-                             & ((!p0 & !q0)) & ((p2 & q2))""", ktt.toFormulaStringWithEncodingStartAndEnd(2));
+                             & ((!p0 & !q0)) & ((p2 & q2))""", ktt.toFormulaStringWithEncodingStartAndEnd(false,2));
         assertEquals("""
                              p q || p'q'| p'q'
                              0 1 || 0 0 | 0 0
@@ -44,6 +44,6 @@ public class KripkeTruthTableTest {
                              ((((pnext <-> ((p & !q))) & (qnext <-> ((p & !q) | (!p & !q)))) |
                              ((pnext <-> ((!p & !q))) & !qnext)))
                              )
-                             & ((!p0 & !q0)) & ((p2 & q2))""", ktt.toQBFString(2));
+                             & ((!p0 & !q0)) & ((p2 & q2))""", ktt.toQBFString(false,2));
     }
 }

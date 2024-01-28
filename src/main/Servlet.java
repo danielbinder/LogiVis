@@ -131,30 +131,30 @@ public class Servlet implements RestEndpoint {
                 .computeJSON();
     }
 
-    @GET("/kripke2formula/:kripke/:steps")
-    public String kripke2formula(String kripke, String steps)   {
+    @GET("/kripke2formula/:kripke/:upUntil/:steps")
+    public String kripke2formula(String kripke, String steps, String upUntil)   {
         return new Result(() -> Model.of(preprocess(kripke))
                 .toKripkeStructure()
-                .toFormulaString(Integer.parseInt(steps)))
+                .toFormulaString(Boolean.parseBoolean(upUntil), Integer.parseInt(steps)))
                 .computeJSON();
     }
 
-    @GET("/kripke2compactFormula/:kripke/:steps")
-    public String kripke2CompactFormula(String kripke, String steps) {
+    @GET("/kripke2compactFormula/:kripke/:upUntil/:steps")
+    public String kripke2CompactFormula(String kripke, String steps, String upUntil) {
         return new Result(() -> Model.of(preprocess(kripke))
                                  .toKripkeStructure()
                                  .toKripkeTruthTable(),
-                         ktt -> ktt.toFormulaStringWithEncodingStartAndEnd(Integer.parseInt(steps)),
+                         ktt -> ktt.toFormulaStringWithEncodingStartAndEnd(Boolean.parseBoolean(upUntil), Integer.parseInt(steps)),
                          KripkeTruthTable::toString)
                 .computeJSON();
     }
 
-    @GET("/kripke2compactQBFFormula/:kripke/:steps")
-    public String kripke2QBFFormula(String kripke, String steps) {
+    @GET("/kripke2compactQBFFormula/:kripke/:upUntil/:steps")
+    public String kripke2QBFFormula(String kripke, String steps, String upUntil) {
         return new Result(() -> Model.of(preprocess(kripke))
                                  .toKripkeStructure()
                                  .toKripkeTruthTable(),
-                         ktt -> ktt.toQBFString(Integer.parseInt(steps)),
+                         ktt -> ktt.toQBFString(Boolean.parseBoolean(upUntil), Integer.parseInt(steps)),
                          KripkeTruthTable::toString)
                 .computeJSON();
     }

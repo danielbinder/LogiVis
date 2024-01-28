@@ -49,8 +49,8 @@ public class KripkeTruthTable {
         this(KripkeStructure.fromString(kripkeStructure));
     }
 
-    public String toFormulaStringWithEncodingStartAndEnd(int steps) {
-        return toFormulaString(steps) + getEncodingStartAndEndString(steps);
+    public String toFormulaStringWithEncodingStartAndEnd(boolean upUntil, int steps) {
+        return toFormulaString(steps) + getEncodingStartAndEndString(upUntil, steps);
     }
 
     public String toFormulaString(int steps) {
@@ -71,7 +71,7 @@ public class KripkeTruthTable {
                 .collect(Collectors.joining(" &\n\n", "(", ")"));
     }
 
-    public String toQBFString(int steps) {
+    public String toQBFString(boolean upUntil, int steps) {
         return literals.stream()
                         .map(literal -> IntStream.range(0, steps + 1)
                                 .mapToObj(i -> "?" + literal + i)
@@ -90,11 +90,11 @@ public class KripkeTruthTable {
                 toFormulaString(1).replaceAll("(!?[a-z]+([a-z]*[0-9]*)*)0", "$1")
                         .replaceAll("(!?[a-z]+([a-z]*[0-9]*)*)1", "$1next") +
                 "\n)" +
-                getEncodingStartAndEndString(steps);
+                getEncodingStartAndEndString(upUntil, steps);
     }
 
-    private String getEncodingStartAndEndString(int steps) {
-        return (!encodingStartVars.isEmpty()
+    private String getEncodingStartAndEndString(boolean upUntil, int steps) {
+        return "\n" + (!encodingStartVars.isEmpty()
                         ? "\n& " +
                         encodingStartVars.stream()
                                 .map(state -> state.entrySet().stream()
@@ -104,10 +104,12 @@ public class KripkeTruthTable {
                         : "") +
                 (!encodingEndVars.isEmpty()
                         ? " & " +
-                        encodingEndVars.stream()
-                                .map(state -> state.entrySet().stream()
-                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
-                                        .collect(Collectors.joining(" & ", "(", ")")))
+                        IntStream.range(upUntil ? 0 : steps, steps + 1)
+                                .mapToObj(i -> encodingEndVars.stream()
+                                        .map(state -> state.entrySet().stream()
+                                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + i)
+                                                .collect(Collectors.joining(" & ", "(", ")")))
+                                        .collect(Collectors.joining(" | ", "(", ")")))
                                 .collect(Collectors.joining(" | ", "(", ")"))
                         : "");
     }

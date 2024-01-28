@@ -43,11 +43,11 @@ public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVaria
         return new KripkeTruthTable(this);
     }
 
-    public LogicNode toFormula(int steps) {
-        return LogicNode.of(toFormulaString(steps));
+    public LogicNode toFormula(boolean upUntil, int steps) {
+        return LogicNode.of(toFormulaString(upUntil, steps));
     }
 
-    public String toFormulaString(int steps) {
+    public String toFormulaString(boolean upUntil, int steps) {
         return IntStream.range(0, steps).mapToObj(step -> stream()
                         .filter(kn -> !kn.successors.isEmpty())
                         .map(kn -> "(" +
@@ -62,7 +62,7 @@ public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVaria
                                         .collect(Collectors.joining(" | ", "(", ")")) +
                                 ")")
                         .collect(Collectors.joining(" &\n", "(", ")")))
-                .collect(Collectors.joining(" &\n\n", "(", ")")) +
+                .collect(Collectors.joining(" &\n\n", "(", ")")) + "\n" +
                 (stream().anyMatch(kn -> kn.isEncodingStart)
                         ? "\n& " +
                         stream()
@@ -74,11 +74,13 @@ public class KripkeStructure extends ArrayList<KripkeNode> implements ModelVaria
                         : "") +
                 (stream().anyMatch(kn -> kn.isEncodingEnd)
                         ? " & " +
-                        stream()
-                                .filter(kn -> kn.isEncodingEnd)
-                                .map(kn -> kn.stateMap.entrySet().stream()
-                                        .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + steps)
-                                        .collect(Collectors.joining(" & ", "(", ")")))
+                        IntStream.range(upUntil ? 0 : steps, steps + 1)
+                                .mapToObj(i -> stream()
+                                        .filter(kn -> kn.isEncodingEnd)
+                                        .map(kn -> kn.stateMap.entrySet().stream()
+                                                .map(literal -> (literal.getValue() ? "" : "!") + literal.getKey() + i)
+                                                .collect(Collectors.joining(" & ", "(", ")")))
+                                        .collect(Collectors.joining(" | ", "(", ")")))
                                 .collect(Collectors.joining(" | ", "(", ")"))
                         : "");
     }
