@@ -3,11 +3,12 @@ package model.variant.finite.interpreter;
 import marker.AlgorithmImplementation;
 import model.variant.finite.FiniteAutomaton;
 import model.variant.finite.State;
+import util.Logger;
 import util.Pair;
 
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SampleImplementation implements AlgorithmImplementation {
     @Override
@@ -171,8 +172,119 @@ public class SampleImplementation implements AlgorithmImplementation {
 
     @Override
     public boolean isSimulatedBy(FiniteAutomaton automaton1, FiniteAutomaton automaton2) {
-        // TODO
-        return true;
+        if(automaton1.equals(automaton2)) return true;
+
+        automaton1 = automaton1.clone(); // automaton A
+        automaton2 = automaton2.clone(); // automaton B
+
+        if(automaton1.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The first automaton does not have any!");
+        if(automaton2.getInitialStates().isEmpty())
+            throw new IllegalArgumentException("This algorithm needs initial states to work! The second automaton does not have any!");
+
+        // initial relation (all state relations are true)
+        Map<State, Map<State, Boolean>> currSim = new LinkedHashMap<>();
+        for(State s : automaton1)
+            currSim.put(s, automaton2.stream().collect(Collectors.toMap(Function.identity(), state -> Boolean.TRUE)));
+        Map<State, Map<State, Boolean>> oldSim = deepCopyOfRelation(currSim);
+
+        printSimulationRelation(currSim);
+
+        // if a state of automaton B has no successors, a state from automaton A cannot be simulated
+        // only exception: if the state from automaton A also lacks any successors, the state may be simulated
+        // (i.e., empty set comparison)
+        final List<State> noSuccessors = new ArrayList<>(automaton2.stream()
+                .filter(state -> state.getSuccessors().isEmpty()).toList());
+        currSim.forEach((aState, value) -> {
+            if (!aState.getSuccessors().isEmpty()) {
+                noSuccessors.forEach(noSuccState -> value.replace(noSuccState, Boolean.FALSE));
+            }
+        });
+
+        printSimulationRelation(currSim);
+
+        // as soon as oldSim and currSim are equal, the simulation relation has stabilized
+        // and will not change anymore
+        boolean initialRun = true;
+        while(initialRun || !currSim.equals(oldSim)) {
+            if(!initialRun) oldSim = deepCopyOfRelation(currSim);
+            else initialRun = false;
+
+            for(State aState : automaton1) {
+                // if a state of automaton A does have successors, the relation must be investigated further
+                // (otherwise, the relation will always remain TRUE)
+                if(!aState.getSuccessors().isEmpty()) {
+                    final Set<String> aStateTransitionLabels = aState.getSuccessorProperties();
+                    for(State bState : automaton2) {
+                        // if a state of automaton B does have successors, the relation must be investigated further
+                        // (otherwise, the relation will always remain FALSE)
+                        if(!bState.getSuccessors().isEmpty()) {
+                            final Set<String> bStateTransitionLabels = bState.getSuccessorProperties();
+                            // evaluate whether the current state from automaton B simulates the current state
+                            // from automaton A
+                            if(bStateTransitionLabels.containsAll(aStateTransitionLabels)
+                                && oldSim.get(aState).get(bState)) {
+                                boolean stateSimulated = true;
+                                simulationLoop:
+                                for(String transitionLabel : aStateTransitionLabels) {
+                                    for(State aSucc : aState.getSuccessorsFor(transitionLabel)) {
+                                        boolean successorSimulated = false;
+                                        for(State bSucc : bState.getSuccessorsFor(transitionLabel)) {
+                                            if(oldSim.get(aSucc).get(bSucc)) {
+                                                successorSimulated = true;
+                                                break;
+                                            }
+                                        }
+                                        if(!successorSimulated) {
+                                            stateSimulated = false;
+                                            break simulationLoop;
+                                        }
+                                    }
+                                }
+                                currSim.get(aState).put(bState, stateSimulated);
+                            } else {
+                                // if the "transition alphabet" of the state from automaton B does not cover
+                                // the entire "transition alphabet" of the state from automaton A, a simulation
+                                // is not possible
+                                currSim.get(aState).put(bState, Boolean.FALSE);
+                            }
+                        }
+                    }
+                }
+            }
+            printSimulationRelation(currSim);
+        }
+
+        // check if all initial states of automaton A are simulated by automaton B
+        final Set<State> bInitial = automaton2.getInitialStates();
+        return automaton1.getInitialStates().stream().map(aInit -> bInitial.stream()
+                .map(bInit -> currSim.get(aInit).get(bInit)).reduce(true, (initial, val) -> initial && val))
+                .reduce(true, (initial, val) -> initial && val);
+    }
+
+    private void printSimulationRelation(final Map<State, Map<State, Boolean>> relation) {
+        final StringBuilder sb = new StringBuilder("\n");
+        final Set<State> bStates = relation.values().stream().findFirst().get().keySet();
+        sb.append("\t").append(bStates.stream().map(state -> state.name).collect(Collectors.joining(" ")))
+                .append("\n");
+        for(var entry : relation.entrySet()) {
+            sb.append(String.format("%s  ", entry.getKey().name));
+            sb.append(entry.getValue().values().stream().map(bool -> bool ? "1" : "0")
+                    .collect(Collectors.joining("  "))).append("\n");
+        }
+        Logger.info(sb.toString());
+    }
+
+    private Map<State, Map<State, Boolean>> deepCopyOfRelation(final Map<State, Map<State, Boolean>> original) {
+        return original.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().entrySet().stream()
+                                .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        Map.Entry::getValue
+                                ))
+                ));
     }
 
     private FiniteAutomaton recursivePowerAutomaton(FiniteAutomaton original, FiniteAutomaton power, Set<State> current) {
