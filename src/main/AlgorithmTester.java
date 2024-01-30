@@ -8,6 +8,8 @@ import util.Result;
 import util.rest.GET;
 import util.rest.REST;
 
+import java.io.File;
+
 import static marker.AlgorithmImplementation.USER;
 import static util.rest.REST.preprocess;
 
@@ -27,7 +29,9 @@ public class AlgorithmTester implements RestEndpoint {
 
     @GET("/validateAll/:name/:compact")
     public String validateAll(String compact, String name) {
-        return new Result(() -> validator.validateAll(name, Boolean.parseBoolean(compact)))
+        return new Result(() -> validator.validateAll(name, Boolean.parseBoolean(compact)),
+                () -> String.format("Created file '%s.report' in directory '%sresources'",
+                        name, System.getProperty("user.dir") + File.separator))
                 .computeJSON();
     }
 
