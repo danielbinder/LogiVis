@@ -29,6 +29,7 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.toSinkAutomaton(automaton("a")))) validateToSinkAutomaton();
         if(isImplemented(() -> USER.toOracleAutomaton(automaton("a")))) validateToOracleAutomaton();
         if(isImplemented(() -> USER.toOptimisedOracleAutomaton(automaton("a")))) validateToOptimisedOracleAutomaton();
+        if(isImplemented(() -> USER.isSimulatedBy(automaton("a"), automaton("b")))) validateIsSimulatedBy();
 
         TestReportFile.compile(testReport.compile(name, false), name);
         return testReport.compile(name, compact);
@@ -48,6 +49,7 @@ public class ImplementationValidator {
             case "toSinkAutomaton" -> validateToSinkAutomaton();
             case "toOracleAutomaton" -> validateToOracleAutomaton();
             case "toOptimisedOracleAutomaton" -> validateToOptimisedOracleAutomaton();
+            case "isSimulatedBy" -> validateIsSimulatedBy();
         }
 
         return testReport.compile(name, compact);
@@ -116,6 +118,28 @@ public class ImplementationValidator {
                                   (i1, i2) -> SAMPLE.isEquivalent(automaton(i1), automaton(i2)),
                                   generateAutomatons(),
                                   generateAutomatons());
+    }
+
+    private void validateIsSimulatedBy() {
+        String testName = "isSimulatedBy";
+
+        testReport.testTrue(testName,
+                (i1, i2) -> USER.isSimulatedBy(automaton(i1), automaton(i2)),
+                List.of("s1_ -> [c] s3, s1 -> [c] s2, s3 -> [d] s5 , s2 -> [m] s4"),
+                List.of("s6_ -> [c] s7, s7 -> [d] s9, s7 -> [m] s8"));
+
+        testReport.testFalse(testName,
+                (i1, i2) -> USER.isSimulatedBy(automaton(i1), automaton(i2)),
+                List.of("s6_ -> [c] s7, s7 -> [d] s9, s7 -> [m] s8"),
+                List.of("s1_ -> [c] s3, s1 -> [c] s2, s3 -> [d] s5 , s2 -> [m] s4"));
+
+        testReport.sectionDivider(testName);
+
+        testReport.compareBoolean(testName,
+                                (i1, i2) -> USER.isSimulatedBy(automaton(i1), automaton(i2)),
+                                (i1, i2) -> SAMPLE.isSimulatedBy(automaton(i1), automaton(i2)),
+                                generateAutomatons(),
+                                generateAutomatons());
     }
 
     private void validateAreReachable() {
