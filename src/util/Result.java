@@ -22,15 +22,11 @@ public class Result {
     public String error = "";
 
 
-    public Result(String result, String info, String warning, String error) {
+    private Result(String result, String info, String warning, String error) {
         this.result = result;
         this.info = info;
         this.warning = warning;
         this.error = error;
-    }
-
-    public Result(String result, String info) {
-        this(result, info, "", "");
     }
 
     public Result(Supplier<String> resultSupplier) {
@@ -87,7 +83,8 @@ public class Result {
     }
 
     private static String replaceIllegalCharacters(String s) {
-        return s.replace("vvv_qmark", "\\u2754")
+        return s.replace("\\", "\\\\")
+                .replace("vvv_qmark", "\\u2754")
                 .replace("vvv_x", "\\u274C")
                 .replace("vvv_tick", "\\u2714")
                 .replace("\t", "    ");
