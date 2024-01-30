@@ -164,6 +164,15 @@ public class AlgorithmTester implements RestEndpoint {
                 .computeJSON();
     }
 
+    @GET("/testIsSimulatedBy/:automaton1/:automaton2")
+    public String testIsSimulatedBy(String automaton1, String automaton2) {
+        return new Result(() -> USER.isSimulatedBy(Model.of(preprocess(automaton1)).toFiniteAutomaton(),
+                        Model.of(preprocess(automaton2)).toFiniteAutomaton())
+                ? "true"
+                : "false")
+                .computeJSON();
+    }
+
     @GET("/testToPowerAutomaton/:automaton")
     public String testToPowerAutomaton(String automaton) {
         return new Result(() -> USER.toPowerAutomaton(Model.of(preprocess(automaton)).toFiniteAutomaton())
