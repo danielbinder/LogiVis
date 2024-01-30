@@ -77,6 +77,37 @@ public class SampleImplementationTest {
     }
 
     @Test
+    public void testIsSimulatedBy() {
+        assertTrue(Model.of("s1_ -> [c] s3, s1 -> [c] s2, s3 -> [d] s5 , s2 -> [m] s4")
+                .toFiniteAutomaton()
+                .isSimulatedBy(
+                        Model.of("s6_ -> [c] s7, s7 -> [d] s9, s7 -> [m] s8")
+                                .toFiniteAutomaton()
+                ));
+
+        assertFalse(Model.of("s6_ -> [c] s7, s7 -> [d] s9, s7 -> [m] s8")
+                .toFiniteAutomaton()
+                .isSimulatedBy(
+                        Model.of("s1_ -> [c] s3, s1 -> [c] s2, s3 -> [d] s5 , s2 -> [m] s4")
+                                .toFiniteAutomaton()
+                ));
+
+        assertTrue(Model.of("s4_ -> [a] s5, s4 -> [a] s6, s6 -> [c] s6, s5 -> [b c] s5")
+                .toFiniteAutomaton()
+                .isSimulatedBy(
+                        Model.of("s1_ -> [a] s2, s1 -> [a] s3, s3 -> [b] s3, s2 -> [b c] s2")
+                                .toFiniteAutomaton()
+                ));
+
+        assertTrue(Model.of("s1_ -> [a] s2, s1 -> [a] s3, s3 -> [b] s3, s2 -> [b c] s2")
+                .toFiniteAutomaton()
+                .isSimulatedBy(
+                        Model.of("s4_ -> [a] s5, s4 -> [a] s6, s6 -> [c] s6, s5 -> [b c] s5")
+                                .toFiniteAutomaton()
+                ));
+    }
+
+    @Test
     public void testAreReachable() {
         assertTrue(Model.of("s1_ -> [a] s2, s2 -> [b] s3, s3 -> [c] s4<")
                            .toFiniteAutomaton()
