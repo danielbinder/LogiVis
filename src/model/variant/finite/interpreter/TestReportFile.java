@@ -46,9 +46,10 @@ public class TestReportFile {
                     + "hashed report list:\n"
                     + hash(name, timeStamp, tests);
 
+            Files.createDirectories(Path.of(System.getProperty("user.dir") + "/resources/"));
             Files.writeString(Path.of(System.getProperty("user.dir") + "/resources/" + name + ".report"),
-                              report,
-                              StandardCharsets.UTF_8);
+                    report,
+                    StandardCharsets.UTF_8);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
