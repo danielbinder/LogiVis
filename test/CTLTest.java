@@ -350,7 +350,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", false,
                 "s2", false,
                 "s3", false,
-                "s4", false), solver.solve(CTLNode.of("AXq & A(p U q)")));
+                "s4", false), solver.solve(CTLNode.of("(AXq) & A(p U q)")));
     }
 
     @Test
@@ -360,7 +360,7 @@ public class CTLTest {
         assertEquals(Map.of("s1", true,
                 "s2", true,
                 "s3", false,
-                "s4", true), solver.solve(CTLNode.of("AXq | A(p U q)")));
+                "s4", true), solver.solve(CTLNode.of("(AXq) | A(p U q)")));
     }
 
     @Test
