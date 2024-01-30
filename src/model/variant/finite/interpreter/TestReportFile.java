@@ -20,6 +20,7 @@ public class TestReportFile {
             List.of(Pattern.compile("public boolean isDeterministic\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public boolean isComplete\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public boolean isEquivalent\\(FiniteAutomaton automaton1, FiniteAutomaton automaton2\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
+                    Pattern.compile("public boolean isSimulatedBy\\(FiniteAutomaton automaton1, FiniteAutomaton automaton2\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public boolean areReachable\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toProductAutomaton\\(FiniteAutomaton automaton1, FiniteAutomaton automaton2\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toPowerAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
