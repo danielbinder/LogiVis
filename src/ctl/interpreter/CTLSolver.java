@@ -56,7 +56,7 @@ public class CTLSolver {
             case OrNode n -> {
                 solutionInfo.add("Taking UNION of satisfying left- and right states of " + n);
                 List<KripkeNode> union = new ArrayList<>(sat(n.left()));
-                union.addAll(sat(n.right()));
+                union.addAll(sat(n.right()).stream().filter(node -> !union.contains(node)).toList());
                 yield union;
             }
             case ImplicationNode n -> {
@@ -65,7 +65,7 @@ public class CTLSolver {
             }
             case DoubleImplicationNode n -> {
                 solutionInfo.add("Splitting up double implication 'a <-> b' to '(a -> b) & (b -> a)' for " + n);
-                yield sat(new AndNode(new ImplicationNode(n.left(), n.right()), new ImplicationNode(n.left(), n.right())));
+                yield sat(new AndNode(new ImplicationNode(n.left(), n.right()), new ImplicationNode(n.right(), n.left())));
             }
             // evaluate CTL-expression for checking if a certain property holds at least
             // in one path directly in the next state (no simplifications via semantic equivalence possible)
@@ -73,7 +73,7 @@ public class CTLSolver {
             case AXNode n -> {
                 // evaluate CTL-expression for checking if a certain property holds directly in the next states
                 // on all outgoing paths
-                solutionInfo.add("Transforming 'AX a' to '!EX !a' for " + n);
+                solutionInfo.add("Transforming 'AX(a)' to '!EX(!a)' for " + n);
                 yield new ArrayList<>(sat(new NegationNode(new EXNode(new NegationNode(n.child())))))
                         .stream()
                         .filter(from -> !from.successors.isEmpty())
@@ -88,11 +88,11 @@ public class CTLSolver {
             case AUNode n -> {
                 // evaluate CTL-expression for checking if a certain property holds until at some point in the
                 // future another property holds on all outgoing paths
-                solutionInfo.add("Transforming 'A a U b' to '!(E !b U (!a & !b)) | (EG !b)' for " + n);
-                yield sat(new OrNode(new NegationNode(new EUNode(new NegationNode(n.right()),
+                solutionInfo.add("Transforming 'A(a U b)' to '!(E(!b U (!a & !b)) | (EG !b))' for " + n);
+                yield sat(new NegationNode(new OrNode(new EUNode(new NegationNode(n.right()),
                                                                  new AndNode(new NegationNode(n.left()),
-                                                                             new NegationNode(n.right())))),
-                                     new EGNode(new NegationNode(n.right()))));
+                                                                             new NegationNode(n.right()))),
+                                                      new EGNode(new NegationNode(n.right())))));
             }
             case EFNode n -> {
                 // evaluate CTL-expression for checking if a certain property holds eventually on at least
@@ -134,7 +134,8 @@ public class CTLSolver {
      * following rule: {s elem. of States | exists s': s -> s' and s' elem. of exprStates}.
      * */
     private List<KripkeNode> existentialPredecessors(List<KripkeNode> exprStates) {
-        solutionInfo.add("Taking all existential predecessors for " + exprStates);
+        solutionInfo.add("Taking all existential predecessors for " + exprStates.stream()
+                .map(node -> node.name).collect(Collectors.joining(", ")));
         return kripkeStructure.stream()
                 .filter(from -> exprStates.stream().anyMatch(from.successors::contains))
                 .toList();
@@ -147,7 +148,8 @@ public class CTLSolver {
      * @see <a href="https://q2a.cs.uni-kl.de/34/how-to-compute-the-universal-predecessor"></a>
      * */
     private List<KripkeNode> universalPredecessors(List<KripkeNode> targetStates) {
-        solutionInfo.add("Taking all universal predecessors for " + targetStates);
+        solutionInfo.add("Taking all universal predecessors for " + targetStates.stream()
+                .map(node -> node.name).collect(Collectors.joining(", ")));
         List<KripkeNode> targetPredecessors = new ArrayList<>(existentialPredecessors(targetStates));
         List<KripkeNode> diffStates = new ArrayList<>(kripkeStructure);
         for(KripkeNode state : targetStates) {
