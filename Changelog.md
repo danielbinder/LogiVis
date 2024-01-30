@@ -19,9 +19,11 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
-### 1.6.2 Added 'always endable' option to
+### 1.6.3 Added isSimulatedBy() to Finite Automaton algorithms
+* Checks if one automaton can be simulated by another one
+### 1.6.2 Added 'always endable' option to Model Encoder
 * It encodes end states at all steps
-### 1.6.1 Added areReachable() to finite Automaton algorithms
+### 1.6.1 Added areReachable() to Finite Automaton algorithms
 * Checks if all 'isEncodingEnd' states are reachable
 ### 1.6.0 Restructured and Refactored the whole Project
 * Classes are grouped by concept and not by function
