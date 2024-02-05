@@ -37,6 +37,16 @@ public class Result {
         this(resultSupplier, s -> s, s -> infoSupplier.get());
     }
 
+    public Result(Supplier<String> baseSupplier, Supplier<String> infoSupplier, Map<Predicate<String>, String> alternatives) {
+        this(baseSupplier,
+             base -> alternatives.keySet().stream()
+                    .filter(p -> p.test(base))
+                    .map(alternatives::get)
+                    .findFirst()
+                    .orElse(base),
+             base -> infoSupplier.get());
+    }
+
     public <T> Result(Supplier<T> baseSupplier, Function<T, List<Map<String, Boolean>>> resultFunction,
                       Function<T, String> infoFunction, Map<Predicate<T>, String> alternatives) {
         this(baseSupplier,
@@ -66,10 +76,6 @@ public class Result {
         } finally {
             System.setOut(stdOut);
         }
-    }
-
-    public Result(Map<String, Boolean> result, String info) {
-        this(JSONof(result), info, "", "");
     }
 
     public String computeJSON() {

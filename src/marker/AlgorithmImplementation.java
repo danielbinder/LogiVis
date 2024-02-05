@@ -7,6 +7,7 @@ import model.variant.finite.interpreter.SampleImplementation;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface AlgorithmImplementation {
@@ -24,6 +25,7 @@ public interface AlgorithmImplementation {
     FiniteAutomaton toSinkAutomaton(FiniteAutomaton automaton);
     FiniteAutomaton toOracleAutomaton(FiniteAutomaton automaton);
     FiniteAutomaton toOptimisedOracleAutomaton(FiniteAutomaton automaton);
+    Set<Set<State>> getStronglyConnectedComponents(FiniteAutomaton automaton);
 
     /* H E L P E R S */
     default String combinedName(State... nodes) {

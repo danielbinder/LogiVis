@@ -27,8 +27,9 @@ public class TestReportFile {
                     Pattern.compile("public FiniteAutomaton toComplementAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toSinkAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     Pattern.compile("public FiniteAutomaton toOracleAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
+                    Pattern.compile("public FiniteAutomaton toOptimisedOracleAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s+@Override", Pattern.DOTALL),
                     // End last pattern in file with \\z, since there is no @Override after
-                    Pattern.compile("public FiniteAutomaton toOptimisedOracleAutomaton\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s*\\z", Pattern.DOTALL));
+                    Pattern.compile("public Set<Set<State>> getStronglyConnectedComponents\\(FiniteAutomaton automaton\\) \\{(.*?)}\\s*\\z", Pattern.DOTALL));
     private static final Set<String> KNOWN_WORDS =
             Set.of("if", "return", "stream", "getInitialStates", "size", "allMatch", "toCheck",
                    "getSuccessorProperties", "getSuccessorsFor", "map", "FiniteAutomaton", "getAlphabet", "noneMatch",

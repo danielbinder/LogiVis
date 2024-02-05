@@ -262,6 +262,10 @@ public class FiniteAutomaton extends HashSet<State> implements ModelVariant {
         return SAMPLE.toOptimisedOracleAutomaton(this);
     }
 
+    public Set<Set<State>> getStronglyConnectedComponents() {
+        return SAMPLE.getStronglyConnectedComponents(this);
+    }
+
     @Override
     public String toString() {
         return toModel().toString();

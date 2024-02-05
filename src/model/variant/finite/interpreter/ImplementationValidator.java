@@ -3,10 +3,13 @@ package model.variant.finite.interpreter;
 import model.parser.Model;
 import model.variant.finite.FiniteAutomaton;
 import model.variant.finite.FiniteAutomatonGenerator;
+import model.variant.finite.State;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static marker.AlgorithmImplementation.SAMPLE;
@@ -15,6 +18,12 @@ import static marker.AlgorithmImplementation.USER;
 public class ImplementationValidator {
     private static final Function<String, FiniteAutomaton> automatonFunction = s -> Model.of(s).toFiniteAutomaton();
     private TestReport<String, FiniteAutomaton> testReport;
+    private static final Function<Set<Set<State>>, Set<Set<String>>> setConversionFunction = s ->
+            s.stream()
+                    .map(set -> set.stream()
+                            .map(state -> state.name)
+                            .collect(Collectors.toUnmodifiableSet()))
+            .collect(Collectors.toUnmodifiableSet());
 
     public String validateAll(String name, boolean compact) {
         testReport = new TestReport<>(FiniteAutomaton::isEquivalent);
@@ -22,6 +31,7 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.isDeterministic(automaton("a")))) validateIsDeterministic();
         if(isImplemented(() -> USER.isComplete(automaton("a")))) validateIsComplete();
         if(isImplemented(() -> USER.isEquivalent(automaton("a"), automaton("b")))) validateIsEquivalent();
+        if(isImplemented(() -> USER.isSimulatedBy(automaton("a"), automaton("b")))) validateIsSimulatedBy();
         if(isImplemented(() -> USER.areReachable(automaton("a")))) validateAreReachable();
         if(isImplemented(() -> USER.toProductAutomaton(automaton("a"), automaton("b")))) validateToProductAutomaton();
         if(isImplemented(() -> USER.toPowerAutomaton(automaton("a")))) validateToPowerAutomaton();
@@ -29,7 +39,7 @@ public class ImplementationValidator {
         if(isImplemented(() -> USER.toSinkAutomaton(automaton("a")))) validateToSinkAutomaton();
         if(isImplemented(() -> USER.toOracleAutomaton(automaton("a")))) validateToOracleAutomaton();
         if(isImplemented(() -> USER.toOptimisedOracleAutomaton(automaton("a")))) validateToOptimisedOracleAutomaton();
-        if(isImplemented(() -> USER.isSimulatedBy(automaton("a"), automaton("b")))) validateIsSimulatedBy();
+        if(isImplemented(() -> USER.getStronglyConnectedComponents(automaton("a")))) validateGetStronglyConnectedComponents();
 
         TestReportFile.compile(testReport.compile(name, false), name);
         return testReport.compile(name, compact);
@@ -42,6 +52,7 @@ public class ImplementationValidator {
             case "isDeterministic" -> validateIsDeterministic();
             case "isComplete" -> validateIsComplete();
             case "isEquivalent" -> validateIsEquivalent();
+            case "isSimulatedBy" -> validateIsSimulatedBy();
             case "areReachable" -> validateAreReachable();
             case "toProductAutomaton" -> validateToProductAutomaton();
             case "toPowerAutomaton" -> validateToPowerAutomaton();
@@ -49,7 +60,7 @@ public class ImplementationValidator {
             case "toSinkAutomaton" -> validateToSinkAutomaton();
             case "toOracleAutomaton" -> validateToOracleAutomaton();
             case "toOptimisedOracleAutomaton" -> validateToOptimisedOracleAutomaton();
-            case "isSimulatedBy" -> validateIsSimulatedBy();
+            case "getStronglyConnectedComponents" -> validateGetStronglyConnectedComponents();
         }
 
         return testReport.compile(name, compact);
@@ -323,6 +334,39 @@ public class ImplementationValidator {
     private void validateToOptimisedOracleAutomaton() {
         testReport.uncertain("toOptimisedOracleAutomaton",
                              "It's impossible to test this function due to its non-deterministic nature");
+    }
+
+    private void validateGetStronglyConnectedComponents() {
+        String testName = "getStronglyConnectedComponents";
+
+        testReport.testEquals(testName,
+                              automatonFunction.andThen(USER::getStronglyConnectedComponents).andThen(setConversionFunction),
+                              Map.of("s0 -> [a] s1, s1 -> [a] s2, s2 -> [a] s3", Set.of(),
+                                     "s0 -> [a] s0, s1", Set.of(Set.of("s0")),
+                                     "s0 -> [a] s1, s1 -> [a] s2, s1 -> [a] s6, s1 -> [a] s4, s2 - [a] s3, s3 -> [a] s4," +
+                                             "s3 -> [a] s5, s4 - [a] s5, s6 -> [a] s0, s6 -> [a] s2",
+                                     Set.of(Set.of("s3", "s2"),
+                                            Set.of("s6", "s0", "s1"),
+                                            Set.of("s5", "s4")),
+                                     "s0 -> [a] s1, s1 -> [a] s2, s2 -> [a] s0, s3 - [a] s7, s3 -> [a] s4, s4 -> [a] s5," +
+                                             "s5 -> [a] s6, s5 -> [a] s0, s6 -> [a] s0, s6 -> [a] s2, s6 -> [a] s4, s7 -> [a] s5",
+                                     Set.of(Set.of("s0", "s1", "s2"),
+                                            Set.of("s4", "s5", "s6"),
+                                            Set.of("s3", "s7")),
+                                     """
+                                      S = {s5, s3<, s0<, s4, s1, s2}
+                                      I = {s2}
+                                      T = {(s5, s2) [a], (s3, s0) [a], (s0, s1) [a], (s4, s5) [a], (s4, s3) [a],
+                                          (s4, s0) [a], (s4, s2) [a], (s1, s5) [a], (s1, s3) [a], (s1, s4) [a],
+                                          (s2, s5) [a], (s2, s0) [a]}""",
+                                     Set.of(Set.of("s5", "s4", "s3", "s2", "s1", "s0"))));
+
+        testReport.sectionDivider(testName);
+
+        testReport.compareNonCustomEquals(testName,
+                                          automatonFunction.andThen(USER::getStronglyConnectedComponents).andThen(setConversionFunction),
+                                          automatonFunction.andThen(SAMPLE::getStronglyConnectedComponents).andThen(setConversionFunction),
+                                          generateAutomatons());
     }
 
     /* H E L P E R S */
