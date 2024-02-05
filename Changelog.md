@@ -19,6 +19,10 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
+### 1.6.4 Added getStronglyConnectedComponents() to Finite Automaton algorithms
+* Groups states from which you can reach all other states in group
+* Expanded validator and report classes to take an arbitrary type with custom equals
+* Added solution information to algorithms
 ### 1.6.3 Added isSimulatedBy() to Finite Automaton algorithms
 * Checks if one automaton can be simulated by another one
 ### 1.6.2 Added 'always endable' option to Model Encoder

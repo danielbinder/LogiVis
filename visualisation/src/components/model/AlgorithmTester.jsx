@@ -56,7 +56,8 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
     }
 
     function requiresSetSolutionTab() {
-        return ['isDeterministic', 'isComplete', 'isEquivalent', 'isSimulatedBy', 'areReachable'].includes(algorithm)
+        return ['isDeterministic', 'isComplete', 'isEquivalent', 'isSimulatedBy', 'areReachable',
+            'getStronglyConnectedComponents'].includes(algorithm)
     }
 
     return (
@@ -83,6 +84,7 @@ export default function AlgorithmTester({setSolutionTab, setModelTab}) {
                         <option value='toOracleAutomaton'>toOracleAutomaton</option>
                         <option value='toOptimisedOracleAutomaton'>toOptimisedOracleAutomaton</option>
                         <option value='isSimulatedBy'>isSimulatedBy</option>
+                        <option value='getStronglyConnectedComponents'>getStronglyConnectedComponents</option>
                     </select>
                 </div>
                 <div className='centerContainer'>
