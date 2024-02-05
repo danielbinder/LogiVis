@@ -3,12 +3,15 @@ package main;
 import marker.RestEndpoint;
 import model.parser.Model;
 import model.variant.finite.interpreter.ImplementationValidator;
+import model.variant.finite.interpreter.SampleImplementation;
 import util.Logger;
 import util.Result;
 import util.rest.GET;
 import util.rest.REST;
 
 import java.io.File;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static marker.AlgorithmImplementation.USER;
 import static util.rest.REST.preprocess;
@@ -37,13 +40,15 @@ public class AlgorithmTester implements RestEndpoint {
 
     @GET("/isDeterministic/:automaton")
     public String isDeterministic(String automaton) {
-        return new Result(() -> Model.of(preprocess(automaton)).toFiniteAutomaton().isDeterministic() ? "true" : "false")
+        return new Result(() -> Model.of(preprocess(automaton)).toFiniteAutomaton().isDeterministic() ? "true" : "false",
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
     @GET("/isComplete/:automaton")
     public String isComplete(String automaton) {
-        return new Result(() -> Model.of(preprocess(automaton)).toFiniteAutomaton().isComplete() ? "true" : "false")
+        return new Result(() -> Model.of(preprocess(automaton)).toFiniteAutomaton().isComplete() ? "true" : "false",
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -51,7 +56,8 @@ public class AlgorithmTester implements RestEndpoint {
     public String isEquivalent(String automaton1, String automaton2) {
         return new Result(() -> Model.of(preprocess(automaton1))
                 .toFiniteAutomaton()
-                .isEquivalent(Model.of(preprocess(automaton2)).toFiniteAutomaton()) ? "true" : "false")
+                .isEquivalent(Model.of(preprocess(automaton2)).toFiniteAutomaton()) ? "true" : "false",
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -59,7 +65,8 @@ public class AlgorithmTester implements RestEndpoint {
     public String areReachable(String automaton) {
         return new Result(() -> Model.of(preprocess(automaton))
                 .toFiniteAutomaton()
-                .areReachable() ? "true" : "false")
+                .areReachable() ? "true" : "false",
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -68,7 +75,8 @@ public class AlgorithmTester implements RestEndpoint {
         return new Result(() -> Model.of(preprocess(automaton1)).toFiniteAutomaton()
                 .toProductAutomaton(Model.of(preprocess(automaton2)).toFiniteAutomaton())
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -86,7 +94,8 @@ public class AlgorithmTester implements RestEndpoint {
                 .toFiniteAutomaton()
                 .toPowerAutomaton()
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -96,7 +105,8 @@ public class AlgorithmTester implements RestEndpoint {
                 .toFiniteAutomaton()
                 .toComplementAutomaton()
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -106,7 +116,8 @@ public class AlgorithmTester implements RestEndpoint {
                 .toFiniteAutomaton()
                 .toSinkAutomaton()
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -116,7 +127,8 @@ public class AlgorithmTester implements RestEndpoint {
                 .toFiniteAutomaton()
                 .toOracleAutomaton()
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
                 .computeJSON();
     }
 
@@ -126,7 +138,21 @@ public class AlgorithmTester implements RestEndpoint {
                 .toFiniteAutomaton()
                 .toOptimisedOracleAutomaton()
                 .toModel()
-                .toModelString())
+                .toModelString(),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()))
+                .computeJSON();
+    }
+
+    @GET("getStronglyConnectedComponents/:automaton")
+    public String getStronglyConnectedComponents(String automaton) {
+        return new Result(() -> Model.of(preprocess(automaton)).toFiniteAutomaton().getStronglyConnectedComponents()
+                    .stream()
+                    .map(set -> set.stream()
+                            .map(state -> state.name)
+                            .collect(Collectors.joining(", ")))
+                    .collect(Collectors.joining("\n")),
+                          () -> String.join("\n", SampleImplementation.getSolutionInformation()),
+                          Map.of(String::isEmpty, "No strongly connected components!"))
                 .computeJSON();
     }
 
@@ -210,6 +236,17 @@ public class AlgorithmTester implements RestEndpoint {
         return new Result(() -> USER.toOptimisedOracleAutomaton(Model.of(preprocess(automaton)).toFiniteAutomaton())
                 .toModel()
                 .toModelString())
+                .computeJSON();
+    }
+
+    @GET("testGetStronglyConnectedComponents/:automaton")
+    public String testGetStronglyConnectedComponents(String automaton) {
+        return new Result(() -> USER.getStronglyConnectedComponents(Model.of(preprocess(automaton)).toFiniteAutomaton())
+                .stream()
+                .map(set -> set.stream()
+                        .map(state -> state.name)
+                        .collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n")))
                 .computeJSON();
     }
 }

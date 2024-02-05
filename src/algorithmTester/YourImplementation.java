@@ -183,4 +183,9 @@ public class YourImplementation implements AlgorithmImplementation {
     public FiniteAutomaton toOptimisedOracleAutomaton(FiniteAutomaton automaton) {
         throw new IllegalStateException("Algorithm 'toOptimisedOracleAutomaton' not implemented yet!");
     }
+
+    @Override
+    public Set<Set<State>> getStronglyConnectedComponents(FiniteAutomaton automaton) {
+        throw new IllegalStateException("Algorithm 'getStronglyConnectedComponents' not implemented yet!");
+    }
 }

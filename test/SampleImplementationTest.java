@@ -2,6 +2,9 @@ import model.parser.Model;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SampleImplementationTest {
@@ -281,5 +284,69 @@ public class SampleImplementationTest {
                                       I = {s0, s1}
                                       T = {(s3, s4) [b0], (s3, s2) [a0], (s0, s3) [b0 a0], (s0, s1) [b2], (s0, s2) [b1], (s2, s4) [a0], (s2, s1) [b0], (s4, s4) [b0 a0], (s1, s4) [b0], (s1, s1) [a0 b1]}
                                       F = {s0, s2, s4}"""));
+    }
+
+    @Test
+    public void testGetStronglyConnectedComponents() {
+        assertEquals(Set.of(),
+                     Model.of("s0 -> [a] s1, s1 -> [a] s2, s2 -> [a] s3")
+                             .toFiniteAutomaton()
+                             .getStronglyConnectedComponents()
+                             .stream()
+                             .map(set -> set.stream()
+                                     .map(state -> state.name)
+                                     .collect(Collectors.toUnmodifiableSet()))
+                             .collect(Collectors.toUnmodifiableSet()));
+
+        assertEquals(Set.of(Set.of("s0")),
+                     Model.of("s0 -> [a] s0, s1")
+                             .toFiniteAutomaton()
+                             .getStronglyConnectedComponents()
+                             .stream()
+                             .map(set -> set.stream()
+                                     .map(state -> state.name)
+                                     .collect(Collectors.toUnmodifiableSet()))
+                             .collect(Collectors.toUnmodifiableSet()));
+
+        assertEquals(Set.of(Set.of("s3", "s2"),
+                            Set.of("s6", "s0", "s1"),
+                            Set.of("s5", "s4")),
+                     Model.of("s0 -> [a] s1, s1 -> [a] s2, s1 -> [a] s6, s1 -> [a] s4, s2 - [a] s3, s3 -> [a] s4," +
+                             "s3 -> [a] s5, s4 - [a] s5, s6 -> [a] s0, s6 -> [a] s2")
+                             .toFiniteAutomaton()
+                             .getStronglyConnectedComponents()
+                             .stream()
+                             .map(set -> set.stream()
+                                     .map(state -> state.name)
+                                     .collect(Collectors.toUnmodifiableSet()))
+                             .collect(Collectors.toUnmodifiableSet()));
+
+        assertEquals(Set.of(Set.of("s0", "s1", "s2"),
+                            Set.of("s4", "s5", "s6"),
+                            Set.of("s3", "s7")),
+                     Model.of("s0 -> [a] s1, s1 -> [a] s2, s2 -> [a] s0, s3 - [a] s7, s3 -> [a] s4, s4 -> [a] s5," +
+                                      "s5 -> [a] s6, s5 -> [a] s0, s6 -> [a] s0, s6 -> [a] s2, s6 -> [a] s4, s7 -> [a] s5")
+                             .toFiniteAutomaton()
+                             .getStronglyConnectedComponents()
+                             .stream()
+                             .map(set -> set.stream()
+                                     .map(state -> state.name)
+                                     .collect(Collectors.toUnmodifiableSet()))
+                             .collect(Collectors.toUnmodifiableSet()));
+
+        assertEquals(Set.of(Set.of("s5", "s4", "s3", "s2", "s1", "s0")),
+                     Model.of("""
+                                      S = {s5, s3<, s0<, s4, s1, s2}
+                                      I = {s2}
+                                      T = {(s5, s2) [a], (s3, s0) [a], (s0, s1) [a], (s4, s5) [a], (s4, s3) [a],
+                                          (s4, s0) [a], (s4, s2) [a], (s1, s5) [a], (s1, s3) [a], (s1, s4) [a],
+                                          (s2, s5) [a], (s2, s0) [a]}""")
+                             .toFiniteAutomaton()
+                             .getStronglyConnectedComponents()
+                             .stream()
+                             .map(set -> set.stream()
+                                     .map(state -> state.name)
+                                     .collect(Collectors.toUnmodifiableSet()))
+                             .collect(Collectors.toUnmodifiableSet()));
     }
 }

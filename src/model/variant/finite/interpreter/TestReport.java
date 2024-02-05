@@ -71,6 +71,12 @@ public class TestReport<I, E> {
                                         .toList());
     }
 
+    public <X> void testEquals(String testName, Function<I, X> testFunction, Map<I, X> inputExpectedMap) {
+        getFor(testName).addAll(inputExpectedMap.entrySet().stream()
+                                        .map(e -> nonCustomEquals(e.getKey().toString(), () -> testFunction.apply(e.getKey()), e.getValue()))
+                                        .toList());
+    }
+
     public void compare(String testName, Function<I, E> testFunction, Function<I, E> sampleFunction, List<I> inputs) {
         getFor(testName).addAll(inputs.stream()
                                         .map(input -> equals(input.toString(),
@@ -100,6 +106,14 @@ public class TestReport<I, E> {
                                         .mapToObj(i -> equalsBoolean(inputs1.get(i) + "\n" + inputs2.get(i),
                                                                      () -> testFunction.apply(inputs1.get(i), inputs2.get(i)),
                                                                      () -> sampleFunction.apply(inputs1.get(i), inputs2.get(i))))
+                                        .toList());
+    }
+
+    public <X> void compareNonCustomEquals(String testName, Function<I, X> testFunction, Function<I, X> sampleFunction, List<I> inputs) {
+        getFor(testName).addAll(inputs.stream()
+                                        .map(input -> nonCustomEqualsCompare(input.toString(),
+                                                                      () -> testFunction.apply(input),
+                                                                      () -> sampleFunction.apply(input)))
                                         .toList());
     }
 
@@ -137,9 +151,41 @@ public class TestReport<I, E> {
         return equalsBoolean(input, test, expected);
     }
 
+    private <X> String nonCustomEqualsCompare(String input, Callable<X> callable, Callable<X> expectedCallable) {
+        X expected;
+        X test;
+        try {
+            expected = expectedCallable.call();
+        } catch(Exception e) {
+            try {
+                test = callable.call();
+            } catch(Exception e2) {
+                return success(input);
+            }
+
+            return failure(input, e.toString(), String.valueOf(test));
+        }
+
+        try {
+            test = callable.call();
+        } catch(Exception e) {
+            return failure(input, e.toString(), String.valueOf(expected));
+        }
+
+        return nonCustomEquals(input, test, expected);
+    }
+
     private String equals(String input, Callable<E> callable, E expected) {
         try {
             return equals(input, callable.call(), expected);
+        } catch(Exception e) {
+            return failure(input, e.toString(), expected.toString());
+        }
+    }
+
+    private <X> String nonCustomEquals(String input, Callable<X> callable, X expected) {
+        try {
+            return nonCustomEquals(input, callable.call(), expected);
         } catch(Exception e) {
             return failure(input, e.toString(), expected.toString());
         }
@@ -189,6 +235,12 @@ public class TestReport<I, E> {
         } catch(Exception e) {
             return uncertain(input);
         }
+    }
+
+    private <X> String nonCustomEquals(String input, X test, X expected) {
+        return test.equals(expected)
+                ? success(input)
+                : failure(input, test.toString(), expected.toString());
     }
 
     public String compile(String name, boolean compact) {
