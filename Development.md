@@ -46,22 +46,14 @@ which is why the repository is grouped by concepts (e.g. bool, ctl, model) and n
 - util - for all utility classes (never create a class Util!)
 ### Explanation:
 Write your code without thinking about sending it over REST.
-The `Result` class in `./src/servlet` will take care of that.
+The `util.Result` class will take care of that.
 - Use `System.out.println("My warning message");` for warnings
 - Use `throw new [whatever type you want]Exception("My error message");` for errors i.e. states from which you can't recover
 
 `Result` will capture your warnings and errors and send them to the front-end where they are displayed as such.
 To send something over REST, as done in `Servlet` and `AlgorithmTester`, do the following:
-- If your method is not in `Servlet` or `AlgorithmTester`, you need to add a main method which calls `REST.start()` to make the REST framework aware of your method.
-  - Don't forget to also add your REST APIs everywhere, especially in `Main.main()` where everything is called from one place and all the READMEs.
-  - It is highly encouraged to add `if(args.length > 0 && args[0].equals("DEV")) Result.DEV = true;` to your `main()` method to automatically print stack traces if your main is called in `DEV` mode.
-  - Also add a run configuration to `./.run` to make it easier for others to execute your method. (In IntelliJ) you can do this by clicking on your run configuration on the top right next to the green play button `[Your run configuration] -> Edit Configurations -> Application -> [Your application configuration] -> Store as project file (on the top right)`
-- Annotate your method with `@GET("/myUniquePath/:param1/:param2/:param3")`
-  - Your method name and path name should be the same to avoid confusion and to avoid name conflicts.
-- Create your method according to your parameters
-  - Your parameters MUST BE in alphabetical order!!!
-  - E.g. `public String myUniquePath(param1, param2, param3)`
-- In the method, use `Result` for calling whatever you implemented
+- If your method is not in `Servlet` or `AlgorithmTester`, you need to add the `@RestController` annotation which is automatically found and started by Spring boot.
+- In the REST methods, use `Result` for calling whatever you implemented
   - `Result` works with `Supplier<String>`, meaning anything that takes nothing and produces a `String`
   - To send it over REST, it needs to be converted to JSON format. This is done automatically in the `Result.computeJSON()` method. It also takes care of any newline characters you want to send over REST.
   - Be sure to never use illegal characters over REST, especially not `;`

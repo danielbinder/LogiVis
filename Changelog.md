@@ -19,6 +19,10 @@
 * Select an algorithm to apply on a Finite Automata
 * Code your own implementation and test it
 ---
+### 1.7.0 Replace sparkJava dependency with Spring boot
+* Got rid of Args, ShadowJar (replaced by bootJar) among other things
+* Restructured project so gradle finds it automatically
+* This enables us to use native compilation!
 ### 1.6.4 Added getStronglyConnectedComponents() to Finite Automaton algorithms
 * Groups states from which you can reach all other states in group
 * Expanded validator and report classes to take an arbitrary type with custom equals

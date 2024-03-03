@@ -1,48 +1,51 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'application'
+    id 'org.graalvm.buildtools.native' version '0.10.1'
+    id 'com.github.node-gradle.node' version '7.0.2'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
     id 'maven-publish'
 }
 
 group = 'com.github.danielbinder'
-version '1.6.4'
+version '1.7.0'
 
-application {
-    mainClass = 'main.Main'
+graalvmNative.binaries.main.imageName = "LogiVis-${version}"
+
+bootJar.dependsOn('test')
+
+springBoot {
+    setMainClass('main.Main')
 }
 
-shadowJar {
-    setArchiveClassifier(null)
-    dependsOn test
+node {
+    download = false
+    nodeProjectDir.set(new File('./src/main/javascript'))
 }
+
+tasks.named('npm_run_build').get().onlyIf {
+    gradle.taskGraph.hasTask(':bootJar')
+}
+
+tasks.register('moveFrontend', Copy) {
+    new File('./src/main/resources/public').deleteDir()
+    new File('./src/main/resources/public').mkdir()
+
+    from './src/main/javascript/build'
+    into './src/main/resources/public'
+}
+
+moveFrontend.dependsOn 'npm_run_build'
+processResources.dependsOn 'moveFrontend'
 
 compileJava {
-    dependsOn ':visualisation:npm-run-build'
+    dependsOn 'moveFrontend'
     options.compilerArgs << "-Xlint:all"
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-
-        resources {
-            srcDirs = ['visualisation/build']
-        }
-    }
-
-    test {
-        java {
-            srcDirs = ['test']
-        }
     }
 }
 
@@ -58,17 +61,18 @@ repositories {
 }
 
 dependencies {
-    implementation "com.sparkjava:spark-core:2.9.4"
-    implementation "org.slf4j:slf4j-nop:2.0.6"
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.8.1"
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 publishing {
     publications {
-        pub(MavenPublication) {
-            artifact shadowJar
+        pubJar(MavenPublication) {
+            artifact bootJar
         }
     }
 }
