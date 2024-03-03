@@ -1,1 +1,1 @@
-include 'visualisation'
+rootProject.name = 'LogiVis'
