@@ -1,14 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main (DEV)" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="main.Main" />
+  <configuration default="false" name="Main (DEV)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="dev" />
     <module name="LogiVis.main" />
-    <option name="PROGRAM_PARAMETERS" value="-dev -run" />
-    <extension name="coverage">
-      <pattern>
-        <option name="PATTERN" value="util.*" />
-        <option name="ENABLED" value="true" />
-      </pattern>
-    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="main.Main" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
