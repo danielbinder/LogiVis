@@ -160,6 +160,12 @@
     text-align: left;
 }
 
+.has {
+    margin: 2px 0;
+    width: 99%;
+    text-align: left;
+}
+
 .textArea {
     resize: vertical;
     min-width: 99%;
