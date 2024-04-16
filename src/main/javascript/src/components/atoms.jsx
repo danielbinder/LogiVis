@@ -8,6 +8,11 @@ export const formulaTypeState = atom({
     effects: [syncEffect({refine: string()})]
 })
 
+export const solverStrategyState = atom({
+    key: 'solverStrategy',
+    default: 'DPLLnonrec'
+})
+
 export const formulaState = atom({
     key: 'formula',
     default: '',

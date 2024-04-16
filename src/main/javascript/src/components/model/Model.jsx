@@ -9,6 +9,7 @@ import ModelTracer from './ModelTracer';
 import {modelErrorMessageState, modelState, modelStatusMessageState, modelWarningMessageState} from '../atoms';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {modelPlaceholder} from '../constants';
+import SolverStrategyChooser from './SolverStrategyChooser';
 
 export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
     const [modelStatusMessage, setModelStatusMessage] = useRecoilState(modelStatusMessageState)
@@ -30,6 +31,7 @@ export default function Model({setFormulaTab, setSolutionTab, setModelTab}) {
                 <h3 className='center'>Tune and apply parameters</h3>
                 <div className='parameters'>
                     <div className='smallColumn'>
+                        <SolverStrategyChooser/>
                         <AlgorithmTester
                             setSolutionTab={setSolutionTab}
                             setModelTab={setModelTab}
