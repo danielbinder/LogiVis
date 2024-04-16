@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import static util.Logger.stdOut;
+import static util.Logger.STD_OUT;
 
 public class Result {
     //In DEV mode, stacktraces are printed to the console. Don't use in production!
@@ -72,9 +72,9 @@ public class Result {
         } catch(Exception e) {
             warning = outputStream.toString().replaceAll("\r", Matcher.quoteReplacement(""));
             error = e.getMessage();
-            if(DEV) e.printStackTrace(stdOut);        // For local debugging only!
+            if(DEV) e.printStackTrace(STD_OUT);        // For local debugging only!
         } finally {
-            System.setOut(stdOut);
+            System.setOut(STD_OUT);
         }
     }
 
@@ -84,7 +84,7 @@ public class Result {
                 "\t\"result\": \"" + replaceIllegalCharacters(result).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
                 "\t\"info\": \"" + replaceIllegalCharacters(info).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
                 "\t\"warning\": \"" + replaceIllegalCharacters(warning).replaceAll("\n", Matcher.quoteReplacement("$")) + "\",\n" +
-                "\t\"error\": \"" +replaceIllegalCharacters(error).replaceAll("\n", Matcher.quoteReplacement("$")) + "\"\n" +
+                "\t\"error\": \"" + replaceIllegalCharacters(error).replaceAll("\n", Matcher.quoteReplacement("$")) + "\"\n" +
                 "}";
     }
 
