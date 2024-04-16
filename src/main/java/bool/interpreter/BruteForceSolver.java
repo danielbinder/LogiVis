@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class BruteForceSolver {
+public class BruteForceSolver implements BooleanAlgebraSolver {
     private final LogicNode formula;
     private final Map<String, Boolean> currentAssignment = new HashMap<>();
     private final List<String> assignments = new ArrayList<>();     // all possible variable assignments as binary string
