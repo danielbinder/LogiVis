@@ -5,6 +5,11 @@ import bool.interpreter.BruteForceSolver;
 import bool.interpreter.Parenthesiser;
 import bool.interpreter.Simplification;
 import bool.parser.logicnode.LogicNode;
+import bool.variant.cnf.interpreter.CDCLSolver;
+import bool.variant.cnf.interpreter.IncrementalCNFSolver;
+import bool.variant.cnf.interpreter.NonRecursiveLiteralWatchingDPLLSolver;
+import bool.variant.cnf.interpreter.RecursiveDPLLSolver;
+import bool.variant.cnf.parser.cnfnode.Conjunction;
 import ctl.generator.CTLGenerator;
 import ctl.interpreter.CTLSolver;
 import ctl.parser.ctlnode.CTLNode;
@@ -26,8 +31,8 @@ import java.util.Map;
 public class Servlet implements RestEndpoint {
     private static final ImplementationValidator validator = new ImplementationValidator();
 
-    @GetMapping("/solve/{formula}")
-    public String solve(@PathVariable String formula) {
+    @GetMapping("/solve/brute/{formula}")
+    public String solveBruteForce(@PathVariable String formula) {
         return new Result(() -> new BruteForceSolver(preprocess(formula)),
                           solver -> List.of(solver.solve()),
                           solver -> String.join("\n", solver.solutionInfo),
@@ -35,13 +40,73 @@ public class Servlet implements RestEndpoint {
                 .computeJSON();
     }
 
-    @GetMapping("/solveAll/{formula}")
-    public String solveAll(@PathVariable String formula) {
+    @GetMapping("/solve/DPLLrec/{formula}")
+    public String solveDPLLRec(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(RecursiveDPLLSolver::new,
+                          solver -> List.of(solver.solveAndTransform(conjunction)),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solve/DPLLnonrec/{formula}")
+    public String solveDPLLNonRec(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(NonRecursiveLiteralWatchingDPLLSolver::new,
+                          solver -> List.of(solver.solveAndTransform(LogicNode.of(preprocess(formula)).toCNF())),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solve/CDCL/{formula}")
+    public String solveCDCL(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(CDCLSolver::new,
+                          solver -> List.of(solver.solveAndTransform(LogicNode.of(preprocess(formula)).toCNF())),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solveAll/brute/{formula}")
+    public String solveAllBruteForce(@PathVariable String formula) {
         return new Result(() -> new BruteForceSolver(preprocess(formula)),
                           BruteForceSolver::solveAll,
                           solver -> String.join("\n", solver.solutionInfo),
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable",
                                  solver -> solver.valid, "valid"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solveAll/DPLLrec/{formula}")
+    public String solveAllDPLLRec(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(() -> new IncrementalCNFSolver(new RecursiveDPLLSolver()),
+                          solver -> solver.solveAllAndTransform(conjunction),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solveAll/DPLLnonrec/{formula}")
+    public String solveAllDPLLNonRec(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(() -> new IncrementalCNFSolver(new NonRecursiveLiteralWatchingDPLLSolver()),
+                          solver -> solver.solveAllAndTransform(LogicNode.of(preprocess(formula)).toCNF()),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
+                .computeJSON();
+    }
+
+    @GetMapping("/solveAll/CDCL/{formula}")
+    public String solveAllCDCL(@PathVariable String formula) {
+        Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
+        return new Result(() -> new IncrementalCNFSolver(new CDCLSolver()),
+                          solver -> solver.solveAllAndTransform(LogicNode.of(preprocess(formula)).toCNF()),
+                          solver -> "Equisatisfiable CNF:\n" + conjunction,
+                          Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
                 .computeJSON();
     }
 

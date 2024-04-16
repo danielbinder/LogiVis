@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {formulaSelector, modelSelector} from '../selectors';
-import {formulaTypeState} from '../atoms';
+import {formulaTypeState, solverStrategyState} from '../atoms';
 import {serverURL} from '../constants';
 
 export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
     const formulaType = useRecoilValue(formulaTypeState)
     const getFormula = useRecoilValue(formulaSelector)
     const getModel = useRecoilValue(modelSelector)
+    const solverStrategy = useRecoilValue(solverStrategyState)
 
     const [simplifyFormulaLoading, setSimplifyFormulaLoading] = useState(false)
     const [checkFormulaLoading, setCheckFormulaLoading] = useState(false)
@@ -26,7 +27,7 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
 
     function handleCheckFormula() {
         setCheckFormulaLoading(true)
-        fetch(serverURL + '/solve/' +  getFormula)
+        fetch(serverURL + '/solve/' + solverStrategy + '/' +  getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setCheckFormulaLoading(false))
@@ -34,7 +35,7 @@ export default function FormulaButtonArray({setFormulaTab, setSolutionTab}) {
 
     function handleAllModels() {
         setAllModelsLoading(true)
-        fetch(serverURL + '/solveAll/' + getFormula)
+        fetch(serverURL + '/solveAll/' + solverStrategy + '/' + getFormula)
             .then(response => response.json())
             .then(setSolutionTab)
             .finally(() => setAllModelsLoading(false))
