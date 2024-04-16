@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'com.github.danielbinder'
-version '1.7.0'
+version '1.8.0'
 
 graalvmNative.binaries.main.imageName = "LogiVis-${version}"
 
@@ -24,22 +24,22 @@ node {
 }
 
 tasks.named('npm_run_build').get().onlyIf {
-    gradle.taskGraph.hasTask(':bootJar')
+    gradle.taskGraph.hasTask(':moveFrontend')
 }
 
 tasks.register('moveFrontend', Copy) {
-    new File('./src/main/resources/public').deleteDir()
-    new File('./src/main/resources/public').mkdir()
+    if(project.hasProperty('overwriteResourceDir')) {
+        new File('./src/main/resources/public').deleteDir()
+        new File('./src/main/resources/public').mkdir()
+    }
 
     from './src/main/javascript/build'
     into './src/main/resources/public'
 }
 
 moveFrontend.dependsOn 'npm_run_build'
-processResources.dependsOn 'moveFrontend'
 
 compileJava {
-    dependsOn 'moveFrontend'
     options.compilerArgs << "-Xlint:all"
 }
 

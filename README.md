@@ -66,7 +66,7 @@ You can see how the setup is done in <a href='https://youtu.be/UXu0TBOh53U'>this
    - Don't forget to reload your gradle changes (in IntelliJ, there is a pop-up on the top right with the gradle elephant)
    - Don't ignore gradle build errors (visible in IntelliJ on the bottom under the `build` tab)!
 #### Compile to JAR
-- Open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew booJar`
+- Open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew moveFrontend -PoverwriteResourceDir` to compile the frontend and `./gradlew booJar`
    - It compiles the front-end and pulls it into the JAR when compiling the back-end.
    - If your front-end does not build, consider downloading the latest version of node (manually from the website)
    - The JAR is located in `./build/libs/`
@@ -77,7 +77,7 @@ You can see how the setup is done in <a href='https://youtu.be/UXu0TBOh53U'>this
 - Use the graalvm 21+ as your JDK (e.g. from <a href='https://www.graalvm.org/downloads/'>here</a>)
 - <a href='https://www.graalvm.org/22.0/reference-manual/native-image/#prerequisites'>Prerequisites</a>
 - On windows, <a href='https://stackoverflow.com/a/75348946'>this may help</a>
-- Open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew nativeCompile`
+- Open the Terminal (on the bottom or left side in IntelliJ) run `./gradlew moveFrontend -PoverwriteResourceDir` to rebuild the frontend if necessary and `./gradlew nativeCompile`
 - Test your executable by running it and verify that the frontend is served and all REST controllers are reachable
 #### Front-end:
 1) Open the `./src/main/javascript` folder as your project
