@@ -7,6 +7,7 @@ public interface TokenType {
     Pattern NAME_PATTERN = Pattern.compile("[a-z][a-z0-9]*");
     Pattern PROPERTY_PATTERN = Pattern.compile("!?[a-z][a-z0-9]*");
     Pattern STRING_PATTERN = Pattern.compile("'.*'");
+    Pattern NUMBER_PATTERN = Pattern.compile("-?[0-9]+");
 
     Pattern NOT_PATTERN = Pattern.compile("!");
     Pattern AND_PATTERN = Pattern.compile("&");
