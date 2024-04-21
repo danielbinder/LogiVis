@@ -38,7 +38,6 @@ public class IncrementalCNFSolver {
                     .map(e -> e.getValue() ? e.getKey().negated() : e.getKey())
                     .forEach(clause::add);
             conjunction.add(clause);
-            conjunction.variableReferences.values().forEach(list -> list.add(clause));
             model = solver.solve(conjunction.clone());
         }
 
