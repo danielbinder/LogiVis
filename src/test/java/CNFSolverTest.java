@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Disabled
@@ -35,47 +34,59 @@ public class CNFSolverTest {
             String solverName = entry.getKey();
             CNFSolver solver = entry.getValue();
             Logger.info("Testing " + solverName);
-            AtomicInteger solved = new AtomicInteger();
-            AtomicInteger timedOut = new AtomicInteger();
+            int sat = 0;
+            int unsat = 0;
+            int error = 0;
+            int timedOut = 0;
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-//                    if(!path.toString().contains("full2no10")) continue;
+//                    if(!path.toString().contains("assume")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);
 
                     var result = Timeout.of(() -> solver.solve(conjunction.clone()), 5, TimeUnit.SECONDS);
 
-                    String fileContent;
+                    String solution;
                     if(result == null) {
-                        fileContent = "timed out";
-                        timedOut.getAndIncrement();
+                        solution = "timed out";
+                        timedOut++;
                     } else if(result.isEmpty()) {
-                        fileContent = "unsatisfiable";
-                        solved.getAndIncrement();
+                        unsat++;
+                        solution = "unsatisfiable";
+                        FileHelper.write(
+                                PATH + "/out/" + path.getFileName().toString()
+                                        .replace(".in", "_" + solverName + ".out"),
+                                "unsatisfiable");
                     } else {
-                        fileContent = result.entrySet().stream()
+                        solution = result.entrySet().stream()
                                 .sorted(Comparator.comparing(e -> e.getKey().name()))
                                 .map(e -> (e.getValue() ? "" : "!") + e.getKey().name())
                                 .collect(Collectors.joining(", "));
                         if(AssignmentTester.isValidAssignment(conjunction, result)) {
-                            solved.getAndIncrement();
+                            sat++;
                             Logger.info("Verified correctness of assignment!");
-                        } else Logger.error("Assignment is wrong!");
+                            FileHelper.write(
+                                    PATH + "/out/" + path.getFileName().toString()
+                                            .replace(".in", "_" + solverName + ".out"),
+                                    result.entrySet().stream()
+                                            .map(e -> (e.getValue() ? "" : "-") + (conjunction.variables.indexOf(e.getKey()) + 1))
+                                            .collect(Collectors.joining(" ")));
+                        } else {
+                            error++;
+                            Logger.error("Assignment is wrong!");
+                        }
                     }
 
-                    Logger.info("Result: " + fileContent);
-                    FileHelper.write(
-                            PATH + "/out/" + path.getFileName().toString()
-                                    .replace(".in", "_" + solverName + ".out"),
-                            fileContent);
+                    Logger.info("Result: " + solution);
                     }
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
 
-            Logger.info(solverName + ": " + solved.get() + " solved, " + timedOut.get() + " timed out");
+            Logger.info(solverName + ": " + sat + " sat, " + unsat + " unsat, " + timedOut + " timedOut, " + error + " error");
+            Logger.info(solverName + ": " + (sat + unsat) + " solved out of " + (sat + unsat + timedOut + error) + " total");
             FileHelper.write(PATH + "/log/" + solverName + "_" + LocalDateTime.now().toString()
                                      .replace(":", "_")
                                      .replaceAll("\\.\\d+", "") + ".log",
@@ -87,7 +98,6 @@ public class CNFSolverTest {
 
     @Test
     void testProblematicFormulas() {
-        // TODO: non rec DPLL does not seem to work with this:
         List<String> problematicFormulas = List.of("!(!a | b) -> (c & (c))");
 
 
