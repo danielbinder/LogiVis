@@ -13,10 +13,11 @@ public final class NonRecursiveLiteralWatchingDPLLSolver implements CNFSolver {
 
     @Override
     public Map<Variable, Boolean> solve(Conjunction conjunction) {
+        conjunction = Preprocessor.sortAscending(conjunction);
         Stack<Conjunction> stack = new Stack<>();
 
         while(true) {
-            conjunction = NRLWBCP(conjunction);
+            conjunction = BCP(conjunction);
             if(conjunction.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
             if(conjunction.stream().anyMatch(ArrayList::isEmpty)) {
                 if(stack.isEmpty()) {

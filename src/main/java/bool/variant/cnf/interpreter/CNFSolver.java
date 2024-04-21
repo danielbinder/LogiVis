@@ -14,6 +14,7 @@ public sealed interface CNFSolver extends BooleanAlgebraSolver permits
         RecursiveDPLLSolver,
         NonRecursiveLiteralWatchingDPLLSolver,
         CDCLSolver {
+
     Map<Variable, Boolean> solve(Conjunction conjunction);
 
     default Map<String, Boolean> solveAndTransform(Conjunction conjunction) {
@@ -25,11 +26,11 @@ public sealed interface CNFSolver extends BooleanAlgebraSolver permits
     }
 
     default Conjunction BCP(Conjunction conjunction) {
-        return BooleanConstraintPropagation.of(conjunction);
-    }
-
-    default Conjunction NRLWBCP(Conjunction conjunction) {
-        return BooleanConstraintPropagation.nonRecursiveLiteralWatchingOf(conjunction);
+        return switch(this) {
+            case RecursiveDPLLSolver ignored -> BooleanConstraintPropagation.recursive(conjunction);
+            case NonRecursiveLiteralWatchingDPLLSolver ignored -> BooleanConstraintPropagation.nonRecursiveLiteralWatching(conjunction);
+            case CDCLSolver ignored -> BooleanConstraintPropagation.nonRecursiveLiteralWatchingConflictGraphUpdating(conjunction);
+        };
     }
 
     default List<Variable> variablesInBothPolarities(Conjunction conjunction) {
@@ -47,6 +48,7 @@ public sealed interface CNFSolver extends BooleanAlgebraSolver permits
 
         return posPolarity.stream()
                 .filter(negPolarity::contains)
+                .filter(var -> !conjunction.assignment.containsKey(var))
                 .toList();
     }
 }
