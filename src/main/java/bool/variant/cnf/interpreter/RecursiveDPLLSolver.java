@@ -17,10 +17,12 @@ public final class RecursiveDPLLSolver implements CNFSolver {
         if(conjunction.stream().anyMatch(ArrayList::isEmpty)) {
             unsatisfiable = true;
             return Map.of();
-        };
+        }
+
         List<Variable> variablesInBothPolarities = variablesInBothPolarities(conjunction);
         if(variablesInBothPolarities.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
         Variable bpVar = variablesInBothPolarities.getFirst();
+
         Map<Variable, Boolean> withBPVar = solve(conjunction.clone().withUnitClause(bpVar));
         if(!withBPVar.isEmpty()) return withBPVar;
         return solve(conjunction.withUnitClause(bpVar.negated()));

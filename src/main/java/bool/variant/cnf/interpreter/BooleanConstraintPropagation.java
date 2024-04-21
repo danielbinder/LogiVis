@@ -4,12 +4,11 @@ import bool.variant.cnf.parser.cnfnode.AbstractVariable;
 import bool.variant.cnf.parser.cnfnode.Clause;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static bool.variant.cnf.parser.cnfnode.Conjunction.UNSAT_CONJUNCTION;
-
 public class BooleanConstraintPropagation {
-    public static Conjunction of(Conjunction conjunction) {
+    public static Conjunction recursive(Conjunction conjunction) {
         List<Clause> unitClauses = conjunction.stream()
                 .filter(clause -> clause.size() == 1)
                 .toList();
@@ -21,16 +20,16 @@ public class BooleanConstraintPropagation {
         conjunction.stream()
                 .filter(clause -> clause.containsVariable(unitClauseVariable.getVariable()))
                 .map(clause -> clause.occursInSamePolarity(unitClauseVariable)
-                        ? (Runnable) () -> removeSafe(conjunction, clause)
+                        ? (Runnable) () -> conjunction.removeSafe(clause)
                         : (Runnable) () -> clause.remove(unitClauseVariable.negated()))
                 // Collect to not execute on collection that is being iterated
                 .toList()
                 .forEach(Runnable::run);
 
-        return of(conjunction);
+        return recursive(conjunction);
     }
 
-    public static Conjunction nonRecursiveLiteralWatchingOf(Conjunction conjunction) {
+    public static Conjunction nonRecursive(Conjunction conjunction) {
         List<Clause> unitClauses = conjunction.stream()
                 .filter(clause -> clause.size() == 1)
                 .toList();
@@ -38,7 +37,6 @@ public class BooleanConstraintPropagation {
         while(!unitClauses.isEmpty()) {
             AbstractVariable unitClauseVariable = unitClauses.getFirst().getFirst();
             conjunction.assignment.put(unitClauseVariable.getVariable(), unitClauseVariable.isPositive());
-            conjunction = triggerWatcherUpdate(conjunction, unitClauseVariable);
 
             unitClauses = conjunction.stream()
                     .filter(clause -> clause.size() == 1)
@@ -48,93 +46,70 @@ public class BooleanConstraintPropagation {
         return conjunction;
     }
 
-    private static Conjunction triggerWatcherUpdate(Conjunction conjunction, AbstractVariable variable) {
-        conjunction.variableReferences.get(variable.getVariable()).stream()
-                .map(clause -> clause.occursInSamePolarity(variable)
-                        ? (Runnable) () -> removeSafe(conjunction, clause)
-                        : (Runnable) () -> removeSafe(clause, variable.negated()))
-                // Collect to not execute on collection that is being iterated
-                .toList()
-                .forEach(Runnable::run);
+    public static Conjunction nonRecursiveLiteralWatching(Conjunction conjunction) {
+        boolean actionTaken;
+        do {
+            actionTaken = false;
 
-        conjunction.variableReferences.get(variable.getVariable()).clear();
+            List<Clause> toRemove = new ArrayList<>();
+            for(Clause clause : conjunction) {
+                // status is derived from clause
+                Clause.Status status = clause.getStatus(conjunction.assignment);
+                if(status == Clause.Status.UNSAT) return Conjunction.UNSAT_CONJUNCTION;
 
-        boolean unsat = conjunction.variableReferences.get(variable.getVariable()).stream()
-                .anyMatch(clause ->
-                    clause.watchIndex1 < clause.size() && clause.get(clause.watchIndex1).getVariable().equals(variable)
-                        ? !updateWatchIndex1(conjunction, clause)
-                        : clause.watchIndex2 < clause.size() &&
-                            clause.get(clause.watchIndex2).getVariable().equals(variable) &&
-                            !updateWatchIndex2(conjunction, clause));
+                if(status == Clause.Status.SAT) toRemove.add(clause);
+                else if(status == Clause.Status.DECIDABLE) {
+                    AbstractVariable decidable = clause.getDecidable(conjunction.assignment);
+                    if(conjunction.assignment.containsKey(decidable.getVariable())) {
+                        if(conjunction.assignment.get(decidable.getVariable()) != decidable.isPositive())
+                            return Conjunction.UNSAT_CONJUNCTION;
+                        else toRemove.add(clause);
+                    } else {
+                        conjunction.assignment.put(decidable.getVariable(), decidable.isPositive());
+                        toRemove.add(clause);
+                        actionTaken = true;
+                    }
+                }
+            }
 
-        return unsat ? UNSAT_CONJUNCTION : conjunction;
+            toRemove.forEach(conjunction::removeSafe);
+
+        } while(actionTaken);
+
+        return conjunction;
     }
 
-    /**
-     * @return true iff clause not unsat
-     */
-    private static boolean updateWatchIndex1(Conjunction conjunction, Clause clause) {
-        clause.watchIndex1 = Math.max(clause.watchIndex1, clause.watchIndex2) + 1;
+    public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
+        // TODO: take actions until actions can't be taken
+        boolean actionTaken;
+        do {
+            actionTaken = false;
 
-        while(clause.watchIndex1 < clause.size()) {
-            if(conjunction.assignment.containsKey(clause.get(clause.watchIndex1).getVariable())) clause.watchIndex1++;
-            else return true;
-        }
+            List<Clause> toRemove = new ArrayList<>();
+            for(Clause clause : conjunction) {
+                // status is derived from clause
+                Clause.Status status = clause.getStatus(conjunction.assignment);
+                if(status == Clause.Status.UNSAT) return Conjunction.UNSAT_CONJUNCTION;
 
-        // here: watchIndex1 == clause.size() -> watch2 is possibly the only remaining watcher
-        if(clause.watchIndex2 < clause.size()) {
-            AbstractVariable var2 = clause.get(clause.watchIndex2);
-            if(conjunction.assignment.containsKey(var2.getVariable()))
-                // if watch2 is assigned and is not assigned to value that makes this clause true -> unsat
-                return conjunction.assignment.get(var2.getVariable()) == var2.isPositive();
+                if(status == Clause.Status.SAT) toRemove.add(clause);
+                else if(status == Clause.Status.DECIDABLE) {
+                    AbstractVariable decidable = clause.getDecidable(conjunction.assignment);
+                    if(conjunction.assignment.containsKey(decidable.getVariable())) {
+                        if(conjunction.assignment.get(decidable.getVariable()) != decidable.isPositive())
+                            return Conjunction.UNSAT_CONJUNCTION;
+                        else toRemove.add(clause);
+                    } else {
+                        conjunction.assignment.put(decidable.getVariable(), decidable.isPositive());
+                        toRemove.add(clause);
+                        actionTaken = true;
+                    }
+                }
+            }
 
-            conjunction.withUnitClause(var2);
-        } else return false;
+            toRemove.forEach(conjunction::removeSafe);
 
-        return true;
-    }
+        } while(actionTaken);
 
-    /**
-     * @return true iff clause not unsat
-     */
-    private static boolean updateWatchIndex2(Conjunction conjunction, Clause clause) {
-        clause.watchIndex2 = Math.max(clause.watchIndex1, clause.watchIndex2) + 1;
-
-        while(clause.watchIndex2 < clause.size()) {
-            if(conjunction.assignment.containsKey(clause.get(clause.watchIndex2).getVariable())) clause.watchIndex2++;
-            else return true;
-        }
-
-        // here: watchIndex2 == clause.size() -> watch1 is possibly the only remaining watcher
-        if(clause.watchIndex1 < clause.size()) {
-            AbstractVariable var1 = clause.get(clause.watchIndex1);
-            if(conjunction.assignment.containsKey(var1.getVariable()))
-                // if watch1 is assigned and is not assigned to value that makes this clause true -> unsat
-                return conjunction.assignment.get(var1.getVariable()) == var1.isPositive();
-
-            conjunction.withUnitClause(var1);
-        } else return false;
-
-        return true;
-    }
-
-    private static void removeSafe(Conjunction conjunction, Clause toRemove) {
-        if(conjunction.contains(toRemove)) for(AbstractVariable var : toRemove) {
-            conjunction.variableReferences.get(var.getVariable()).remove(toRemove);
-
-            if(conjunction.variableReferences.get(var.getVariable()).isEmpty())
-                conjunction.assignment.put(var.getVariable(), var.isPositive());
-        }
-
-        conjunction.remove(toRemove);
-    }
-
-    private static void removeSafe(Clause clause, AbstractVariable toRemove) {
-        int varIndex = clause.indexOf(toRemove);
-
-        if(clause.watchIndex1 >= varIndex) clause.watchIndex1--;
-        if(clause.watchIndex2 >= varIndex) clause.watchIndex2--;
-
-        clause.remove(toRemove);
+        return conjunction;
     }
 }
