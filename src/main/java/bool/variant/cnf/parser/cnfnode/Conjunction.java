@@ -1,7 +1,7 @@
 package bool.variant.cnf.parser.cnfnode;
 
-import bool.variant.cnf.interpreter.confictGraph.DecisionGraph;
-import bool.variant.cnf.interpreter.confictGraph.DecisionGraphNode;
+import bool.variant.cnf.interpreter.decisionGraph.DecisionGraph;
+import bool.variant.cnf.interpreter.decisionGraph.DecisionGraphNode;
 import bool.variant.cnf.parser.CNFParser;
 import marker.ConceptRepresentation;
 
@@ -52,7 +52,8 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
         return this;
     }
 
-    public void backtrackUIP() {
+    public void backtrackUIP(AbstractVariable firstUIP) {
+        // TODO: this is wrong!!! fix pls this goes back to lastUIP
         DecisionGraphNode node = decisionGraph.removeLast();
         List<Variable> decisionVariables = node.getDecisionVariables();
         decisionVariables.forEach(assignment::remove);
