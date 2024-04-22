@@ -61,7 +61,19 @@ public class Clause extends ArrayList<AbstractVariable> {
                 if(assignments.containsKey(get(watchIndex1).getVariable())) {
                     if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
                     else watchIndex1++;
-                } else return UNKNOWN;
+                } else {
+                    if(assignments.containsKey(get(watchIndex2).getVariable())) {
+                        if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
+
+                        watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
+                        while(watchIndex2 < size()) {
+                            if(assignments.containsKey(get(watchIndex2).getVariable())) {
+                                if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
+                                else watchIndex2++;
+                            } else return DECIDABLE;
+                        }
+                    } else return UNKNOWN;
+                }
             }
 
             if(watchIndex2 < size()) return DECIDABLE;
@@ -76,7 +88,19 @@ public class Clause extends ArrayList<AbstractVariable> {
                 if(assignments.containsKey(get(watchIndex2).getVariable())) {
                     if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
                     else watchIndex2++;
-                } else return UNKNOWN;
+                } else {
+                    if(assignments.containsKey(get(watchIndex1).getVariable())) {
+                        if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
+
+                        watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
+                        while(watchIndex1 < size()) {
+                            if(assignments.containsKey(get(watchIndex1).getVariable())) {
+                                if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
+                                else watchIndex1++;
+                            } else return DECIDABLE;
+                        }
+                    } else return UNKNOWN;
+                }
             }
 
             if(watchIndex1 < size()) return DECIDABLE;
