@@ -80,7 +80,7 @@ public class BooleanConstraintPropagation {
     }
 
     public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
-        // TODO: take actions until actions can't be taken
+        // TODO: take actions until actions can't be taken - also set conflict true if conflict
         boolean actionTaken;
         do {
             actionTaken = false;
