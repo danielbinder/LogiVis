@@ -6,10 +6,7 @@ import bool.variant.cnf.parser.CNFParser;
 import marker.ConceptRepresentation;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Conjunction extends ArrayList<Clause> implements ConceptRepresentation {
@@ -20,6 +17,8 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
     public final Map<Variable, Boolean> assignment = new HashMap<>();
     public final Map<Variable, Boolean> assignmentBuffer = new HashMap<>();
     public final DecisionGraph decisionGraph = new DecisionGraph();
+    public final Map<Variable, List<Clause>> removedClauses = new HashMap<>();
+    public final List<AbstractVariable> futureAssignments = new ArrayList<>();
 
     public Conjunction(List<Clause> clauses, List<Variable> variables, Map<Variable, Boolean> assignment) {
         super();
@@ -52,21 +51,45 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
         return this;
     }
 
-    public void backtrackUIP(AbstractVariable firstUIP) {
-        // TODO: this is wrong!!! fix pls this goes back to lastUIP
-        DecisionGraphNode node = decisionGraph.removeLast();
-        List<Variable> decisionVariables = node.getDecisionVariables();
-        decisionVariables.forEach(assignment::remove);
+    public void backtrack() {
+        List<Clause> conflictClauses = decisionGraph.getLast()
+                .getConflictClausesStartingFrom(decisionGraph.getFirstAndLastUIP().left);
 
-        addAll(node.getConflictClauses());
+        Clause conflictClause = decisionGraph.constructConflictClause();
+
+        List<AbstractVariable> conflictParticipants = conflictClauses
+                .stream()
+                .flatMap(Collection::stream)
+                .distinct()
+                .toList();
+
+        DecisionGraphNode backJumpingNode = decisionGraph.getBackJumpingNode(conflictParticipants);
+        List<Variable> backtrackedVariables = new ArrayList<>();
+        DecisionGraphNode current;
+        do {
+            current = decisionGraph.removeLast();
+            current.getDecisionVariables().forEach(assignment::remove);
+            backtrackedVariables.addAll(current.getDecisionVariables());
+        } while(!backJumpingNode.equals(current));
+
+        // restore removed clauses
+        backtrackedVariables.forEach(var -> {
+            addAll(removedClauses.get(var));
+            removedClauses.remove(var);
+        });
+
+        // reset watchers for backtracked variables
         stream()
                 .filter(clause -> clause.stream()
-                        .anyMatch(var -> decisionVariables.contains(var.getVariable())))
+                        .anyMatch(var -> backtrackedVariables.contains(var.getVariable())))
                 .forEach(clause -> clause.resetWatcherIndices(assignment));
+
+        add(conflictClause);
     }
 
     public Conjunction withRemainingClausesAssignedTrue() {
-        forEach(clause -> clause
+        forEach(clause -> clause.stream()
+                .filter(var -> !assignment.containsKey(var))
                 .forEach(var -> assignment.put(var.getVariable(), var.isPositive())));
 
         assignmentBuffer.keySet().stream()

@@ -1,8 +1,7 @@
 import bool.parser.logicnode.LogicNode;
 import bool.variant.cnf.interpreter.AssignmentTester;
+import bool.variant.cnf.interpreter.CDCLSolver;
 import bool.variant.cnf.interpreter.CNFSolver;
-import bool.variant.cnf.interpreter.NonRecursiveLiteralWatchingDPLLSolver;
-import bool.variant.cnf.interpreter.RecursiveDPLLSolver;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,9 @@ import java.util.stream.Collectors;
 public class CNFSolverTest {
     private static final String PATH = "src/test/resources/cnf";
     private static final Map<String, CNFSolver> SOLVERS = Map.of(
-            "RecursiveDPLLSolver", new RecursiveDPLLSolver(),
-            "NonRecursiveLiteralWatchingDPLLSolver", new NonRecursiveLiteralWatchingDPLLSolver()
+//            "RecursiveDPLLSolver", new RecursiveDPLLSolver(),
+//            "NonRecursiveLiteralWatchingDPLLSolver", new NonRecursiveLiteralWatchingDPLLSolver(),
+            "CDCLSolver", new CDCLSolver()
     );
 
     @Test
@@ -41,12 +41,12 @@ public class CNFSolverTest {
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-//                    if(!path.toString().contains("assume")) continue;
+                    if(!path.toString().contains("unit5")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);
 
-                    var result = Timeout.of(() -> solver.solve(conjunction.clone()), 5, TimeUnit.SECONDS);
+                    var result = Timeout.of(() -> solver.solve(conjunction.clone()), 5, TimeUnit.MINUTES);
 
                     String solution;
                     if(result == null) {

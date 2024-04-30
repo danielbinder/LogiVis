@@ -14,15 +14,24 @@ public final class CDCLSolver implements CNFSolver {
     public Map<Variable, Boolean> solve(Conjunction conjunction) {
         while(true) {
             conjunction = BCP(conjunction);
-            if(conjunction.decisionGraph.conflict) {
-                if(conjunction.decisionGraph.isEmpty()) return Map.of();
-                AbstractVariable firstUIP = conjunction.decisionGraph.getFirstAndLastUIP().left;
-                conjunction.backtrackUIP(firstUIP);
+            if(conjunction.stream().anyMatch(List::isEmpty)) {
+                if(conjunction.decisionGraph.isEmpty()) {
+                    unsatisfiable = true;
+                    return Map.of();
+                }
+                conjunction.backtrack();
             } else {
                 List<Variable> variablesInBothPolarities = variablesInBothPolarities(conjunction);
                 if(variablesInBothPolarities.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
                 Variable bpVar = variablesInBothPolarities.getFirst();
-                conjunction.decisionGraph.decide(bpVar);
+                AbstractVariable assignment = conjunction.futureAssignments.stream()
+                                .filter(var -> var.getVariable().equals(bpVar))
+                                .findFirst()
+                                .orElse(bpVar);
+                conjunction.futureAssignments.remove(assignment);
+                conjunction.futureAssignments.add(assignment.negated());
+                conjunction.assignment.put(assignment.getVariable(), assignment.isPositive());
+                conjunction.decisionGraph.decide(assignment);
             }
         }
     }

@@ -45,69 +45,116 @@ public class Clause extends ArrayList<AbstractVariable> {
                 .anyMatch(var -> var.getVariable().equals(variable.getVariable()) && var.isPositive() == variable.isPositive());
     }
 
+    public Clause resolution(Clause other) {
+        Clause result = new Clause();
+
+        // add all unique
+        result.addAll(stream()
+                              .filter(var -> !other.containsVariable(var.getVariable()))
+                              .toList());
+        result.addAll(other.stream()
+                              .filter(var -> !containsVariable(var.getVariable()))
+                              .toList());
+
+        // Do resolution on remaining i.e. only keep the ones whose opposite is not contained in the other
+        result.addAll(stream()
+                              .filter(var -> other.containsVariable(var.getVariable()))
+                              .filter(var -> !other.contains(var.negated()))
+                              .toList());
+
+        return result;
+    }
+
+//    public Status getStatus(Map<Variable, Boolean> assignments) {
+//        if(isEmpty()) return UNSAT;
+//
+//        // if this would be SAT or UNSAT, an action would have been taken -> SAT = removed, UNSAT = all unsat
+//        if(watchIndex1 >= size() || watchIndex2 >= size()) return DECIDABLE;
+//
+//        AbstractVariable var1 = get(watchIndex1);
+//        AbstractVariable var2 = get(watchIndex2);
+//
+//        if(assignments.containsKey(var1.getVariable())) {
+//            if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
+//
+//            watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
+//            while(watchIndex1 < size()) {
+//                if(assignments.containsKey(get(watchIndex1).getVariable())) {
+//                    if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
+//                    else watchIndex1++;
+//                } else {
+//                    if(assignments.containsKey(get(watchIndex2).getVariable())) {
+//                        if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
+//
+//                        watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
+//                        while(watchIndex2 < size()) {
+//                            if(assignments.containsKey(get(watchIndex2).getVariable())) {
+//                                if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
+//                                else watchIndex2++;
+//                            } else return DECIDABLE;
+//                        }
+//                    } else return UNKNOWN;
+//                }
+//            }
+//
+//            if(watchIndex2 < size()) return DECIDABLE;
+//            else return UNSAT;
+//        }
+//
+//        if(assignments.containsKey(var2.getVariable())) {
+//            if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
+//
+//            watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
+//            while(watchIndex2 < size()) {
+//                if(assignments.containsKey(get(watchIndex2).getVariable())) {
+//                    if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
+//                    else watchIndex2++;
+//                } else {
+//                    if(assignments.containsKey(get(watchIndex1).getVariable())) {
+//                        if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
+//
+//                        watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
+//                        while(watchIndex1 < size()) {
+//                            if(assignments.containsKey(get(watchIndex1).getVariable())) {
+//                                if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
+//                                else watchIndex1++;
+//                            } else return DECIDABLE;
+//                        }
+//                    } else return UNKNOWN;
+//                }
+//            }
+//
+//            if(watchIndex1 < size()) return DECIDABLE;
+//            else return UNSAT;
+//        }
+//
+//        return UNKNOWN;
+//    }
+
     public Status getStatus(Map<Variable, Boolean> assignments) {
-        if(isEmpty()) return UNSAT;
+        // update both counters until either >= size or SAT
+        while(watchIndex1 < size() && assignments.containsKey(get(watchIndex1).getVariable()) &&
+                assignments.get(get(watchIndex1).getVariable()) != get(watchIndex1).isPositive()) watchIndex1++;
+        while(watchIndex2 < size() && assignments.containsKey(get(watchIndex2).getVariable()) &&
+                assignments.get(get(watchIndex2).getVariable()) != get(watchIndex2).isPositive()) watchIndex2++;
 
-        // if this would be SAT or UNSAT, an action would have been taken -> SAT = removed, UNSAT = all unsat
-        if(watchIndex1 >= size() || watchIndex2 >= size()) return DECIDABLE;
-        AbstractVariable var1 = get(watchIndex1);
-        AbstractVariable var2 = get(watchIndex2);
+        if(watchIndex1 >= size() && watchIndex2 >= size()) return UNSAT;
 
-        if(assignments.containsKey(var1.getVariable())) {
-            if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
-
-            watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
-            while(watchIndex1 < size()) {
-                if(assignments.containsKey(get(watchIndex1).getVariable())) {
-                    if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
-                    else watchIndex1++;
-                } else {
-                    if(assignments.containsKey(get(watchIndex2).getVariable())) {
-                        if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
-
-                        watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
-                        while(watchIndex2 < size()) {
-                            if(assignments.containsKey(get(watchIndex2).getVariable())) {
-                                if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
-                                else watchIndex2++;
-                            } else return DECIDABLE;
-                        }
-                    } else return UNKNOWN;
-                }
-            }
-
-            if(watchIndex2 < size()) return DECIDABLE;
-            else return UNSAT;
+        if(watchIndex1 >= size()) {
+            // if containsKey -> SAT, otherwise it would have been incremented earlier
+            if(assignments.containsKey(get(watchIndex2).getVariable())) return SAT;
+            else return DECIDABLE;
         }
-
-        if(assignments.containsKey(var2.getVariable())) {
-            if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
-
-            watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
-            while(watchIndex2 < size()) {
-                if(assignments.containsKey(get(watchIndex2).getVariable())) {
-                    if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
-                    else watchIndex2++;
-                } else {
-                    if(assignments.containsKey(get(watchIndex1).getVariable())) {
-                        if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
-
-                        watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
-                        while(watchIndex1 < size()) {
-                            if(assignments.containsKey(get(watchIndex1).getVariable())) {
-                                if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
-                                else watchIndex1++;
-                            } else return DECIDABLE;
-                        }
-                    } else return UNKNOWN;
-                }
-            }
-
-            if(watchIndex1 < size()) return DECIDABLE;
-            else return UNSAT;
+        if(watchIndex2 >= size()) {
+            // if containsKey -> SAT, otherwise it would have been incremented earlier
+            if(assignments.containsKey(get(watchIndex1).getVariable())) return SAT;
+            else return DECIDABLE;
         }
+        // if containsKey -> SAT, otherwise it would have been incremented earlier
+        if(assignments.containsKey(get(watchIndex1).getVariable()) ||
+                assignments.containsKey(get(watchIndex2).getVariable())) return SAT;
 
-        return UNKNOWN;
+        else return UNKNOWN;
     }
 
     /**
