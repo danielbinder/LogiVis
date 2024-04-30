@@ -3,7 +3,6 @@ package bool.variant.cnf.interpreter;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 import bool.variant.cnf.parser.cnfnode.Variable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -13,13 +12,13 @@ public final class NonRecursiveLiteralWatchingDPLLSolver implements CNFSolver {
 
     @Override
     public Map<Variable, Boolean> solve(Conjunction conjunction) {
-        conjunction = Preprocessor.sortAscending(conjunction);
+        conjunction = Preprocessor.sortAscendingClauseSize(conjunction);
         Stack<Conjunction> stack = new Stack<>();
 
         while(true) {
             conjunction = BCP(conjunction);
             if(conjunction.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
-            if(conjunction.stream().anyMatch(ArrayList::isEmpty)) {
+            if(conjunction.stream().anyMatch(List::isEmpty)) {
                 if(stack.isEmpty()) {
                     unsatisfiable = true;
                     return Map.of();

@@ -3,7 +3,6 @@ package bool.variant.cnf.interpreter;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 import bool.variant.cnf.parser.cnfnode.Variable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ public final class RecursiveDPLLSolver implements CNFSolver {
     public Map<Variable, Boolean> solve(Conjunction conjunction) {
         conjunction = BCP(conjunction);
         if(conjunction.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
-        if(conjunction.stream().anyMatch(ArrayList::isEmpty)) {
+        if(conjunction.stream().anyMatch(List::isEmpty)) {
             unsatisfiable = true;
             return Map.of();
         }
