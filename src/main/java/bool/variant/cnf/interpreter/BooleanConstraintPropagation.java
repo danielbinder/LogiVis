@@ -6,7 +6,6 @@ import bool.variant.cnf.parser.cnfnode.Conjunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BooleanConstraintPropagation {
     public static Conjunction recursive(Conjunction conjunction) {
@@ -81,23 +80,24 @@ public class BooleanConstraintPropagation {
     }
 
     public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
-        if(conjunction.decisionGraph.isEmpty()) return conjunction;
-
-        boolean actionTaken;
-        do {
-            List<Clause> decidables = conjunction.stream()
-                    .filter(clause -> clause.getStatus(conjunction.assignment) == Clause.Status.DECIDABLE)
-                    .toList();
-
-            actionTaken = !decidables.isEmpty();
-
-            boolean sat = conjunction.decisionGraph.deriveDecisions(conjunction.assignment, decidables);
-            if(!sat) return Conjunction.UNSAT_CONJUNCTION;
-
-            conjunction.removedClauses.putAll(decidables.stream()
-                                                      .collect(Collectors.groupingBy(decidable -> decidable.getDecidable(conjunction.assignment).getVariable())));
-            decidables.forEach(conjunction::removeSafe);
-        } while(actionTaken);
+        // TODO csteidl
+//        if(conjunction.decisionGraph.isEmpty()) return conjunction;
+//
+//        boolean actionTaken;
+//        do {
+//            List<Clause> decidables = conjunction.stream()
+//                    .filter(clause -> clause.getStatus(conjunction.assignment) == Clause.Status.DECIDABLE)
+//                    .toList();
+//
+//            actionTaken = !decidables.isEmpty();
+//
+//            boolean sat = conjunction.decisionGraph.deriveDecision(conjunction.assignment, decidables);
+//            if(!sat) return Conjunction.UNSAT_CONJUNCTION;
+//
+//            conjunction.removedClauses.putAll(decidables.stream()
+//                                                      .collect(Collectors.groupingBy(decidable -> decidable.getDecidable(conjunction.assignment).getVariable())));
+//            decidables.forEach(conjunction::removeSafe);
+//        } while(actionTaken);
 
         return conjunction;
     }
