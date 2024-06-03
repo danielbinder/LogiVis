@@ -41,7 +41,7 @@ public class CNFSolverTest {
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-                    if(!path.toString().contains("unit5")) continue;
+//                    if(!path.toString().contains("unit5")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);
@@ -80,7 +80,7 @@ public class CNFSolverTest {
                     }
 
                     Logger.info("Result: " + solution);
-                    }
+                }
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }

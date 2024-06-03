@@ -135,8 +135,9 @@ public class Clause extends ArrayList<AbstractVariable> {
         // update both counters until either >= size or SAT
         while(watchIndex1 < size() && assignments.containsKey(get(watchIndex1).getVariable()) &&
                 assignments.get(get(watchIndex1).getVariable()) != get(watchIndex1).isPositive()) watchIndex1++;
-        while(watchIndex2 < size() && assignments.containsKey(get(watchIndex2).getVariable()) &&
-                assignments.get(get(watchIndex2).getVariable()) != get(watchIndex2).isPositive()) watchIndex2++;
+        while((watchIndex2 < size() && assignments.containsKey(get(watchIndex2).getVariable()) &&
+                assignments.get(get(watchIndex2).getVariable()) != get(watchIndex2).isPositive())
+                || watchIndex1 == watchIndex2) watchIndex2++;
 
         if(watchIndex1 >= size() && watchIndex2 >= size()) return UNSAT;
 
