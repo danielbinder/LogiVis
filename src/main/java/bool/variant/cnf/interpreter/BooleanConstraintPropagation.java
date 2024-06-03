@@ -81,7 +81,6 @@ public class BooleanConstraintPropagation {
     }
 
     public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
-        // TODO csteidl
         if(conjunction.decisionGraph.isEmpty()) return conjunction;
 
         boolean actionTaken;
