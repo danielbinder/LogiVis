@@ -5,10 +5,7 @@ import bool.variant.cnf.parser.CNFParser;
 import marker.ConceptRepresentation;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Conjunction extends ArrayList<Clause> implements ConceptRepresentation {
@@ -54,40 +51,25 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
     }
 
     public void backtrack() {
-        // TODO csteidl
-//        List<Clause> conflictClauses = decisionGraph.getLast()
-//                .getConflictClausesStartingFrom(decisionGraph.getFirstAndLastUIP().left);
-//
-//        Clause conflictClause = decisionGraph.constructConflictClause();
-//
-//        List<AbstractVariable> conflictParticipants = conflictClauses
-//                .stream()
-//                .flatMap(Collection::stream)
-//                .distinct()
-//                .toList();
-//
-//        DecisionGraphNodeOld backJumpingNode = decisionGraph.getBackJumpingNode(conflictParticipants);
-//        List<Variable> backtrackedVariables = new ArrayList<>();
-//        DecisionGraphNodeOld current;
-//        do {
-//            current = decisionGraph.removeLast();
-//            current.getDecisionVariables().forEach(assignment::remove);
-//            backtrackedVariables.addAll(current.getDecisionVariables());
-//        } while(!backJumpingNode.equals(current));
-//
-//        // restore removed clauses
-//        backtrackedVariables.forEach(var -> {
-//            addAll(removedClauses.get(var));
-//            removedClauses.remove(var);
-//        });
-//
-//        // reset watchers for backtracked variables
-//        stream()
-//                .filter(clause -> clause.stream()
-//                        .anyMatch(var -> backtrackedVariables.contains(var.getVariable())))
-//                .forEach(clause -> clause.resetWatcherIndices(assignment));
-//
-//        add(conflictClause);
+        add(decisionGraph.constructConflictClause());
+        List<Variable> backtrackedVariables = decisionGraph.backtrack();
+
+        // restore removed clauses
+        backtrackedVariables.stream()
+                .filter(removedClauses::containsKey)
+                .forEach(var -> {
+                    addAll(removedClauses.get(var));
+                    removedClauses.remove(var);
+        });
+
+        // remove variables from assignment
+        backtrackedVariables.forEach(var -> assignment.remove(var.getVariable()));
+
+        // reset watchers for backtracked variables
+        stream()
+                .filter(clause -> clause.stream()
+                        .anyMatch(var -> backtrackedVariables.contains(var.getVariable())))
+                .forEach(clause -> clause.resetWatcherIndices(assignment));
     }
 
     public Conjunction withRemainingClausesAssignedTrue() {

@@ -1,5 +1,6 @@
 package bool.variant.cnf.interpreter.decisionGraph;
 
+import bool.variant.cnf.interpreter.CDCLSolver;
 import bool.variant.cnf.parser.cnfnode.AbstractVariable;
 import bool.variant.cnf.parser.cnfnode.Clause;
 import bool.variant.cnf.parser.cnfnode.Variable;
@@ -15,12 +16,13 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
 
     public int level = 0;
     // is calculated in constructConflictClause()
-    private int backtrackLevel = 0;
+    public int backtrackLevel = 0;
 
     /**
      * Use this if you have only UNKNOWN clauses
      */
     public void makeDecision(Map<Variable, Boolean> assignments, AbstractVariable decision) {
+        assignments.put(decision.getVariable(), decision.isPositive());
         add(new Decision(++level, decision));
     }
 
@@ -34,10 +36,20 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
     }
 
     /**
-     * Use this if you for UNSAT clauses
+     * Use this for UNSAT clauses
      */
     public void deriveConflict(Clause conflictClause) {
         add(new Conflict(level, findDecisions(conflictClause)));
+    }
+
+    /**
+     * Call deriveDecision(...) right after deriveUnitDecision(...).
+     * Don't query for all status values at the same time (optional).
+     * */
+    public void deriveUnitDecision(Map<Variable, Boolean> assignments, AbstractVariable decision) {
+        assignments.put(decision.getVariable(), decision.isPositive());
+        add(new UnitDecision(decision));
+        level = 1;
     }
 
     /**
@@ -45,13 +57,13 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
      */
     public Clause constructConflictClause() {
         Conflict conflict = findConflict();
-        Decision lastUIP = getLastUIP(conflict);
+        Decision firstUIP = getFirstUIP(conflict);
         Clause conflictClause = conflict.getConflictClause();
         List<Decision> expandedConflictParticipants = new ArrayList<>();
 
         for(Decision decision : conflict.ancestors)
             if(decision instanceof ForcedDecision fd)
-                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, lastUIP, expandedConflictParticipants);
+                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
 
         // minimize
         int oldConflictClauseSize;
@@ -94,9 +106,13 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
         return backtrackedVariables;
     }
 
+    public boolean hasConflict() {
+        return stream().anyMatch(node -> node instanceof Conflict);
+    }
+
     private Clause expandConflictClauseToLastUIP(ForcedDecision decision, Clause conflictClause,
-                                                 Decision lastUIP, List<Decision> expandedConflictParticipants) {
-        if(decision.level != level && !lastUIP.equals(decision) && !expandedConflictParticipants.contains(decision))
+                                                 Decision firstUIP, List<Decision> expandedConflictParticipants) {
+        if(decision.level != level || firstUIP.equals(decision) || expandedConflictParticipants.contains(decision))
             return conflictClause;
 
         expandedConflictParticipants.add(decision);
@@ -104,34 +120,38 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
 
         for(Decision ancestor : decision.ancestors)
             if(ancestor instanceof ForcedDecision fd)
-                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, lastUIP, expandedConflictParticipants);
+                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
 
         return conflictClause;
     }
 
     // i.e. find first common ancestor
-    private Decision getLastUIP(Conflict conflict) {
+    private Decision getFirstUIP(Conflict conflict) {
         return conflict.ancestors.stream()
                 .filter(node -> node.level == level)
                 .map(this::findAncestorsOnSameLevel)
-                .reduce((a, b) -> new ArrayList<>(a.stream().filter(b::contains).toList()))
-                .orElse(List.of())
-                .stream()
-                .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .filter(list -> !list.isEmpty())
+                .reduce(stream().filter(node -> node.level == level)
+                                .filter(node -> !(node instanceof Conflict))
+                                .map(node -> (Decision) node).toList(),
+                        (a, b) -> {
+                            List<Decision> result = new ArrayList<>(a);
+                            result.removeIf(e -> !b.contains(e));
+                            return result;
+                }).getFirst();
     }
 
     private List<Decision> findAncestorsOnSameLevel(DecisionGraphNode node) {
-        if(node instanceof Decision) return List.of();
+        if(node instanceof HasAncestors ha) return ha.getAllAncestorsOnSameLevel();
 
-        return ((HasAncestors) node).getAllAncestorsOnSameLevel();
+        return List.of();
     }
 
     private Decision findDecision(AbstractVariable toFind) {
         return stream()
                 .filter(node -> !(node instanceof Conflict))
                 .map(node -> (Decision) node)
-                .filter(decision -> decision.decision.equals(toFind))
+                .filter(decision -> decision.decision.getVariable().equals(toFind.getVariable()))
                 .findAny()
                 .orElseThrow(NoSuchElementException::new);
     }
@@ -148,7 +168,7 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
         return stream()
                 .filter(node -> !(node instanceof Conflict))
                 .map(node -> (Decision) node)
-                .filter(decision -> clause.contains(decision.decision))
+                .filter(decision -> clause.containsVariable(decision.decision.getVariable()))
                 .collect(Collectors.toSet());
     }
 
@@ -157,7 +177,7 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
                 .filter(node -> !(node instanceof Conflict))
                 .map(node -> (Decision) node)
                 .filter(decision -> !decision.decision.equals(exclusion))
-                .filter(decision -> clause.contains(decision.decision))
+                .filter(decision -> clause.containsVariable(decision.decision.getVariable()))
                 .collect(Collectors.toSet());
     }
 }

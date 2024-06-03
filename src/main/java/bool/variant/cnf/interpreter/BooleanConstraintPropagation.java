@@ -6,6 +6,7 @@ import bool.variant.cnf.parser.cnfnode.Conjunction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BooleanConstraintPropagation {
     public static Conjunction recursive(Conjunction conjunction) {
@@ -81,23 +82,29 @@ public class BooleanConstraintPropagation {
 
     public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
         // TODO csteidl
-//        if(conjunction.decisionGraph.isEmpty()) return conjunction;
-//
-//        boolean actionTaken;
-//        do {
-//            List<Clause> decidables = conjunction.stream()
-//                    .filter(clause -> clause.getStatus(conjunction.assignment) == Clause.Status.DECIDABLE)
-//                    .toList();
-//
-//            actionTaken = !decidables.isEmpty();
-//
-//            boolean sat = conjunction.decisionGraph.deriveDecision(conjunction.assignment, decidables);
-//            if(!sat) return Conjunction.UNSAT_CONJUNCTION;
-//
-//            conjunction.removedClauses.putAll(decidables.stream()
-//                                                      .collect(Collectors.groupingBy(decidable -> decidable.getDecidable(conjunction.assignment).getVariable())));
-//            decidables.forEach(conjunction::removeSafe);
-//        } while(actionTaken);
+        if(conjunction.decisionGraph.isEmpty()) return conjunction;
+
+        boolean actionTaken;
+        do {
+            List<Clause> toRemove = new ArrayList<>();
+            for(Clause clause : conjunction) {
+                Clause.Status status = clause.getStatus(conjunction.assignment);
+                if(status == Clause.Status.UNSAT) {
+                    conjunction.decisionGraph.deriveConflict(clause);
+                    return conjunction;
+                } else if(status == Clause.Status.SAT) {
+                    toRemove.add(clause);
+                } else if(status == Clause.Status.DECIDABLE) {
+                    conjunction.decisionGraph.deriveDecision(conjunction.assignment, clause);
+                    toRemove.add(clause);
+                }
+            }
+
+            actionTaken = !toRemove.isEmpty();
+            toRemove.forEach(conjunction::removeSafe);
+            conjunction.removedClauses.putAll(toRemove.stream()
+                                                      .collect(Collectors.groupingBy(clause -> clause.getDecidable(conjunction.assignment).getVariable())));
+        } while(actionTaken);
 
         return conjunction;
     }
