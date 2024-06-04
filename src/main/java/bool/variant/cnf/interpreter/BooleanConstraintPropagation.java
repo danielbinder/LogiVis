@@ -6,7 +6,6 @@ import bool.variant.cnf.parser.cnfnode.Conjunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BooleanConstraintPropagation {
     public static Conjunction recursive(Conjunction conjunction) {
@@ -81,8 +80,6 @@ public class BooleanConstraintPropagation {
     }
 
     public static Conjunction nonRecursiveLiteralWatchingConflictGraphUpdating(Conjunction conjunction) {
-        if(conjunction.decisionGraph.isEmpty()) return conjunction;
-
         boolean actionTaken;
         do {
             List<Clause> toRemove = new ArrayList<>();
@@ -101,8 +98,6 @@ public class BooleanConstraintPropagation {
 
             actionTaken = !toRemove.isEmpty();
             toRemove.forEach(conjunction::removeSafe);
-            conjunction.removedClauses.putAll(toRemove.stream()
-                                                      .collect(Collectors.groupingBy(clause -> clause.getDecidable(conjunction.assignment).getVariable())));
         } while(actionTaken);
 
         return conjunction;
