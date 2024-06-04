@@ -5,7 +5,10 @@ import bool.variant.cnf.parser.CNFParser;
 import marker.ConceptRepresentation;
 
 import java.io.Serial;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Conjunction extends ArrayList<Clause> implements ConceptRepresentation {
@@ -15,30 +18,23 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
     public final List<Variable> variables;
     public final Map<Variable, Boolean> assignment = new HashMap<>();
     public final Map<Variable, Boolean> assignmentBuffer = new HashMap<>();
-    public final DecisionGraph decisionGraph = new DecisionGraph();
-    public final Map<Variable, List<Clause>> removedClauses = new HashMap<>();
-    public final List<AbstractVariable> futureAssignments = new ArrayList<>();
+    public final DecisionGraph decisionGraph;
 
-    public Conjunction(List<Clause> clauses, List<Variable> variables, Map<Variable, Boolean> assignment) {
+    private Conjunction(List<Clause> clauses, List<Variable> variables, Map<Variable, Boolean> assignment, DecisionGraph decisionGraph) {
         super();
 
         addAll(clauses);
         this.variables = variables;
         this.assignment.putAll(assignment);
+        this.decisionGraph = decisionGraph;
     }
 
-    private Conjunction() {
-        super();
-
-        variables = new ArrayList<>();
+    public Conjunction(List<Clause> clauses, List<Variable> variables, Map<Variable, Boolean> assignment) {
+        this(clauses, variables, assignment, new DecisionGraph());
     }
 
     public static Conjunction of(String input) {
         return CNFParser.parse(input);
-    }
-
-    public boolean containsVariable(Variable variable) {
-        return stream().anyMatch(clause -> clause.containsVariable(variable));
     }
 
     public Conjunction withUnitClause(AbstractVariable variable) {
@@ -48,28 +44,6 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
         add(0, c);
 
         return this;
-    }
-
-    public void backtrack() {
-        add(decisionGraph.constructConflictClause());
-        List<Variable> backtrackedVariables = decisionGraph.backtrack();
-
-        // restore removed clauses
-        backtrackedVariables.stream()
-                .filter(removedClauses::containsKey)
-                .forEach(var -> {
-                    addAll(removedClauses.get(var));
-                    removedClauses.remove(var);
-        });
-
-        // remove variables from assignment
-        backtrackedVariables.forEach(var -> assignment.remove(var.getVariable()));
-
-        // reset watchers for backtracked variables
-        stream()
-                .filter(clause -> clause.stream()
-                        .anyMatch(var -> backtrackedVariables.contains(var.getVariable())))
-                .forEach(clause -> clause.resetWatcherIndices(assignment));
     }
 
     public Conjunction withRemainingClausesAssignedTrue() {
@@ -94,7 +68,7 @@ public class Conjunction extends ArrayList<Clause> implements ConceptRepresentat
         List<Clause> cloned = new ArrayList<>();
         forEach(clause -> cloned.add(clause.clone()));
 
-        return new Conjunction(cloned, variables, new HashMap<>(assignment));
+        return new Conjunction(cloned, variables, new HashMap<>(assignment), decisionGraph.clone());
     }
 
     @Override

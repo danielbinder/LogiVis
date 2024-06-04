@@ -1,10 +1,7 @@
 package bool.variant.cnf.parser.cnfnode;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static bool.variant.cnf.parser.cnfnode.Clause.Status.*;
@@ -38,6 +35,11 @@ public class Clause extends ArrayList<AbstractVariable> {
         return stream()
                 .map(AbstractVariable::getVariable)
                 .anyMatch(var -> var.equals(variable));
+    }
+
+    public boolean containsAllVariables(Collection<Variable> variables) {
+        return variables.stream()
+                .allMatch(this::containsVariable);
     }
 
     public boolean occursInSamePolarity(AbstractVariable variable) {

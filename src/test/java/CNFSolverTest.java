@@ -41,12 +41,12 @@ public class CNFSolverTest {
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-//                    if(!path.toString().contains("unit5")) continue;
+                    if(!path.toString().contains("prime961")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);
 
-                    var result = Timeout.of(() -> solver.solve(conjunction.clone()), 5, TimeUnit.MINUTES);
+                    var result = Timeout.of(() -> solver.solve(conjunction.clone()), 20, TimeUnit.SECONDS);
 
                     String solution;
                     if(result == null) {

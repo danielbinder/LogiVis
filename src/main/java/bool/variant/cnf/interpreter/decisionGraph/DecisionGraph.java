@@ -1,6 +1,5 @@
 package bool.variant.cnf.interpreter.decisionGraph;
 
-import bool.variant.cnf.interpreter.CDCLSolver;
 import bool.variant.cnf.parser.cnfnode.AbstractVariable;
 import bool.variant.cnf.parser.cnfnode.Clause;
 import bool.variant.cnf.parser.cnfnode.Variable;
@@ -8,6 +7,7 @@ import bool.variant.cnf.parser.cnfnode.Variable;
 import java.io.Serial;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class DecisionGraph extends HashSet<DecisionGraphNode> {
@@ -15,15 +15,26 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
     private static final long serialVersionUID = -6003666467876720212L;
 
     public int level = 0;
-    // is calculated in constructConflictClause()
-    public int backtrackLevel = 0;
+
+    public DecisionGraph() {
+
+    }
+
+    private DecisionGraph(HashSet<DecisionGraphNode> nodes) {
+        addAll(nodes);
+
+        level = nodes.stream()
+                .map(node -> node.level)
+                .max(Integer::compareTo)
+                .orElse(0);
+    }
 
     /**
      * Use this if you have only UNKNOWN clauses
      */
     public void makeDecision(Map<Variable, Boolean> assignments, AbstractVariable decision) {
         assignments.put(decision.getVariable(), decision.isPositive());
-        add(new Decision(++level, decision));
+        add(new Decision(stream().anyMatch(node -> node.level == 0) ? ++level : 0, decision));
     }
 
     /**
@@ -43,21 +54,22 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
     }
 
     /**
-     * Call deriveDecision(...) right after deriveUnitDecision(...).
-     * Don't query for all status values at the same time (optional).
+     * Call deriveDecision(...) right after deriveUnitDecision(...), since additional assignments may be forced.
+     * Don't query for all status values at the same time, since conjunction may contain (a) & (!a).
      * */
     public void deriveUnitDecision(Map<Variable, Boolean> assignments, AbstractVariable decision) {
         assignments.put(decision.getVariable(), decision.isPositive());
         add(new UnitDecision(decision));
-        level = 1;
     }
 
     /**
-     * Get the conflict Clause to add for the next run
+     * Get the conflict Clause to add for the next run AND
+     * Get all variables that have been backtracked
      */
     public Clause constructConflictClause() {
         Conflict conflict = findConflict();
         Decision firstUIP = getFirstUIP(conflict);
+        System.out.println("First UIP: " + firstUIP.decision);
         Clause conflictClause = conflict.getConflictClause();
         List<Decision> expandedConflictParticipants = new ArrayList<>();
 
@@ -70,14 +82,19 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
         do {
             oldConflictClauseSize = conflictClause.size();
             Clause finalResultingConflictClause = conflictClause;
-            conflictClause = new Clause(conflictClause.stream()
-                                                .filter(var -> findDecision(var) instanceof ForcedDecision fd &&
-                                                        !finalResultingConflictClause.containsAll(fd.getReasons()))
-                                                .toList());
+            conflictClause = new Clause(
+                    conflictClause.stream()
+                            .filter(var -> !(findDecision(var) instanceof ForcedDecision fd) ||
+                                    !finalResultingConflictClause.containsAllVariables(
+                                            fd.getReasons().stream()
+                                                    .map(AbstractVariable::getVariable)
+                                                    .toList()))
+                            .toList()
+            );
         } while(conflictClause.size() < oldConflictClauseSize);
 
         // calculate back jumping level
-        backtrackLevel = expandedConflictParticipants
+        level = expandedConflictParticipants
                 .stream()
                 .flatMap(decision -> decision instanceof ForcedDecision fd
                         ? fd.ancestors.stream()
@@ -87,27 +104,17 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
                 .max(Integer::compareTo)
                 .orElse(0);
 
+        removeIf(node -> node.level >= level);
+
         return conflictClause;
-    }
-
-    /**
-     * Get all variables that have been backtracked
-     * CAREFUL! Only call AFTER constructConflictClause(), since this calculates the back jumping level!
-     */
-    public List<Variable> backtrack() {
-        List<Variable> backtrackedVariables = stream()
-                .filter(node -> node.level >= backtrackLevel)
-                .filter(node -> node instanceof Decision)
-                .map(node -> ((Decision) node).decision.getVariable())
-                .toList();
-
-        removeIf(node -> node.level >= backtrackLevel);
-
-        return backtrackedVariables;
     }
 
     public boolean hasConflict() {
         return stream().anyMatch(node -> node instanceof Conflict);
+    }
+
+    public DecisionGraph clone() {
+        return new DecisionGraph(this);
     }
 
     private Clause expandConflictClauseToLastUIP(ForcedDecision decision, Clause conflictClause,
@@ -125,20 +132,25 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
         return conflictClause;
     }
 
-    // i.e. find first common ancestor
+    // i.e. find first common ancestor on the same level
     private Decision getFirstUIP(Conflict conflict) {
-        return conflict.ancestors.stream()
+        return conflict.ancestors.size() == 1
+                ? conflict.ancestors.stream().findAny().orElseThrow(NoSuchElementException::new)
+                : conflict.ancestors.stream()
                 .filter(node -> node.level == level)
                 .map(this::findAncestorsOnSameLevel)
                 .filter(list -> !list.isEmpty())
-                .reduce(stream().filter(node -> node.level == level)
-                                .filter(node -> !(node instanceof Conflict))
-                                .map(node -> (Decision) node).toList(),
-                        (a, b) -> {
+                .reduce((a, b) -> {
                             List<Decision> result = new ArrayList<>(a);
                             result.removeIf(e -> !b.contains(e));
                             return result;
-                }).getFirst();
+                })
+                // else lastUIP = firstUIP
+                .orElse(stream().filter(node -> node.level == level)
+                                .filter(node -> !(node instanceof HasAncestors))
+                                .map(node -> (Decision) node)
+                                .toList())
+                .getFirst();
     }
 
     private List<Decision> findAncestorsOnSameLevel(DecisionGraphNode node) {
@@ -179,5 +191,26 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
                 .filter(decision -> !decision.decision.equals(exclusion))
                 .filter(decision -> clause.containsVariable(decision.decision.getVariable()))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String toString() {
+        return stream().map(node -> node.level)
+                .map(String::valueOf)
+                .collect(Collectors.joining(", ", "Node levels: ", "\n")) +
+                IntStream.range(0, level + 1)
+                .mapToObj(i -> stream().filter(node -> node.level == i)
+                        .sorted()
+                        .map(node -> node instanceof Conflict c
+                                ? "K" + c.ancestors.stream()
+                                        .map(a -> a.decision.toString())
+                                        .collect(Collectors.joining(", ", "(", ")"))
+                                : ((Decision) node).decision.toString() + (node instanceof HasAncestors ha
+                                        ? ha.getDirectAncestors().stream()
+                                                .map(a -> a.decision.toString())
+                                                .collect(Collectors.joining(", ", "(", ")"))
+                                        : ""))
+                        .collect(Collectors.joining(" -> ", i + ": ", "")))
+                .collect(Collectors.joining("\n"));
     }
 }
