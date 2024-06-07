@@ -29,6 +29,7 @@ public class CNFSolverTest {
 
     @Test
     public void test() {
+        Logger.maxLevel();
         Logger.SAVE_LOG = true;
         for(var entry : SOLVERS.entrySet()) {
             String solverName = entry.getKey();
@@ -41,7 +42,7 @@ public class CNFSolverTest {
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-                    if(!path.toString().contains("prime961")) continue;
+                    if(!path.toString().contains("prime25.")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);
@@ -99,7 +100,6 @@ public class CNFSolverTest {
     @Test
     void testProblematicFormulas() {
         List<String> problematicFormulas = List.of("!(!a | b) -> (c & (c))");
-
 
         for(var entry : SOLVERS.entrySet()) {
             String solverName = entry.getKey();

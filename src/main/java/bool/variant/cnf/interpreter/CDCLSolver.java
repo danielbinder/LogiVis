@@ -3,6 +3,7 @@ package bool.variant.cnf.interpreter;
 import bool.variant.cnf.parser.cnfnode.Clause;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 import bool.variant.cnf.parser.cnfnode.Variable;
+import util.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ public final class CDCLSolver implements CNFSolver {
 
     @Override
     public Map<Variable, Boolean> solve(Conjunction conjunction) {
+        conjunction = Preprocessor.sortAscendingClauseSize(conjunction);
+
         for(Clause clause : conjunction) {
             if(clause.size() == 1) {
                 Clause.Status status = clause.getStatus(conjunction.assignment);
@@ -29,31 +32,30 @@ public final class CDCLSolver implements CNFSolver {
         while(true) {
             conjunction = BCP(conjunction);
             if(conjunction.decisionGraph.hasConflict()) {
-                System.out.println(conjunction.decisionGraph);
-                Clause conflictClause = conjunction.decisionGraph.constructConflictClause();
-                System.out.println("Conflict clause: " + conflictClause);
-                stack.forEach(c -> c.add(conflictClause));
+                Logger.info(1, conjunction.decisionGraph.toString());
+                Clause conflictClause = conjunction.decisionGraph.constructConflictClause(conjunction.assignment);
+                Logger.info(1, "Conflict clause: " + conflictClause);
+                stack.forEach(c -> c.addFirst(conflictClause));
+
                 int backtrackLevel = conjunction.decisionGraph.level;
-                System.out.println("Backtrack level: " + backtrackLevel);
+                Logger.info(1, "Backtrack level: " + backtrackLevel);
                 do {
                     if(stack.isEmpty()) {
                         unsatisfiable = true;
                         return Map.of();
                     }
                     conjunction = stack.pop();
-                    // A decision in the popped stack has already been made -> backtrackLevel + 1
-                } while(conjunction.decisionGraph.level > backtrackLevel + 1);
-                System.out.println("Conjunction: " + conjunction);
+                } while(conjunction.decisionGraph.level > backtrackLevel);
+                Logger.info(2, "Backtracked conjunction: " + conjunction, conflictClause.toString());
             } else {
                 List<Variable> variablesInBothPolarities = variablesInBothPolarities(conjunction);
                 if(variablesInBothPolarities.isEmpty()) return conjunction.withRemainingClausesAssignedTrue().assignment;
                 Variable bpVar = variablesInBothPolarities.getFirst();
 
                 Conjunction clone = conjunction.clone();
-                clone.decisionGraph.makeDecision(clone.assignment, bpVar.negated());
-                conjunction.decisionGraph.makeDecision(conjunction.assignment, bpVar);
                 stack.push(clone);
 
+                conjunction.decisionGraph.makeDecision(conjunction.assignment, bpVar);
             }
         }
     }
