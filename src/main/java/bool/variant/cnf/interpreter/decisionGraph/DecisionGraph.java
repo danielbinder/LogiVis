@@ -3,12 +3,12 @@ package bool.variant.cnf.interpreter.decisionGraph;
 import bool.variant.cnf.parser.cnfnode.AbstractVariable;
 import bool.variant.cnf.parser.cnfnode.Clause;
 import bool.variant.cnf.parser.cnfnode.Variable;
+import util.Logger;
 
 import java.io.Serial;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class DecisionGraph extends HashSet<DecisionGraphNode> {
     @Serial
@@ -66,16 +66,28 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
      * Get the conflict Clause to add for the next run AND
      * Get all variables that have been backtracked
      */
-    public Clause constructConflictClause() {
+    public Clause constructConflictClause(Map<Variable, Boolean> assignment) {
         Conflict conflict = findConflict();
         Decision firstUIP = getFirstUIP(conflict);
-        System.out.println("First UIP: " + firstUIP.decision);
+        Logger.info(1, "First UIP: " + firstUIP.decision);
         Clause conflictClause = conflict.getConflictClause();
+        Logger.info(2, "Conflict Ancestors:\n" + conflictClause.stream()
+                .map(AbstractVariable::negated)
+                .map(this::findDecision)
+                .filter(x -> x instanceof HasAncestors)
+                .map(x -> (HasAncestors) x)
+                .map(x -> x.getAllAncestorsOnSameLevel().stream()
+                        .map(anc -> anc.decision.toString())
+                        .collect(Collectors.joining(", ", "\t\t", "")))
+                .collect(Collectors.joining("\n")));
+        Logger.info(2, "Unexpanded conflict clause: " + conflictClause);
         List<Decision> expandedConflictParticipants = new ArrayList<>();
 
         for(Decision decision : conflict.ancestors)
             if(decision instanceof ForcedDecision fd)
-                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
+                conflictClause = expandConflictClauseToFirstUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
+
+        Logger.info(1, "Expanded conflict clause: " + conflictClause);
 
         // minimize
         int oldConflictClauseSize;
@@ -93,18 +105,17 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
             );
         } while(conflictClause.size() < oldConflictClauseSize);
 
-        // calculate back jumping level
-        level = expandedConflictParticipants
-                .stream()
-                .flatMap(decision -> decision instanceof ForcedDecision fd
-                        ? fd.ancestors.stream()
-                        : Stream.of(decision))
-                .filter(decision -> decision.level != level)
-                .map(decision -> decision.level)
-                .max(Integer::compareTo)
-                .orElse(0);
-
-        removeIf(node -> node.level >= level);
+        // decrease level until conflict clause is satisfiable
+        Map<Variable, Boolean> currentAssignment = new HashMap<>(assignment);
+        while(level > 0 && conflictClause.getStatus(currentAssignment) == Clause.Status.UNSAT) {
+            stream()
+                    .filter(node -> node.level == level)
+                    .filter(node -> node instanceof Decision)
+                    .map(node -> (Decision) node)
+                    .filter(decision -> currentAssignment.containsKey(decision.decision.getVariable()))
+                    .forEach(decision -> currentAssignment.remove(decision.decision.getVariable()));
+            level--;
+        }
 
         return conflictClause;
     }
@@ -117,17 +128,17 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
         return new DecisionGraph(this);
     }
 
-    private Clause expandConflictClauseToLastUIP(ForcedDecision decision, Clause conflictClause,
+    private Clause expandConflictClauseToFirstUIP(ForcedDecision decision, Clause conflictClause,
                                                  Decision firstUIP, List<Decision> expandedConflictParticipants) {
         if(decision.level != level || firstUIP.equals(decision) || expandedConflictParticipants.contains(decision))
             return conflictClause;
 
         expandedConflictParticipants.add(decision);
-        conflictClause.resolution(decision.getConflictClause());
+        conflictClause = conflictClause.resolution(decision.getConflictClause());
 
         for(Decision ancestor : decision.ancestors)
             if(ancestor instanceof ForcedDecision fd)
-                conflictClause = expandConflictClauseToLastUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
+                conflictClause = expandConflictClauseToFirstUIP(fd, conflictClause, firstUIP, expandedConflictParticipants);
 
         return conflictClause;
     }
@@ -195,9 +206,7 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
 
     @Override
     public String toString() {
-        return stream().map(node -> node.level)
-                .map(String::valueOf)
-                .collect(Collectors.joining(", ", "Node levels: ", "\n")) +
+        return "Decision Graph:\n" +
                 IntStream.range(0, level + 1)
                 .mapToObj(i -> stream().filter(node -> node.level == i)
                         .sorted()
@@ -210,7 +219,7 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
                                                 .map(a -> a.decision.toString())
                                                 .collect(Collectors.joining(", ", "(", ")"))
                                         : ""))
-                        .collect(Collectors.joining(" -> ", i + ": ", "")))
+                        .collect(Collectors.joining(" -> ", "\t\t" + i + ": ", "")))
                 .collect(Collectors.joining("\n"));
     }
 }
