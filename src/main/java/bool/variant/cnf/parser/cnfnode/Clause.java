@@ -9,8 +9,8 @@ import static bool.variant.cnf.parser.cnfnode.Clause.Status.*;
 public class Clause extends ArrayList<AbstractVariable> {
     @Serial
     private static final long serialVersionUID = 7678731468078357261L;
-    public int watchIndex1 = 0;
-    public int watchIndex2 = 1;
+    public int watchIndex1;
+    public int watchIndex2;
 
     public Clause(List<AbstractVariable> variables) {
         super();
@@ -67,72 +67,6 @@ public class Clause extends ArrayList<AbstractVariable> {
         return result;
     }
 
-//    public Status getStatus(Map<Variable, Boolean> assignments) {
-//        if(isEmpty()) return UNSAT;
-//
-//        // if this would be SAT or UNSAT, an action would have been taken -> SAT = removed, UNSAT = all unsat
-//        if(watchIndex1 >= size() || watchIndex2 >= size()) return DECIDABLE;
-//
-//        AbstractVariable var1 = get(watchIndex1);
-//        AbstractVariable var2 = get(watchIndex2);
-//
-//        if(assignments.containsKey(var1.getVariable())) {
-//            if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
-//
-//            watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
-//            while(watchIndex1 < size()) {
-//                if(assignments.containsKey(get(watchIndex1).getVariable())) {
-//                    if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
-//                    else watchIndex1++;
-//                } else {
-//                    if(assignments.containsKey(get(watchIndex2).getVariable())) {
-//                        if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
-//
-//                        watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
-//                        while(watchIndex2 < size()) {
-//                            if(assignments.containsKey(get(watchIndex2).getVariable())) {
-//                                if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
-//                                else watchIndex2++;
-//                            } else return DECIDABLE;
-//                        }
-//                    } else return UNKNOWN;
-//                }
-//            }
-//
-//            if(watchIndex2 < size()) return DECIDABLE;
-//            else return UNSAT;
-//        }
-//
-//        if(assignments.containsKey(var2.getVariable())) {
-//            if(assignments.get(var2.getVariable()) == var2.isPositive()) return SAT;
-//
-//            watchIndex2 = Math.max(watchIndex1, watchIndex2) + 1;
-//            while(watchIndex2 < size()) {
-//                if(assignments.containsKey(get(watchIndex2).getVariable())) {
-//                    if(assignments.get(get(watchIndex2).getVariable()) == get(watchIndex2).isPositive()) return SAT;
-//                    else watchIndex2++;
-//                } else {
-//                    if(assignments.containsKey(get(watchIndex1).getVariable())) {
-//                        if(assignments.get(var1.getVariable()) == var1.isPositive()) return SAT;
-//
-//                        watchIndex1 = Math.max(watchIndex1, watchIndex2) + 1;
-//                        while(watchIndex1 < size()) {
-//                            if(assignments.containsKey(get(watchIndex1).getVariable())) {
-//                                if(assignments.get(get(watchIndex1).getVariable()) == get(watchIndex1).isPositive()) return SAT;
-//                                else watchIndex1++;
-//                            } else return DECIDABLE;
-//                        }
-//                    } else return UNKNOWN;
-//                }
-//            }
-//
-//            if(watchIndex1 < size()) return DECIDABLE;
-//            else return UNSAT;
-//        }
-//
-//        return UNKNOWN;
-//    }
-
     public Status getStatus(Map<Variable, Boolean> assignments) {
         // update both counters until either >= size or SAT
         while(watchIndex1 < size() && assignments.containsKey(get(watchIndex1).getVariable()) &&
@@ -169,11 +103,9 @@ public class Clause extends ArrayList<AbstractVariable> {
                 : get(watchIndex1);
     }
 
-    public void resetWatcherIndices(Map<Variable, Boolean> assignment) {
+    public void resetWatcherIndices() {
         watchIndex1 = 0;
-        while(watchIndex1 < size() && !assignment.containsKey(get(watchIndex1).getVariable())) watchIndex1++;
-        watchIndex2 = watchIndex1 + 1;
-        while(watchIndex2 < size() && !assignment.containsKey(get(watchIndex2).getVariable())) watchIndex2++;
+        watchIndex2 = 1;
     }
 
     public Clause clone() {
