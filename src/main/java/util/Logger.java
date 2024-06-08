@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Logger {
@@ -13,7 +14,7 @@ public class Logger {
     private static String SAVED_LOG = "";
     private static final PrintStream ORIGINAL_STD_OUT = System.out;
     private static final List<Function<String, String>> highlighters = List.of(
-            (s) -> "\033[31m" + s + "\033[0m",
+            (s) -> "\033[32m" + s + "\033[0m",
             (s) -> "\033[35m" + s + "\033[0m",
             (s) -> "\033[36m" + s + "\033[0m"
     );
@@ -100,7 +101,7 @@ public class Logger {
 
     private static String highlight(Identifier identifier, String text, String... highlights) {
         for(String highlight : highlights) {
-            text = text.replaceAll(highlight, highlight(identifier, highlight));
+            text = text.replaceAll(Pattern.quote(highlight), highlight(identifier, highlight));
         }
 
         return text;
