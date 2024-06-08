@@ -1,7 +1,5 @@
 import bool.parser.logicnode.LogicNode;
-import bool.variant.cnf.interpreter.AssignmentTester;
-import bool.variant.cnf.interpreter.CDCLSolver;
-import bool.variant.cnf.interpreter.CNFSolver;
+import bool.variant.cnf.interpreter.*;
 import bool.variant.cnf.parser.cnfnode.Conjunction;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -22,14 +20,14 @@ import java.util.stream.Collectors;
 public class CNFSolverTest {
     private static final String PATH = "src/test/resources/cnf";
     private static final Map<String, CNFSolver> SOLVERS = Map.of(
-//            "RecursiveDPLLSolver", new RecursiveDPLLSolver(),
-//            "NonRecursiveLiteralWatchingDPLLSolver", new NonRecursiveLiteralWatchingDPLLSolver(),
+            "RecursiveDPLLSolver", new RecursiveDPLLSolver(),
+            "NonRecursiveLiteralWatchingDPLLSolver", new NonRecursiveLiteralWatchingDPLLSolver(),
             "CDCLSolver", new CDCLSolver()
     );
 
     @Test
     public void test() {
-        Logger.maxLevel();
+        // Logger.maxLevel();
         Logger.SAVE_LOG = true;
         for(var entry : SOLVERS.entrySet()) {
             String solverName = entry.getKey();
@@ -42,7 +40,7 @@ public class CNFSolverTest {
 
             try {
                 for(Path path : FileHelper.readAll(PATH + "/in")) {
-                    if(!path.toString().contains("prime25.")) continue;
+//                    if(!path.toString().contains("prime25.")) continue;
                     Logger.info("Reading " + path);
                     Conjunction conjunction = Conjunction.of(FileHelper.read(path.toString()));
                     Logger.info("Conjunction: " + conjunction);

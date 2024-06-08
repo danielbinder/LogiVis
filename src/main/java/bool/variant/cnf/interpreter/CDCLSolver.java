@@ -46,6 +46,7 @@ public final class CDCLSolver implements CNFSolver {
                     }
                     conjunction = stack.pop();
                 } while(conjunction.decisionGraph.level > backtrackLevel);
+                Logger.info(1, "Backtracked " + conjunction.decisionGraph);
                 Logger.info(2, "Backtracked conjunction: " + conjunction, conflictClause.toString());
             } else {
                 List<Variable> variablesInBothPolarities = variablesInBothPolarities(conjunction);

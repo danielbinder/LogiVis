@@ -117,6 +117,7 @@ public class DecisionGraph extends HashSet<DecisionGraphNode> {
             level--;
         }
 
+        conflictClause.resetWatcherIndices();
         return conflictClause;
     }
 
