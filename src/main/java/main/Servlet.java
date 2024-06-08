@@ -44,7 +44,7 @@ public class Servlet implements RestEndpoint {
     public String solveDPLLRec(@PathVariable String formula) {
         Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
         return new Result(RecursiveDPLLSolver::new,
-                          solver -> List.of(solver.solveAndTransform(conjunction)),
+                          solver -> List.of(solver.solveAndTransform(LogicNode.of(preprocess(formula)).toCNF())),
                           solver -> "Equisatisfiable CNF:\n" + conjunction,
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
                 .computeJSON();
@@ -84,7 +84,7 @@ public class Servlet implements RestEndpoint {
     public String solveAllDPLLRec(@PathVariable String formula) {
         Conjunction conjunction = LogicNode.of(preprocess(formula)).toCNF();
         return new Result(() -> new IncrementalCNFSolver(new RecursiveDPLLSolver()),
-                          solver -> solver.solveAllAndTransform(conjunction),
+                          solver -> solver.solveAllAndTransform(LogicNode.of(preprocess(formula)).toCNF()),
                           solver -> "Equisatisfiable CNF:\n" + conjunction,
                           Map.of(solver -> solver.unsatisfiable, "unsatisfiable"))
                 .computeJSON();

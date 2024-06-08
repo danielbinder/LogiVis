@@ -55,7 +55,7 @@ export default function SolverStrategyChooser() {
                         />
                         <label htmlFor='CDCL'>CDCL</label>
                     </div>
-                    {(solverStrategy === 'DPLLnonrec') &&
+                    {(solverStrategy === 'DPLLnonrec' || solverStrategy === 'CDCL') &&
                         <Has>Literal watching</Has>
                     }
                 </div>
